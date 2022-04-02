@@ -1,0 +1,76 @@
+{% extends 'admin/popup/base.html' %}
+
+{% block style %}
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            color: #606266;
+            text-align: left;
+        }
+    </style>
+
+{% endblock %}
+
+{% block main %}
+    <div id="app">
+        <el-col :span="4">
+            <div style="width: 190px; height: 110px; text-align: center;">
+                <div style="width: 95px; height: 110px; float: left; overflow: hidden">
+                    <h5>原图像</h5>
+                    <el-image src="{{ instance.target.photo }}" style="width: 100%"></el-image>
+                </div>
+                <div style="width: 95px; height: 110px; float: left; overflow: hidden">
+                    <h5>抓拍图像</h5>
+                    <el-image src="{{ instance.record.head_path }}" style="width: 100%"></el-image>
+                </div>
+            </div>
+            <h5 style="margin-top: 10px; margin-bottom: 10px">相似度: 91.99%</h5>
+            <div style="background-color: gray; width: 190px; height: 300px; overflow: hidden">
+                <el-image src="{{ instance.record.body_path }}" style="width: 100%"></el-image>
+            </div>
+        </el-col>
+        <el-col :span="15">
+            <div style="width: 713px; height: 430px; margin-left: 20px">
+                <el-image src="{{ instance.record.back_path }}" style="padding-top: 19px; width: 100%; height: 100%"></el-image>
+            </div>
+        </el-col>
+        <el-col :span="3">
+            <div style="width: 100%; height: 430px; margin-left: 20px">
+                <div style="padding-top: 19px">
+                    <el-tooltip class="item" effect="dark" content="{{ instance.target.name }}" placement="left">
+                        <el-button>人员详情</el-button>
+                    </el-tooltip>
+                </div>
+                <div style="padding-top: 19px">
+                    <el-tooltip class="item" effect="dark" content="暂时没有获取到人体特征" placement="left">
+                        <el-button>人体特征</el-button>
+                    </el-tooltip>
+                </div>
+                <div style="padding-top: 19px">
+                    <el-tooltip class="item" effect="dark" content="{{ instance.record.device.name }}" placement="left">
+                        <el-button>抓拍设备</el-button>
+                    </el-tooltip>
+                </div>
+                <div style="padding-top: 19px">
+                    <el-tooltip class="item" effect="dark" content="{{ instance.record.address }}" placement="left">
+                        <el-button>抓拍地址</el-button>
+                    </el-tooltip>
+                </div>
+                <div style="padding-top: 19px">
+                    <el-tooltip class="item" effect="dark" content="{{ instance.record.take_photo_time }}" placement="left">
+                        <el-button>抓拍时间</el-button>
+                    </el-tooltip>
+                </div>
+            </div>
+        </el-col>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script type="text/javascript">
+        new Vue({
+            el: '#app'
+        })
+    </script>
+{% endblock %}

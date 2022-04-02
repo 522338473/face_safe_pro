@@ -1,0 +1,271 @@
+{% block extrahead %}
+    <style>
+        .text {
+            font-size: 14px;
+        }
+
+        .item {
+            margin-bottom: 18px;
+        }
+
+        .clearfix:before,
+        .clearfix:after {
+            display: table;
+            content: "";
+        }
+
+        .clearfix:after {
+            clear: both
+        }
+
+        .box-card {
+            width: 480px;
+        }
+    </style>
+    <script>
+        function alert_home() {
+            alert('这里是首页标签')
+        }
+    </script>
+{% endblock %}
+
+{% block content %}
+    <p onclick="alert_home()">哈哈哈</p>
+    <el-row>
+        <el-button>默认按钮</el-button>
+        <el-button type="primary">主要按钮</el-button>
+        <el-button type="success" disabled>成功按钮</el-button>
+        <el-button type="info" plain>信息按钮</el-button>
+        <el-button type="warning" round>警告按钮</el-button>
+        <el-button type="danger" icon="el-icon-delete" circle>危险按钮</el-button>
+    </el-row>
+
+    <el-empty description="这里什么也没有啊"></el-empty>
+    <el-divider></el-divider>
+
+    <el-popover
+            placement="top-start"
+            title="标题"
+            width="200"
+            trigger="hover"
+            content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
+        <el-button slot="reference">hover 激活</el-button>
+    </el-popover>
+
+    <el-divider><i class="el-icon-mobile-phone"></i></el-divider>
+
+    <el-tooltip class="item" effect="dark" content="Top 提示文字" placement="top">
+        <el-button>Top 提示框</el-button>
+    </el-tooltip>
+
+    <div class="block">
+        <el-timeline>
+            <el-timeline-item timestamp="2018/4/12" placement="top">
+                <el-card>
+                    <h4>更新 Github 模板</h4>
+                    <p>王小虎 提交于 2018/4/12 20:46</p>
+                </el-card>
+            </el-timeline-item>
+            <el-timeline-item timestamp="2018/4/3" placement="top">
+                <el-card>
+                    <h4>更新 Github 模板</h4>
+                    <p>王小虎 提交于 2018/4/3 20:46</p>
+                </el-card>
+            </el-timeline-item>
+            <el-timeline-item timestamp="2018/4/2" placement="top">
+                <el-card>
+                    <h4>更新 Github 模板</h4>
+                    <p>王小虎 提交于 2018/4/2 20:46</p>
+                </el-card>
+            </el-timeline-item>
+        </el-timeline>
+    </div>
+
+    <el-card class="box-card">
+        <div slot="header" class="clearfix">
+            <span>卡片名称</span>
+            <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
+        </div>
+        <div class="text item">
+            <span>列表内容1</span>
+        </div>
+        <div class="text item">
+            <span>列表内容2</span>
+        </div>
+        <div class="text item">
+            <span>列表内容3</span>
+        </div>
+    </el-card>
+    <template>
+        <el-alert
+                title="成功提示的文案"
+                type="success">
+        </el-alert>
+        <el-alert
+                title="消息提示的文案"
+                type="info"
+                effect="dark">
+        </el-alert>
+        <el-alert
+                title="警告提示的文案"
+                type="warning">
+        </el-alert>
+        <el-alert
+                title="错误提示的文案"
+                type="error">
+        </el-alert>
+        <el-alert
+                title="不可关闭的 alert"
+                type="success"
+                :closable="false">
+        </el-alert>
+        <el-alert
+                title="自定义 close-text"
+                type="info"
+                close-text="知道了">
+        </el-alert>
+    </template>
+    <el-row>
+        <el-col :sm="12" :lg="6">
+            <el-result icon="success" title="成功提示" subTitle="请根据提示进行操作">
+                <template slot="extra">
+                    <el-button type="primary" size="medium">返回</el-button>
+                </template>
+            </el-result>
+        </el-col>
+        <el-col :sm="12" :lg="6">
+            <el-result icon="warning" title="警告提示" subTitle="请根据提示进行操作">
+                <template slot="extra">
+                    <el-button type="primary" size="medium">返回</el-button>
+                </template>
+            </el-result>
+        </el-col>
+        <el-col :sm="12" :lg="6">
+            <el-result icon="error" title="错误提示" subTitle="请根据提示进行操作">
+                <template slot="extra">
+                    <el-button type="primary" size="medium">返回</el-button>
+                </template>
+            </el-result>
+        </el-col>
+        <el-col :sm="12" :lg="6">
+            <el-result icon="info" title="信息提示" subTitle="请根据提示进行操作">
+                <template slot="extra">
+                    <el-button type="primary" size="medium">返回</el-button>
+                </template>
+            </el-result>
+        </el-col>
+    </el-row>
+    <el-result title="404" subTitle="抱歉，请求错误">
+        <template slot="icon">
+            <el-image src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"></el-image>
+        </template>
+        <template slot="extra">
+            <el-button type="primary" size="medium">返回</el-button>
+        </template>
+    </el-result>
+
+    <template>
+        <el-skeleton/>
+    </template>
+
+    <template>
+        <el-skeleton :rows="6"/>
+    </template>
+
+    <template>
+        <el-skeleton :rows="6" animated/>
+    </template>
+
+    <template>
+        <el-skeleton style="width: 240px">
+            <template slot="template">
+                <el-skeleton-item variant="image" style="width: 240px; height: 240px;"/>
+                <div style="padding: 14px;">
+                    <el-skeleton-item variant="p" style="width: 50%"/>
+                    <div
+                            style="display: flex; align-items: center; justify-items: space-between;"
+                    >
+                        <el-skeleton-item variant="text" style="margin-right: 16px;"/>
+                        <el-skeleton-item variant="text" style="width: 30%;"/>
+                    </div>
+                </div>
+            </template>
+        </el-skeleton>
+    </template>
+
+    <template>
+        <div style="width: 240px">
+            <p>
+                <label style="margin-right: 16px;">切换 Loading</label>
+                <el-switch v-model="loading"/>
+            </p>
+            <el-skeleton style="width: 240px" :loading="loading" animated>
+                <template slot="template">
+                    <el-skeleton-item
+                            variant="image"
+                            style="width: 240px; height: 240px;"
+                    />
+                    <div style="padding: 14px;">
+                        <el-skeleton-item variant="h3" style="width: 50%;"/>
+                        <div
+                                style="display: flex; align-items: center; justify-items: space-between; margin-top: 16px; height: 16px;"
+                        >
+                            <el-skeleton-item variant="text" style="margin-right: 16px;"/>
+                            <el-skeleton-item variant="text" style="width: 30%;"/>
+                        </div>
+                    </div>
+                </template>
+                <template>
+                    <el-card :body-style="{ padding: '0px', marginBottom: '1px' }">
+                        <img
+                                src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"
+                                class="image"
+                        />
+                        <div style="padding: 14px;">
+                            <span>好吃的汉堡</span>
+                            <div class="bottom card-header">
+                                <span class="time">2022-12-12</span>
+                                <el-button type="text" class="button">操作按钮</el-button>
+                            </div>
+                        </div>
+                    </el-card>
+                </template>
+            </el-skeleton>
+        </div>
+    </template>
+    <el-badge value="new" class="item">
+        <el-button size="small">评论</el-button>
+    </el-badge>
+    <el-badge :value="200" :max="99" class="item">
+        <el-button size="small">评论</el-button>
+    </el-badge>
+    <el-badge :value="12" class="item">
+        <el-button size="small">评论</el-button>
+    </el-badge>
+    <el-badge :value="3" class="item">
+        <el-button size="small">回复</el-button>
+    </el-badge>
+    <el-badge :value="1" class="item" type="primary">
+        <el-button size="small">评论</el-button>
+    </el-badge>
+    <el-badge :value="2" class="item" type="warning">
+        <el-button size="small">回复</el-button>
+    </el-badge>
+
+    <el-dropdown trigger="click">
+  <span class="el-dropdown-link">
+    点我查看<i class="el-icon-caret-bottom el-icon--right"></i>
+  </span>
+        <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item class="clearfix">
+                评论
+                <el-badge class="mark" :value="12"/>
+            </el-dropdown-item>
+            <el-dropdown-item class="clearfix">
+                回复
+                <el-badge class="mark" :value="3"/>
+            </el-dropdown-item>
+        </el-dropdown-menu>
+    </el-dropdown>
+    <hr>
+{% endblock %}

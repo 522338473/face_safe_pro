@@ -1,0 +1,49 @@
+{% load static face_safe_pro_tag %}
+
+{% block extrahead %}
+
+{% endblock %}
+
+{% block content %}
+    {# 实时监控页面默认显示10条 #}
+    {% if page_name == 'real_time' %}
+        <div style="width: 25%; height: 900px; background-color: yellow; float: left">
+            <div style="width: 100%; height: 900px; text-align: center; background-color: royalblue">
+                <span>
+                    告警通知
+                </span>
+                {% alarm_list current_page=1 page_size=10 as alarm_list %}
+                <h3>页码数: {{ alarm_list.alarm_page.num_pages }}</h3>
+                <h3>总条数: {{ alarm_list.alarm_page.count }}</h3>
+                <h3>页码区间: {{ alarm_list.alarm_page.page_range }}</h3>
+                {% for alarm in alarm_list.alarm_list %}
+                    <div>{{ alarm }}</div>
+                    <img src="{{ alarm.target__photo }}" alt="" width="10%">
+                    <img src="{{ alarm.record__head_path }}" alt="" width="10%">
+                    <a href="javascript:alert({{ alarm.target__name }})">查看详情(点击弹出框展示当前数据详情|包含三张图片)</a>
+                {% endfor %}
+
+
+            </div>
+        </div>
+
+        {# 首页报警默认显示5条 #}
+    {% else %}
+        <div style="width: 100%; height: 700px; text-align: center; background-color: brown">
+            <span>
+                报警记录
+            </span>
+            {% alarm_list current_page=1 page_size=5 as alarm_list %}
+            <h3>页码数: {{ alarm_list.alarm_page.num_pages }}</h3>
+            <h3>总条数: {{ alarm_list.alarm_page.count }}</h3>
+            <h3>页码区间: {{ alarm_list.alarm_page.page_range }}</h3>
+            {% for alarm in alarm_list.alarm_list %}
+                <div>{{ alarm }}</div>
+                <img src="{{ alarm.target__photo }}" alt="" width="7%">
+                <img src="{{ alarm.record__head_path }}" alt="" width="7%">
+                <a href="javascript:alert({{ alarm }})">查看详情(点击弹出框展示当前数据详情|包含三张图片)</a>
+            {% endfor %}
+
+        </div>
+    {% endif %}
+{% endblock %}

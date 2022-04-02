@@ -1,0 +1,58 @@
+{% extends 'admin/custom/custom_base.html' %}
+{% load static %}
+
+{% block style %}
+
+{% endblock %}
+
+{% block main %}
+    <div style="width: 100%; height: 900px; margin: 0; padding: 0">
+        <div style="width: 20%; height: 900px; background-color: red; float: left">
+            <div style="width: 100%; height: 450px; text-align: center; background-color: red">
+                <span>
+                    摄像头列表
+                </span>
+                <h3>页码数: {{ device_page.num_pages }}</h3>
+                <h3>总条数: {{ device_page.count }}</h3>
+                <h3>页码区间: {{ device_page.page_range }}</h3>
+                <h2>默认返回所有设备列表</h2>
+                {#     前端传参控制返回数量       #}
+                {% for device in device_list %}
+                    <div onclick="alert_hash('{{ device.hash }}')">
+                        {{ device.hash }} -- {{ device.name }} -- {{ device.ip }}
+                    </div>
+                {% endfor %}
+
+            </div>
+            <div style="width: 100%; height: 450px; text-align: center; background-color: yellow">
+                <span>
+                    摄像头分布(跟首页分布展示相同)
+                </span>
+                {#     高德地图打点显示       #}
+                <h3>页码数: {{ device_page.num_pages }}</h3>
+                <h3>总条数: {{ device_page.count }}</h3>
+                <h3>页码区间: {{ device_page.page_range }}</h3>
+                {% for device in device_page.object_list %}
+                    <div>
+                        {{ device.hash }} -- {{ device.geo }}
+                    </div>
+                {% endfor %}
+
+            </div>
+        </div>
+        {#    实时视频以及当前摄像头抓拍列表    #}
+        {% include 'admin/device/other/video_snap.html' %}
+
+        {#  告警通知  #}
+        {% include 'admin/device/other/alarm_list.html' %}
+    </div>
+    <script>
+        function alert_hash(device_hash) {
+            alert(device_hash)
+        }
+    </script>
+{% endblock %}
+
+
+{% block script %}
+{% endblock %}

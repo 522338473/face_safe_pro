@@ -1,0 +1,17 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple/"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+django = "*"
+django-import-export = "*"
+django-simpleui = "*"
+basehash = "*"
+djangorestframework = "*"
+simplepro = "*"
+
+[requires]
+python_version = "3.6"

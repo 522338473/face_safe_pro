@@ -1,0 +1,42 @@
+{% load i18n static simpletags sptags %}
+<link rel="stylesheet" href="{% static 'admin/simplepro/css/home.css' %}">
+<div class="home-body">
+
+    <el-row>
+        <el-col :span="24">
+            {% block home %}
+                <el-card style="margin-top: -20px;">
+                    {% include 'admin/home_top.html' %}
+                    {% include 'admin/home_page.html' %}
+
+                </el-card>x
+            {% endblock %}
+
+            {% block quick %}
+                <el-card style="margin-top: 10px;">
+                    <div slot="header">
+                        {% trans 'Quick Action' %}
+
+                        <search :data="menus"></search>
+                    </div>
+                    {% include 'admin/parts/quick.html' %}
+                </el-card>
+            {% endblock %}
+
+            {% block monitor %}
+                {% get_monitor_display as monitor_display %}
+                {% if monitor_display %}
+                    <el-card style="margin-top: 10px;">
+                        <div slot="header">
+                            {% trans 'System Monitor' %}
+                        </div>
+                        <monitor ref="monitor" url="{% url 'sp:monitor' %}"></monitor>
+                    </el-card>
+                {% endif %}
+            {% endblock %}
+        </el-col>
+
+    </el-row>
+    <div style="height: 80px"></div>
+</div>
+<el-backtop target=".home-body"></el-backtop>

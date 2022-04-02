@@ -1,0 +1,19 @@
+{% extends 'admin/custom/custom_base.html' %}
+{% load static %}
+
+{% block extrahead %}
+
+{% endblock %}
+
+{% block content %}
+    <div style="width: 100%; height: 900px; margin: 0; padding: 0">
+        {# 抓拍统计 #}
+        {% include 'admin/device/other/snap_count.html' %}
+
+        <div style="width: 100%; height: 200px; text-align: center; line-height: 200px; background-color: plum">
+            <span>搜索条件(该页面跟抓拍图像页面数据一致。展示结果不同)</span>
+        </div>
+        {#    搜索结果展示    #}
+        {% include 'admin/device/other/search_results.html' %}
+    </div>
+{% endblock %}

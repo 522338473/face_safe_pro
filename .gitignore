@@ -1,0 +1,16 @@
+.idea
+.venv
+.env
+*.sqlite3
+*.pyc
+*.log
+
+.Python
+build/
+
+.DS_Store
+
+__pycache__/
+
+*.c
+#/dist/

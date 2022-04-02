@@ -1,0 +1,50 @@
+{% load static face_safe_pro_tag %}
+
+{% block extrahead %}
+
+{% endblock %}
+
+{% block content %}
+    <div style="width: 55%; height: 900px; background-color: green; float: left">
+        <div style="width: 100%; height: 650px; text-align: center; background-color: green">
+                <span>
+                    实时视频(点击设备。传递当前设备id值给后端。后端返回该设备webrtc地址。默认播放第一个设备视频流)
+                </span>
+            {% for device in device_page.object_list %}
+                {% if device.hash == 'cJinsNucWTR' %}
+                    {# 当点击的时候。捕获到当前设备hash，后端返回对应的播放地址 #}
+                    <h1>{% video_live id=device.hash %}</h1>
+                {% else %}
+                    {#       默认播放第一个设备视频流         #}
+                {% endif %}
+
+            {% endfor %}
+
+        </div>
+        <div style="width: 100%; height: 250px; text-align: center; background-color: deeppink">
+                <span>
+                    人脸抓拍
+                </span>
+            <h3>页码数: {{ device_page.num_pages }}</h3>
+            <h3>总条数: {{ device_page.count }}</h3>
+            <h3>页码区间: {{ device_page.page_range }}</h3>
+            {% for device in device_page.object_list %}
+                {% if device.hash == 'cJinsNucWTR' %}
+                    {# 当点击的时候。捕获到当前设备hash，后端返回对应的抓拍图片#}
+                    {% device_photo_list id=device.hash current_page=1 page_size=10 as device_photo_list %}
+                    {% for device_photo in device_photo_list.device_photo_list %}
+                        <h1>{{ device_photo }}</h1>
+                        <img src="{{ device_photo.head_path }}" alt="picture." width="10%">
+                    {% endfor %}
+
+                {% else %}
+                    {#      默认返回第一个设备抓拍图片          #}
+
+                {% endif %}
+            {% endfor %}
+
+
+        </div>
+    </div>
+{% endblock %}
+

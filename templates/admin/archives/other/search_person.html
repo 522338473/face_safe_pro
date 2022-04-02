@@ -1,0 +1,53 @@
+{% extends 'admin/custom/custom_base.html' %}
+{% load static %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'css/home_page.css' %}">
+    <style>
+        p {
+            background-color: yellow;
+        }
+    </style>
+    <script>
+        function alert_search_person(message) {
+            alert(message)
+        }
+    </script>
+{% endblock %}
+
+{% block main %}
+    {#    <p onclick="alert_search_person('以人搜图主页')">哈哈哈</p>#}
+    <div style="width: 100%; height: 900px; margin: 0; padding: 0">
+        {# 档案统计 #}
+        {% include 'admin/archives/other/archives_count.html' %}
+        {# 搜索条件: 人脸or图片 #}
+        <div style="width: 100%; height: 200px; text-align: center; line-height: 200px; background-color: plum">
+            {#            <p onclick="alert_search_person('以人搜图的搜索条件')">hahah</p>#}
+            <span class="search">搜索条件(上传图片。返回档案人员列表（参考档案人员页面）)</span>
+        </div>
+        <div style="width: 100%; height: 600px; text-align: center; background-color: yellow">
+
+            <div style="width: 25%; height: 600px; text-align: center; background-color: cornflowerblue; float: left">
+                {#            <p onclick="alert_search_person('以人搜图的档案列表')">hahah</p>#}
+                <span>档案列表: </span>
+                <h1>页码数: {{ library_page.num_pages }}</h1>
+                <h1>总条数: {{ library_page.count }}</h1>
+                <h1>页码区间: {{ library_page.page_range }}</h1>
+                {#     默认返回10条数据，具体数量前端控制       #}
+                {% for library in library_list %}
+                    <div>
+                        {{ library.hash }} -- {{ library.name }}
+                    </div>
+                {% endfor %}
+
+            </div>
+
+            {% include 'admin/archives/other/archives_personnel.html' %}
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block script %}
+
+{% endblock %}

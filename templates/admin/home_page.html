@@ -1,0 +1,128 @@
+{% load static face_safe_pro_tag %}
+
+{% block extrahead %}
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="{% static 'css/home_page.css' %}">
+    <!-- 引入vue -->
+    <script src="{% static 'vue/vue.js' %}"></script>
+    <!-- axios -->
+    <script src="{% static 'axios/axios.min.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+    <div style="width: 100%; height: 900px">
+        <el-col :span="6">
+            <div style="width: 100%; height: 450px; text-align: center; background-color: red">
+            <span>
+                摄像头状态(饼状图展示在线离线)
+            </span>
+
+                {% device_status as device_list %}
+                {% for device in device_list %}
+                    {% if device.status == 1 %}
+                        <h1>在线设备: {{ device.count }}</h1>
+                    {% elif device.status == 0 %}
+                        <h1>离线设备: {{ device.count }}</h1>
+                    {% else %}
+                        <h1>Empty!</h1>
+                    {% endif %}
+                {% endfor %}
+
+
+            </div>
+            <div style="width: 100%; height: 450px; text-align: center; background-color: gray">
+            <span>
+                摄像头分布(地图打点显示)
+            </span>
+                {#    高德地图打点显示    #}
+                {% device_info current_page=1 page_size=10 as device_info %}
+                <h3>页码数: {{ device_info.device_page.num_pages }}</h3>
+                <h3>总条数: {{ device_info.device_page.count }}</h3>
+                <h3>页码区间: {{ device_info.device_page.page_range }}</h3>
+                {% for device in device_info.device_list %}
+                    <h1>{{ device }}</h1>
+                {% endfor %}
+
+            </div>
+        </el-col>
+
+        <el-col :span="11">
+            <div style="width: 100%; height: 300px; text-align: center; background-color: green">
+            <span>
+                概况
+            </span>
+
+                {% survey as survery %}
+                {% for ke, val in survery.items %}
+                    {% if ke == 'now_days_snap_total' %}
+                        <h1>今日抓拍: {{ val }}</h1>
+                    {% elif ke ==  'all_days_snap_total' %}
+                        <h1>总抓拍: {{ val }}</h1>
+                    {% elif ke ==  'monitor_total' %}
+                        <h1>重点人员: {{ val }}</h1>
+                    {% elif ke ==  'personnel_total' %}
+                        <h1>关注人员: {{ val }}</h1>
+                    {% elif ke == 'archives_total' %}
+                        <h1>人员档案: {{ val }}</h1>
+                    {% else %}
+                        <h1>Empty!</h1>
+                    {% endif %}
+
+                {% endfor %}
+
+            </div>
+            <div style="width: 100%; height: 300px; text-align: center; background-color: orange">
+            <span>
+                抓拍统计(可根据时间段搜索。默认传递当天时间)
+            </span>
+                {#     图表展示。时间需要自定义上传。默认展示当天       #}
+                <h1>{% snap_count start_time='20220301000000' end_time='20220316000000' %}</h1>
+            </div>
+            <div style="width: 100%; height: 300px; text-align: center; background-color: pink">
+            <span>
+                预警统计(条形图展示)
+            </span>
+
+                {% alarm_count as alarm_count %}
+                {% for ke, val in alarm_count.items %}
+                    {% if ke == 'monitor_discovery_total' %}
+                        <h1>重点人员: {{ val }}</h1>
+                    {% elif ke == 'vehicle_discovery_total' %}
+                        <h1>重点车辆: {{ val }}</h1>
+                    {% elif ke == 'area_discovery_total' %}
+                        <h1>重点区域: {{ val }}</h1>
+                    {% else %}
+                        <h1>Empty!</h1>
+                    {% endif %}
+                {% endfor %}
+
+            </div>
+        </el-col>
+
+        <el-col :span="7">
+            <div style="width: 100%; height: 200px; text-align: center; background-color: yellow">
+            <span>
+                预警 | 未读统计(数字可点击)
+            </span>
+                {% alarm_unchecked_count as alarm_unchecked_count %}
+                {% for ke, val in alarm_unchecked_count.items %}
+                    {% if ke == 'monitor_discovery_total' %}
+                        <h1>重点人员: {{ val }}</h1>
+                    {% elif ke == 'vehicle_discovery_total' %}
+                        <h1>重点车辆: {{ val }}</h1>
+                    {% elif ke == 'area_discovery_total' %}
+                        <h1>重点区域: {{ val }}</h1>
+                    {% else %}
+                        <h1>Empty!</h1>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            {# 首页告警通知 #}
+            {% include 'admin/device/other/alarm_list.html' %}
+
+        </el-col>
+    </div>
+{% endblock %}
+
+

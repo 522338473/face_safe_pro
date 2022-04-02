@@ -1,0 +1,35 @@
+{% load static %}
+
+{% block extrahead %}
+
+{% endblock %}
+
+{% block content %}
+    <div style="width: 100%; height: 600px; text-align: center; background-color: purple">
+        <span>展示结果</span>
+        <div style="background-color: black">
+            <h1>页码数: {{ photo_page.num_pages }}</h1>
+            <h1>总条数: {{ photo_page.count }}</h1>
+            <h1>页码区间: {{ photo_page.page_range }}</h1>
+        </div>
+        {# 默认返回10条以及分页数据，具体返回多少前端控制 #}
+        {% for photo in photo_list %}
+            <div>
+                {{ photo.hash }} -- {{ photo }}
+            </div>
+            <img src="{{ photo.head_path }}" alt="" width="10%">
+            {#    展示人脸搜图结果    #}
+            {% if page_name == 'search_image' %}
+                <a href="javascript:alert('详情页面')">查看详情</a>
+                {#     展示普通信息搜图结果       #}
+            {% elif page_name == 'search_time' %}
+                <a href="javascript:alert('详情页面')">查看详情</a>
+                <a href="javascript:alert('轨迹页面')">轨迹搜索</a>
+            {% else %}
+
+            {% endif %}
+
+        {% endfor %}
+
+    </div>
+{% endblock %}

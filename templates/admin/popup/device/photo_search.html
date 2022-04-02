@@ -1,0 +1,78 @@
+{% extends 'admin/popup/base.html' %}
+
+{% block style %}
+
+{% endblock %}
+
+{% block main %}
+    <div id="app">
+        <el-table
+                :data="photo_list"
+                stripe
+                style="width: 100%">
+            <el-table-column
+                    prop="address"
+                    label="抓拍地址"
+                    width="360">
+            </el-table-column>
+            <el-table-column
+                    prop="take_photo_time"
+                    label="抓拍时间"
+                    width="200">
+            </el-table-column>
+            <el-table-column
+                    prop="head_path"
+                    label="抓拍头像">
+            </el-table-column>
+            <el-table-column
+                    prop="head_path"
+                    label="头像显示">
+                <template slot-scope="scope">
+                    <el-image :src="scope.row.head_path" style="width: 30px; height: 30px">
+                    </el-image>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    prop="id"
+                    label="操作">
+                <template slot-scope="scope">
+                    <el-link type="primary" href="{% url 'device:photo_detail' %}?id={{ request.GET.id }}">查看</el-link>
+                </template>
+            </el-table-column>
+        </el-table>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script type="text/javascript">
+        new Vue({
+            el: '#app',
+            data: {
+                loading: false,
+                count: 0,
+                photo_list: [],
+            },
+            created() {
+                let self = this;
+                let data = JSON.stringify({
+                    'current_page': 1,
+                    'page_size': 10,
+                    'id': {{ request.GET.id }},
+                    'paginate': 'on'
+                })
+
+                self.loading = true;
+                axios.post('{% url "device:photo_search" %}', data, {
+                    headers: {
+                        'Content-Type': 'application/json;charset=UTF-8'
+                    }
+                }).then(res => {
+                    self.count = res.data.count;
+                    self.photo_list = res.data.results;
+                }).finally(() => {
+                    self.loading = false
+                })
+            },
+        })
+    </script>
+{% endblock %}

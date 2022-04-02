@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Father</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="{% static 'element-ui/index.css' %}">
+    <!-- 引入vue -->
+    <script src="{% static 'vue/vue.js' %}"></script>
+    <!-- 引入组件库 -->
+    <script src="{% static 'element-ui/index.js' %}"></script>
+    <!-- axios -->
+    <script src="{% static 'axios/axios.min.js' %}"></script>
+    {% block style %}
+        样式表
+    {% endblock %}
+</head>
+<body>
+<div class="main el-popup-parent--hidden">
+    {% block main %}
+        这里是主要的内容区域
+    {% endblock %}
+</div>
+
+{% block script %}
+    脚本区域
+
+{% endblock %}
+</body>
+</html>
