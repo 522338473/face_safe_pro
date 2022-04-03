@@ -55,7 +55,7 @@ class VehicleSearchView(ParseJsonView, View):
         page_size = request_data.get('page_size', 10)
         paginate = request_data.get('paginate')
         _id = request_data.get('id')
-        _photo_list = models.VehicleMonitorDiscover.objects.filter(target_id=_id).order_by('-id').values('target__plate', 'record__device__name', 'record__address', 'record__take_photo_time', 'record__plate_path')
+        _photo_list = models.VehicleMonitorDiscover.objects.filter(target_id=_id).order_by('-id').values('id', 'target__plate', 'record__device__name', 'record__address', 'record__take_photo_time', 'record__plate_path')
         photo_page = Paginator(_photo_list, page_size)
         if photo_page.page_range.start <= current_page <= photo_page.page_range.stop:
             return self.paginate_response(photo_page, current_page, paginate)

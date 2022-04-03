@@ -96,9 +96,9 @@ class MonitorDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
         back = ModalDialog(
             cell='<el-link type="primary">回放视频</el-link>',
             title='回放视频',
-            url='http://vfx.mtime.cn/Video/2019/03/21/mp4/190321153853126488.mp4',
-            height='40%',
-            width='50%',
+            url=reverse('device:video_playback') + '?id=%s' % model.id,
+            height='435px',
+            width='800px',
             show_cancel=True
         )
         return MultipleCellDialog([detail, back])
@@ -172,9 +172,9 @@ class VehicleMonitorDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
         back = ModalDialog(
             cell='<el-link type="primary">回放视频</el-link>',
             title='回放视频',
-            url='http://vfx.mtime.cn/Video/2019/03/21/mp4/190321153853126488.mp4',
-            height='40%',
-            width='50%',
+            url=reverse('device:video_playback') + '?id=%s' % model.id,
+            height='435px',
+            width='800px',
             show_cancel=True
         )
         return MultipleCellDialog([detail, back])
@@ -285,10 +285,10 @@ class PhotoClusterAdmin(PublicModelAdmin, admin.ModelAdmin):
             'width': '80px'
         },
         'archives_personnel': {
-            'width': '140px'
+            'width': '180px'
         },
         'device_name': {
-            'width': '120px'
+            'width': '160px'
         },
         'device_address': {
             'width': 'auto',

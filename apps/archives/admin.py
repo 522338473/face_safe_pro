@@ -138,9 +138,9 @@ class AccessDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
         back = ModalDialog(
             cell='<el-link type="primary">回放视频</el-link>',
             title='回放视频',
-            url='http://vfx.mtime.cn/Video/2019/03/21/mp4/190321153853126488.mp4',  # 暂时写死。后期写活
-            height='40%',
-            width='50%',
+            url=reverse('device:video_playback') + '?id=%s' % model.id,  # 暂时写死。后期写活
+            height='435px',
+            width='800px',
             show_cancel=True
         )
         return MultipleCellDialog([detail, back])

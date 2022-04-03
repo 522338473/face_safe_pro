@@ -70,7 +70,7 @@ class VehicleSearchView(ParseJsonView, View):
         paginate = request_data.get('paginate')
         _id = request_data.get('id')
         _plate = models.Vehicle.objects.get(id=_id).plate
-        _photo_list = models.Vehicle.objects.filter(plate=_plate).order_by('-id').values('device__name', 'address', 'take_photo_time', 'plate_path')
+        _photo_list = models.Vehicle.objects.filter(plate=_plate).order_by('-id').values('id', 'device__name', 'address', 'take_photo_time', 'plate_path')
         photo_page = Paginator(_photo_list, page_size)
         if photo_page.page_range.start <= current_page <= photo_page.page_range.stop:
             return self.paginate_response(photo_page, current_page, paginate)
@@ -89,6 +89,9 @@ class VideoPlaybackView(ParseJsonView, View):
     """回放视频接口"""
 
     def get(self, request):
+        _id = request.GET.get('id')
+        print(_id)
+        url = 'http://vfx.mtime.cn/Video/2019/03/21/mp4/190321153853126488.mp4'
         return render(request, 'admin/popup/device/video_playback.html', locals())
 
 

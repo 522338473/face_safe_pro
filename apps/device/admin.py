@@ -118,9 +118,9 @@ class DevicePhotoAdmin(PublicModelAdmin, admin.ModelAdmin):
         back = ModalDialog(
             cell='<el-link type="primary">回放视频</el-link>',
             title='回放视频',
-            url='http://vfx.mtime.cn/Video/2019/03/21/mp4/190321153853126488.mp4',  # 暂时写死。后期写活
-            height='40%',
-            width='50%',
+            url=reverse('device:video_playback') + '?id=%s' % model.id,  # 暂时写死。后期写活
+            height='435px',
+            width='800px',
             show_cancel=True
         )
         return MultipleCellDialog([query, detail, back])
@@ -153,7 +153,7 @@ class MotorAdmin(PublicModelAdmin, admin.ModelAdmin):
             'width': '80px'
         },
         'device': {
-            'width': '120px'
+            'width': '160px'
         },
 
     }
@@ -172,6 +172,15 @@ class VehicleAdmin(PublicModelAdmin, admin.ModelAdmin):
         'device': {
             'width': '160px'
         },
+        'take_photo_time': {
+            'width': '170px'
+        },
+        'plate': {
+            'width': '100px'
+        },
+        'operation': {
+            'width': '180px'
+        }
     }
 
     def operation(self, model):
@@ -194,9 +203,9 @@ class VehicleAdmin(PublicModelAdmin, admin.ModelAdmin):
         back = ModalDialog(
             cell='<el-link type="primary">回放视频</el-link>',
             title='回放视频',
-            url='http://vfx.mtime.cn/Video/2019/03/21/mp4/190321153853126488.mp4',
-            height='40%',
-            width='50%',
+            url=reverse('device:video_playback') + '?id=%s' % model.id,
+            height='435px',
+            width='800px',
             show_cancel=True
         )
         return MultipleCellDialog([query, detail, back])
