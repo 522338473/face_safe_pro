@@ -1,53 +1,289 @@
 {% extends 'admin/custom/custom_base.html' %}
-{% load static %}
 
 {% block style %}
-    <link rel="stylesheet" href="{% static 'css/home_page.css' %}">
     <style>
-        p {
-            background-color: yellow;
+        .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
+            color: #009900;
+            background: none;
+        }
+
+        .box-group {
+            background: #FFFFFF;
+            box-shadow: 0 0 4px 2px rgba(69, 91, 132, 0.1);
+        }
+
+        .top-title-desc {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-end;
+        }
+
+        .item-box {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .item-list {
+            margin: 5px 10px;
+        }
+
+        .item-list > span {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .avatar-photo {
+            width: 100px;
+            height: 100px;
+            display: block;
+            font-size: 28px;
+            color: #8c939d;
+            line-height: 120px;
+            text-align: center;
+            border-radius: 15px;
+            border: 1px dashed #d9d9d9;
+        }
+
+        .uploader-img {
+            width: 100px;
+            height: 100px;
         }
     </style>
-    <script>
-        function alert_search_person(message) {
-            alert(message)
-        }
-    </script>
 {% endblock %}
 
 {% block main %}
-    {#    <p onclick="alert_search_person('以人搜图主页')">哈哈哈</p>#}
-    <div style="width: 100%; height: 900px; margin: 0; padding: 0">
-        {# 档案统计 #}
-        {% include 'admin/archives/other/archives_count.html' %}
-        {# 搜索条件: 人脸or图片 #}
-        <div style="width: 100%; height: 200px; text-align: center; line-height: 200px; background-color: plum">
-            {#            <p onclick="alert_search_person('以人搜图的搜索条件')">hahah</p>#}
-            <span class="search">搜索条件(上传图片。返回档案人员列表（参考档案人员页面）)</span>
-        </div>
-        <div style="width: 100%; height: 600px; text-align: center; background-color: yellow">
-
-            <div style="width: 25%; height: 600px; text-align: center; background-color: cornflowerblue; float: left">
-                {#            <p onclick="alert_search_person('以人搜图的档案列表')">hahah</p>#}
-                <span>档案列表: </span>
-                <h1>页码数: {{ library_page.num_pages }}</h1>
-                <h1>总条数: {{ library_page.count }}</h1>
-                <h1>页码区间: {{ library_page.page_range }}</h1>
-                {#     默认返回10条数据，具体数量前端控制       #}
-                {% for library in library_list %}
-                    <div>
-                        {{ library.hash }} -- {{ library.name }}
+    <div id="app">
+        <el-row>
+            <div class="top-title-desc">
+                <div class="item-box">
+                    <div class="item-list">
+                        <span>总人数：</span>
+                        <span>${ archives_personnel_total }</span>
                     </div>
-                {% endfor %}
-
+                    <div class="item-list">
+                        <span>人像库数量：</span>
+                        <span>${ archives_group_total }</span>
+                    </div>
+                </div>
             </div>
+        </el-row>
+        <el-divider></el-divider>
+        <el-row>
+            <div style="width: 100%; height: 180px;">
+                <div class="terms-height">
+                    <div class="upload-div">
+                        <el-upload
+                                :on-change="changePic"
+                                class="uploader-img"
+                                action="#"
+                                :http-request="upload_file"
+                                :auto-upload="false"
+                                :show-file-list="false"
+                        >
+                            <img v-if="imageUrl" :src="imageUrl" class="avatar-photo"/>
+                        </el-upload>
+                        <span style="display: inline-block;font-size: 12px;color: #e6a23c;margin-top: 10px;">*图片大小不能超过3M</span>
+                    </div>
+                    <div style="margin-top: 10px">
+                        <el-button type="primary" size="mini" @click="search_person">开始搜索</el-button>
+                        <el-button type="primary" size="mini" @click="search_reset">重置</el-button>
+                    </div>
+                </div>
+            </div>
+        </el-row>
+        <hr>
+        <el-row :gutter="20">
+            <el-col :span="4" style="height: 560px; padding: 10px; overflow: auto" class="box-group">
+                <div>
+                    <h3 style="text-align: left; color: #333333; margin-top: 10px;">档案库列表</h3>
+                </div>
+                <div style="display: flex;">
+                    <el-input
+                            placeholder="输入名称查找"
+                            size="mini"
+                            v-model="group_name"
+                    ></el-input>
+                    <div style="margin-left: 10px;">
+                        <el-button @click="group_list" size="mini">搜索</el-button>
+                    </div>
+                </div>
+                <el-tree
+                        class="filter-tree"
+                        :data="archives_group_list"
+                        :highlight-current="checked"
+                        highlight-current
+                        default-expand-all
+                        current-node-key
+                        icon-class=""
+                        :props="defaultProps"
+                        :filter-node-method="group_list"
+                        @node-click="group_personnel_list"
+                        ref="tree">
+                </el-tree>
 
-            {% include 'admin/archives/other/archives_personnel.html' %}
-        </div>
+            </el-col>
+            <el-col :span="20" style=" padding-top: 10px; height: 560px; overflow: auto;" class="box-group">
+                <el-row>
+                    <div v-if="paginator.count>0">
+                        <div v-for="(item, index) in archives_personnel_list" :key="index" style="width: 180px; height: 280px; padding: 10px; margin-right: 10px; margin-bottom: 5px; display: inline-block;" class="box-group">
+                            <el-image
+                                    style="width: 180px; height: 180px"
+                                    :src="item.photo"
+                                    fit="fit"
+                            >
+                            </el-image>
+                            <div>
+                                <span>姓名: ${ item.name }</span>
+                            </div>
+                            <div>
+                                <span>手机: ${ item.phone }</span>
+                            </div>
+                            <div>
+                                <span>证件: ${ item.id_card }</span>
+                            </div>
+                            <div style="padding-top: 15px">
+                                <el-link type="primary" @click="search_trace(item.name)">轨迹搜索</el-link>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-else>
+                        <el-empty description="这里没有搜索到数据吖!"></el-empty>
+                    </div>
+                </el-row>
+                <div v-if="paginator.page_count>1" class="paginator" style="text-align: center; margin-top: 20px">
+                    <el-pagination
+                            background
+                            layout="total, prev, pager, next"
+                            :page-size="paginator.page_size"
+                            :total="paginator.count"
+                            @current-change="group_personnel_list"
+                    >
+                    </el-pagination>
+                </div>
+            </el-col>
+
+        </el-row>
     </div>
 {% endblock %}
 
 
 {% block script %}
+    <script type="text/javascript">
+        new Vue({
+            el: '#app',
+            delimiters: ['${', '}'],
+            data: {
+                loading: false,
+                group_name: '',
+                archives_group_id: '',
+                current_page: 1,
+                imageUrl: 'http://192.168.2.95/fast_dfs/2022/01/19/491c13ce185f3002e390db91853c659e?download=0',
+                archives_group_total: 0,
+                archives_personnel_total: 0,
+                checked: false,
+                defaultProps: {
+                    label: 'name'
+                },
+                paginator: {
+                    count: 0,
+                    page_size: 12,
+                    page_count: 0,
+                    paginate: 'on'
+                },
+                archives_group_list: [],
+                archives_personnel_list: []
+            },
+            created() {
+                this.archives_group_info();
+                this.group_list();
+                this.group_personnel_list(1);
+            },
+            methods: {
+                archives_group_info: function () {
+                    let self = this;
+                    self.loading = true;
+                    axios.get('/v1/archives/group/count/', {
+                        params: {}
+                    }, {
+                        'Content-Type': 'application/json;charset=UTF-8'
+                    }).then(res => {
+                        self.archives_group_total = res.data.archives_group_total;
+                        self.archives_personnel_total = res.data.archives_personnel_total;
+                    }).finally(() => {
+                        self.loading = false
+                    })
+                },
+                group_list: function () {
+                    {# 档案库列表 #}
+                    let self = this;
+                    self.loading = true;
+                    axios.get('/v1/archives/group/', {
+                        params: {
+                            'paginate': self.paginator.paginate,
+                            'name': self.group_name,
+                        }
+                    }, {
+                        'Content-Type': 'application/json;charset=UTF-8'
+                    }).then(res => {
+                        self.paginator.count = res.data.count;
+                        self.paginator.page_count = self.paginator.count / self.paginator.page_size;
+                        self.archives_group_list = res.data.results;
+                    }).finally(() => {
+                        self.loading = false
+                    })
+                },
+                group_personnel_list: function (params) {
+                    {# 人员列表 #}
+                    let self = this;
+                    self.loading = true;
+                    if (typeof (params) == 'number') {
+                        self.current_page = params;
+                        params = {
+                            'offset': (self.current_page - 1) * self.paginator.page_size,
+                            'limit': self.paginator.page_size,
+                            'archives_group': self.archives_group_id,
+                        }
+                    } else {
+                        self.archives_group_id = params.id;
+                        params = {
+                            'archives_group': self.archives_group_id,
+                            'limit': self.paginator.page_size,
+                            'offset': (self.current_page - 1) * self.paginator.page_size,
+                        }
+                    }
+
+                    axios.get('/v1/archives/personnel/', {
+                        params: params
+                    }, {
+                        'Content-Type': 'application/json;charset=UTF-8'
+                    }).then(res => {
+                        self.paginator.count = res.data.count;
+                        self.paginator.page_count = self.paginator.count / self.paginator.page_size;
+                        self.archives_personnel_list = res.data.results;
+                    })
+                },
+                search_person: function (params) {
+                    console.log(params)
+                    this.upload_file()
+                    console.log('以图搜人接口正在开发中...')
+                },
+                changePic(file) {
+                    /** @description 修改文件钩子 */
+                    this.imageUrl = URL.createObjectURL(file.raw);
+                    this.file = file.raw;
+                },
+                search_reset: function () {
+                    this.group_personnel_list(1)
+                },
+                search_trace: function (params) {
+                    alert(params + ': ' + '轨迹回溯页面正在开发中....')
+                },
+                upload_file: function () {
+                    console.log(this.file)
+                }
+            }
+        })
+    </script>
 
 {% endblock %}

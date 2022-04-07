@@ -44,6 +44,17 @@
                 </template>
             </el-table-column>
         </el-table>
+        <div v-if="paginator.page_count>1" class="paginator" style="text-align: center; margin-top: 20px">
+            <el-pagination
+                    background
+                    layout="total, prev, pager, next"
+                    :page-size="paginator.page_size"
+                    :total="paginator.count"
+                    @current-change="vehicle_search"
+            >
+            </el-pagination>
+        </div>
+
     </div>
 
 {% endblock %}
@@ -54,31 +65,41 @@
             el: '#app',
             data: {
                 loading: false,
-                count: 0,
+                paginator: {
+                    count: 0,
+                    page_size: 10,
+                    page_count: 0,
+                    paginate: 'on',
+                },
                 photo_list: [],
             },
             created() {
-                let self = this;
-                let data = JSON.stringify({
-                    'current_page': 1,
-                    'page_size': 10,
-                    'id': {{ request.GET.id }},
-                    'paginate': 'on'
-                })
-
-                self.loading = true;
-                axios.post('{% url "monitor:vehicle_search" %}', data, {
-                    headers: {
-                        'Content-Type': 'application/json;charset=UTF-8'
-                    }
-                }).then(res => {
-                    console.log(res.data.results)
-                    self.count = res.data.count;
-                    self.photo_list = res.data.results;
-                }).finally(() => {
-                    self.loading = false
-                })
+                this.vehicle_search(1);
             },
+            methods: {
+                vehicle_search: function (page) {
+                    let self = this;
+                    let data = JSON.stringify({
+                        'current_page': page,
+                        'page_size': self.paginator.page_size,
+                        'id': {{ request.GET.id }},
+                        'paginate': self.paginator.paginate
+                    })
+
+                    self.loading = true;
+                    axios.post('{% url "monitor:vehicle_search" %}', data, {
+                        headers: {
+                            'Content-Type': 'application/json;charset=UTF-8'
+                        }
+                    }).then(res => {
+                        self.paginator.count = res.data.count;
+                        self.paginator.page_count = self.paginator.count / self.paginator.page_size;
+                        self.photo_list = res.data.results;
+                    }).finally(() => {
+                        self.loading = false
+                    })
+                }
+            }
         })
     </script>
 {% endblock %}

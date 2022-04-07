@@ -236,17 +236,17 @@
         },
         "simplepro": {
             "hashes": [
-                "sha256:6bcf78df65995ecac5d2b5cbbe1215297238e0044c8794407e3ec76c127cbc4d"
+                "sha256:0f018c01cf1769f6a8ef4c765ffe74877dad8ecbd5b553954d8e7f19b3d4d34a"
             ],
             "index": "pypi",
-            "version": "==4.0"
+            "version": "==4.0.1"
         },
         "six": {
             "hashes": [
                 "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926",
                 "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
             "version": "==1.16.0"
         },
         "sqlparse": {

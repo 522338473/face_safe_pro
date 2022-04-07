@@ -1,25 +1,52 @@
 {% extends 'admin/custom/custom_base.html' %}
-{% load static %}
+{% load static face_safe_pro_tag %}
 
 {% block style %}
 
 {% endblock %}
 
 {% block main %}
-    <div style="width: 100%; height: 900px; margin: 0; padding: 0">
-        {# 抓拍统计 #}
-        {% include 'admin/device/other/snap_count.html' %}
+    <div id="app">
+        <div style="width: 100%; height: 900px; margin: 0; padding: 0">
+            <div style="width: 100%; height: 60px; text-align: center; background-color: coral">
+                {% device_snap_count as device_snap_count %}
+                {% for ke, val in device_snap_count.items %}
+                    {% if ke == 'now_days_snap_total' %}
+                        <p>今日抓拍: {{ val }}</p>
+                    {% elif ke == 'all_days_snap_total' %}
+                        <p>总抓拍: {{ val }}</p>
+                    {% else %}
+                        <p>Empty!</p>
+                    {% endif %}
+                {% endfor %}
+            </div>
 
-        <div style="width: 100%; height: 200px; text-align: center; line-height: 200px; background-color: royalblue">
-            <span>搜索条件(图片。时间。单选框)</span>
+            <div style="width: 100%; height: 180px; text-align: center; line-height: 200px; background-color: royalblue">
+                条件
+            </div>
+            <div style="width: 100%; height: 660px; text-align: center; background-color: purple">
+                {% for photo in photo_list %}
+                    <img src="{{ photo.head_path }}" alt="" width="10%">
+                    <el-link href="javascript:alert('详情页面')">查看详情</el-link>
+
+                {% endfor %}
+
+            </div>
         </div>
-        {#    搜索结果展示    #}
-        {% include 'admin/device/other/search_results.html' %}
     </div>
 {% endblock %}
 
 
 {% block script %}
+    <script type="text/javascript">
+        new Vue({
+            el: '#app',
+            data: {},
+            created() {
 
+            },
+            methods: {}
+        })
+    </script>
 {% endblock %}
 

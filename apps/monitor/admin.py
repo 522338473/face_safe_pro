@@ -270,6 +270,7 @@ class ArchivesPersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin):
             width='1200px',
             show_cancel=True
         )
+
         return MultipleCellDialog([trail])
 
     operation.short_description = '操作'
