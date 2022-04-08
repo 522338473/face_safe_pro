@@ -1,38 +1,241 @@
 {% extends 'admin/custom/custom_base.html' %}
-{% load static face_safe_pro_tag %}
 
 {% block style %}
+    <style>
+        .top-title-desc {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-end;
+        }
 
+        .item-box {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .item-list {
+            margin: 5px 10px;
+        }
+
+        .item-list > span {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .avatar-photo {
+            width: 100px;
+            height: 100px;
+            display: block;
+            font-size: 28px;
+            color: #8c939d;
+            line-height: 120px;
+            text-align: center;
+            border-radius: 15px;
+            border: 1px dashed #d9d9d9;
+        }
+
+        .uploader-img {
+            width: 100px;
+            height: 100px;
+        }
+
+        .box-group {
+            background: #FFFFFF;
+            box-shadow: 0 0 4px 2px rgba(69, 91, 132, 0.1);
+        }
+    </style>
 {% endblock %}
 
 {% block main %}
     <div id="app">
-        <div style="width: 100%; height: 900px; margin: 0; padding: 0">
-            <div style="width: 100%; height: 60px; text-align: center; background-color: coral">
-                {% device_snap_count as device_snap_count %}
-                {% for ke, val in device_snap_count.items %}
-                    {% if ke == 'now_days_snap_total' %}
-                        <p>今日抓拍: {{ val }}</p>
-                    {% elif ke == 'all_days_snap_total' %}
-                        <p>总抓拍: {{ val }}</p>
-                    {% else %}
-                        <p>Empty!</p>
-                    {% endif %}
-                {% endfor %}
+        <el-row>
+            <div class="top-title-desc">
+                <div class="item-box">
+                    <div class="item-list">
+                        <span>今日抓拍：</span>
+                        <span>${ now_days_snap_total }</span>
+                    </div>
+                    <div class="item-list">
+                        <span>总抓拍：</span>
+                        <span>${ all_days_snap_total }</span>
+                    </div>
+                </div>
             </div>
+        </el-row>
+        <el-divider></el-divider>
 
-            <div style="width: 100%; height: 180px; text-align: center; line-height: 200px; background-color: royalblue">
-                条件
+        <el-row>
+            <el-col :span="3">
+                <div class="upload-div">
+                    <el-upload
+                            :on-change="changePic"
+                            class="uploader-img"
+                            action="#"
+                            :http-request="upload_file"
+                            :auto-upload="false"
+                            :show-file-list="false"
+                            width="100%"
+                    >
+                        <img v-if="imageUrl" :src="imageUrl" class="avatar-photo"/>
+                        <i class="el-icon-plus avatar-uploader-icon"></i>
+                    </el-upload>
+                    <span style="display: inline-block;font-size: 12px;color: #e6a23c;margin-top: 10px;">*图片大小不能超过3M</span>
+                </div>
+
+            </el-col>
+            <el-col :span="6">
+                <div>
+
+                    <div style="display: inline-block">
+                        <el-radio-group v-model="similarity_radio">
+                            <el-radio :label="6" style="margin-right: 5px">低(60%)</el-radio>
+                            <el-radio :label="7" style="margin-right: 5px">中(70%)</el-radio>
+                            <el-radio :label="8">高(80%)</el-radio>
+                        </el-radio-group>
+                    </div>
+                    <div style="margin-top: 10px">
+                        <el-select v-model="sort_value" placeholder="请选择" size="mini" style="color: #909399">
+                            <el-option
+                                    v-for="item in sort_rules"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value"
+                                    style="color: #909399"
+                            >
+                            </el-option>
+                        </el-select>
+                    </div>
+                    <div style="margin-top: 10px">
+                        <el-select v-model="time_value" placeholder="请选择" size="mini" style="color: #909399">
+                            <el-option
+                                    v-for="item in time_range"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value"
+                                    style="color: #909399"
+                            >
+                            </el-option>
+                        </el-select>
+                    </div>
+                    <div style="margin-top: 10px">
+                        <el-button type="primary" size="mini" @click="search_photo_list">开始搜索</el-button>
+                        <el-button type="primary" size="mini" @click="search_reset">重置</el-button>
+                    </div>
+                </div>
+            </el-col>
+            <el-col :span="15">
+
+            </el-col>
+        </el-row>
+        <el-divider></el-divider>
+        <el-row style="margin-left: 50px; margin-right: 100px; height: 560px; overflow: auto">
+            <el-table
+                    :data="photo_list"
+                    stripe
+                    style="width: 100%"
+            >
+                <el-table-column
+                        type="index"
+                        label="序号"
+                        width="60">
+                </el-table-column>
+                <el-table-column
+                        prop="device.name"
+                        label="抓拍设备"
+                        width="200">
+                </el-table-column>
+                <el-table-column
+                        prop="address"
+                        label="抓拍地址"
+                        width="350">
+                </el-table-column>
+                <el-table-column
+                        prop="take_photo_time"
+                        label="抓拍时间"
+                        width="160">
+                </el-table-column>
+                <el-table-column
+                        prop="head_path"
+                        label="抓拍头像"
+                        width="70"
+                >
+                    <template slot-scope="scope">
+                        <el-image :src="scope.row.head_path" style="width: 50px; height: 50px">
+                        </el-image>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        prop="similarity"
+                        label=""
+                        width="70">
+                    20.00%
+                </el-table-column>
+                <el-table-column
+                        prop="head_path"
+                        label="原头像"
+                        width="70"
+                >
+                    <template slot-scope="scope">
+                        <el-image :src="scope.row.head_path" style="width: 50px; height: 50px">
+                        </el-image>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        prop="id"
+                        label="操作">
+                    <template slot-scope="scope" style="margin-left: 30px">
+                        {#                        <el-link type="primary" :href="`{% url 'device:photo_detail' %}?id=` +scope.row.id">详情</el-link>#}
+                        {#                        <el-link type="primary" :href="`{% url 'device:video_playback' %}?id=` +scope.row.id">回放视频</el-link>#}
+
+                        <el-tooltip class="item" effect="dark" content="直接从本地读取" placement="top-start">
+                            <el-link type="primary" @click="detail_dialog_visible = true">详情</el-link>
+                        </el-tooltip>
+                        <el-tooltip class="item" effect="dark" content="发送HTTP请求" placement="top-start">
+                            <el-link type="primary" @click="video_dialog_visible = true">回放视频</el-link>
+                        </el-tooltip>
+                    </template>
+                </el-table-column>
+
+                <div slot="empty">
+                    <el-empty description="这里没有搜索到数据吖!"></el-empty>
+                </div>
+            </el-table>
+            <div v-if="paginator.page_count>1" class="paginator" style="text-align: center; margin-top: 20px">
+                <el-pagination
+                        background
+                        layout="total, prev, pager, next"
+                        :page-size="paginator.page_size"
+                        :total="paginator.count"
+                        @current-change="search_photo_list"
+                >
+                </el-pagination>
             </div>
-            <div style="width: 100%; height: 660px; text-align: center; background-color: purple">
-                {% for photo in photo_list %}
-                    <img src="{{ photo.head_path }}" alt="" width="10%">
-                    <el-link href="javascript:alert('详情页面')">查看详情</el-link>
+        </el-row>
+        <el-dialog
+                title="抓拍详情"
+                :visible.sync="detail_dialog_visible"
+                width="1200"
+                height="450"
+        >
+            <span>抓拍详情</span>
+            <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="detail_dialog_visible = false">确定</el-button>
+        </span>
+        </el-dialog>
 
-                {% endfor %}
+        <el-dialog
+                title="回放视频"
+                :visible.sync="video_dialog_visible"
+                width="1200"
+                height="450"
+        >
+            <video src="http://vfx.mtime.cn/Video/2019/03/21/mp4/190321153853126488.mp4" controls autoplay width="100%"></video>
+            <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="video_dialog_visible = false">确定</el-button>
+            </span>
+        </el-dialog>
 
-            </div>
-        </div>
     </div>
 {% endblock %}
 
@@ -41,11 +244,104 @@
     <script type="text/javascript">
         new Vue({
             el: '#app',
-            data: {},
-            created() {
-
+            delimiters: ['${', '}'],
+            data: {
+                loading: false,
+                detail_dialog_visible: false,
+                video_dialog_visible: false,
+                similarity_radio: 6,
+                current_page: 1,
+                now_days_snap_total: 0,
+                all_days_snap_total: 0,
+                imageUrl: 'http://192.168.2.95/fast_dfs/2022/01/19/491c13ce185f3002e390db91853c659e?download=0',
+                paginator: {
+                    count: 0,
+                    page_size: 12,
+                    page_count: 0,
+                    paginate: 'on'
+                },
+                sort_value: 'timer',
+                sort_rules: [
+                    {value: 'timer', label: '抓拍时间由近及远'},
+                    {value: 'similarity', label: '相似度由高到低'}
+                ],
+                time_value: 'one',
+                time_range: [
+                    {value: 'one', label: '最近一天'},
+                    {value: 'three', label: '最近三天'},
+                    {value: 'seven', label: '最近七天'},
+                ],
+                photo_list: [],
             },
-            methods: {}
+            created() {
+                this.device_snap_count();
+            },
+            methods: {
+                device_snap_count: function () {
+                    let self = this;
+                    self.loading = true;
+                    axios.get('/v1/device/photo/device_snap_count/', {
+                        params: {}
+                    }, {
+                        'Content-Type': 'application/json;charset=UTF-8'
+                    }).then(res => {
+                        self.now_days_snap_total = res.data.now_days_snap_total;
+                        self.all_days_snap_total = res.data.all_days_snap_total;
+                    }).finally(() => {
+                        self.loading = false
+                    })
+                },
+                search_person: function (params) {
+                    console.log(params)
+                    this.upload_file()
+                    console.log('以图搜人接口正在开发中...')
+                },
+                changePic(file) {
+                    /** @description 修改文件钩子 */
+                    this.imageUrl = URL.createObjectURL(file.raw);
+                    this.file = file.raw;
+                },
+                upload_file: function () {
+                    console.log(this.file)
+                },
+                search_reset: function () {
+                    this.photo_list = [];
+                    this.paginator = {
+                        count: 0,
+                        page_size: 12,
+                        page_count: 0,
+                        paginate: 'on'
+                    }
+                },
+                search_photo_list: function (params) {
+                    let self = this;
+                    self.loading = true;
+                    if (typeof (params) == 'number') {
+                        self.current_page = params;
+                        params = {
+                            'limit': self.paginator.page_size,
+                            'offset': (self.current_page - 1) * self.paginator.page_size,
+                        }
+                    } else {
+                        params = {
+                            'limit': self.paginator.page_size,
+                            'offset': (self.current_page - 1) * self.paginator.page_size,
+                        }
+                    }
+                    axios.get('/v1/device/photo/', {
+                        params: params
+                    }, {
+                        'Content-Type': 'application/json;charset=UTF-8'
+                    }).then(res => {
+                        self.paginator.count = res.data.count;
+                        self.paginator.page_count = self.paginator.count / self.paginator.page_size;
+                        self.photo_list = res.data.results;
+                    }).finally(() => {
+                        self.loading = false;
+                    })
+                }
+            }
+
         })
     </script>
 {% endblock %}

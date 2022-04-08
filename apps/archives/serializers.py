@@ -30,4 +30,4 @@ class PersonnelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Personnel
-        fields = ['id', 'archives_group', 'name', 'photo', 'gender', 'phone', 'id_card', 'address']
+        fields = ['id', 'archives_group', 'name', 'photo', 'gender', 'phone', 'id_card', 'address', 'date_of_birth', 'household_register', 'nationality']

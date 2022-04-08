@@ -56,7 +56,7 @@ class ArchivesGroupAdmin(PublicModelAdmin, admin.ModelAdmin):
 
 @admin.register(archives_models.Personnel)
 class PersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin, AjaxAdmin):
-    list_display = ['id', 'archives_group', 'name', 'phone', 'id_card', 'image', 'operation']
+    list_display = ['id', 'archives_group', 'name', 'phone', 'id_card', 'date_of_birth', 'household_register', 'image', 'operation']
     list_filter = ['archives_group', 'create_at']
     exclude = ['is_access', 'device_list']  # TODO: 该字段为扩展字段，后期决定存留
     search_fields = ['name', 'phone', 'id_card']
@@ -78,6 +78,9 @@ class PersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin, AjaxAdmin):
             'width': '120px'
         },
         'id_card': {
+            'width': '180px'
+        },
+        'date_of_birth': {
             'width': '180px'
         },
         'image': {

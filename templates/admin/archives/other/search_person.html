@@ -49,6 +49,21 @@
             width: 100px;
             height: 100px;
         }
+
+        .face-img {
+            overflow-y: hidden;
+            height: 160px;
+            white-space: nowrap;
+            overflow-x: scroll;
+            display: flex;
+        }
+
+        .img-list {
+            margin-left: 10px;
+            background: #ffffff;
+            box-shadow: 4px 0 4px 0 rgba(22, 87, 184, 0.13), 0 2px 4px rgba(0, 0, 0, 0.12);
+        }
+
     </style>
 {% endblock %}
 
@@ -70,27 +85,40 @@
         </el-row>
         <el-divider></el-divider>
         <el-row>
-            <div style="width: 100%; height: 180px;">
-                <div class="terms-height">
-                    <div class="upload-div">
-                        <el-upload
-                                :on-change="changePic"
-                                class="uploader-img"
-                                action="#"
-                                :http-request="upload_file"
-                                :auto-upload="false"
-                                :show-file-list="false"
-                        >
-                            <img v-if="imageUrl" :src="imageUrl" class="avatar-photo"/>
-                        </el-upload>
-                        <span style="display: inline-block;font-size: 12px;color: #e6a23c;margin-top: 10px;">*图片大小不能超过3M</span>
-                    </div>
-                    <div style="margin-top: 10px">
-                        <el-button type="primary" size="mini" @click="search_person">开始搜索</el-button>
-                        <el-button type="primary" size="mini" @click="search_reset">重置</el-button>
+            <el-col :span="4">
+                <div style="width: 100%; height: 180px;">
+                    <div class="terms-height">
+                        <div class="upload-div">
+                            <el-upload
+                                    :on-change="changePic"
+                                    class="uploader-img"
+                                    action="#"
+                                    :http-request="upload_file"
+                                    :auto-upload="false"
+                                    :show-file-list="false"
+                            >
+                                <img v-if="imageUrl" :src="imageUrl" class="avatar-photo"/>
+                            </el-upload>
+                            <span style="display: inline-block;font-size: 12px;color: #e6a23c;margin-top: 10px;">*图片大小不能超过3M</span>
+                        </div>
+                        <div style="margin-top: 10px">
+                            <el-button type="primary" size="mini" @click="search_person">开始搜索</el-button>
+                            <el-button type="primary" size="mini" @click="search_reset">重置</el-button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </el-col>
+            <el-col :span="20" style="display: none">
+                <div class="face-img box-group">
+                    <div class="img-list" v-for="(item, index) of archives_personnel_list" :key="index">
+                        <el-image
+                                style="width: 140px; height: 120px"
+                                :src="item.photo">
+                        </el-image>
+                        <p style="line-height: 40px">${ item.name }-${ item.phone }</p>
+                    </div>
+                </div>
+            </el-col>
         </el-row>
         <hr>
         <el-row :gutter="20">
@@ -124,33 +152,59 @@
 
             </el-col>
             <el-col :span="20" style=" padding-top: 10px; height: 560px; overflow: auto;" class="box-group">
-                <el-row>
-                    <div v-if="paginator.count>0">
-                        <div v-for="(item, index) in archives_personnel_list" :key="index" style="width: 180px; height: 280px; padding: 10px; margin-right: 10px; margin-bottom: 5px; display: inline-block;" class="box-group">
-                            <el-image
-                                    style="width: 180px; height: 180px"
-                                    :src="item.photo"
-                                    fit="fit"
-                            >
+                <el-table
+                        :data="archives_personnel_list"
+                        stripe
+                        style="width: 100%"
+                >
+                    <el-table-column
+                            type="index"
+                            label="序号"
+                            width="50">
+                    </el-table-column>
+                    <el-table-column
+                            prop="name"
+                            label="人名姓名"
+                            width="100">
+                    </el-table-column>
+                    <el-table-column
+                            prop="phone"
+                            label="手机号"
+                            width="120">
+                    </el-table-column>
+                    <el-table-column
+                            prop="date_of_birth"
+                            label="出生年月"
+                            width="120">
+                    </el-table-column>
+                    <el-table-column
+                            prop="nationality"
+                            label="国籍"
+                            width="100">
+                    </el-table-column>
+                    <el-table-column
+                            prop="address"
+                            label="居住地址"
+                            width="160">
+                    </el-table-column>
+                    <el-table-column
+                            prop="id_card"
+                            label="身份证号"
+                            width="200">
+                    </el-table-column>
+                    <el-table-column
+                            prop="photo"
+                            label="头像显示">
+                        <template slot-scope="scope">
+                            <el-image :src="scope.row.photo" style="width: 50px; height: 50px">
                             </el-image>
-                            <div>
-                                <span>姓名: ${ item.name }</span>
-                            </div>
-                            <div>
-                                <span>手机: ${ item.phone }</span>
-                            </div>
-                            <div>
-                                <span>证件: ${ item.id_card }</span>
-                            </div>
-                            <div style="padding-top: 15px">
-                                <el-link type="primary" @click="search_trace(item.name)">轨迹搜索</el-link>
-                            </div>
-                        </div>
-                    </div>
-                    <div v-else>
+                        </template>
+                    </el-table-column>
+
+                    <div slot="empty">
                         <el-empty description="这里没有搜索到数据吖!"></el-empty>
                     </div>
-                </el-row>
+                </el-table>
                 <div v-if="paginator.page_count>1" class="paginator" style="text-align: center; margin-top: 20px">
                     <el-pagination
                             background
@@ -162,7 +216,6 @@
                     </el-pagination>
                 </div>
             </el-col>
-
         </el-row>
     </div>
 {% endblock %}
@@ -187,7 +240,7 @@
                 },
                 paginator: {
                     count: 0,
-                    page_size: 12,
+                    page_size: 10,
                     page_count: 0,
                     paginate: 'on'
                 },
