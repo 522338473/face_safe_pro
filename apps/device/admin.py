@@ -4,6 +4,7 @@ from simplepro.dialog import ModalDialog, MultipleCellDialog
 
 from apps.device import models as device_models
 from apps.public.admin import PublicModelAdmin
+from apps.utils.constant import VIDEO_PLAY_TYPE, DETAIL_TYPE
 
 
 # Register your models here.
@@ -48,7 +49,7 @@ class DeviceInfoAdmin(PublicModelAdmin, admin.ModelAdmin):
         login = ModalDialog(
             cell='<el-link type="primary" {status}>登录</el-link>'.format(status='disabled' if model.status == 0 else ''),
             title='摄像头登录',
-            url='http://192.168.2.164/',
+            url=model.ip,
             height='80%',
             width='90%',
             show_cancel=True
@@ -56,9 +57,9 @@ class DeviceInfoAdmin(PublicModelAdmin, admin.ModelAdmin):
         real = ModalDialog(
             cell='<el-link type="primary" {status}>实况</el-link>'.format(status='disabled' if model.status == 0 else ''),
             title='摄像头实况',
-            url='/admin/device/deviceinfo/real_time/',
-            height='40%',
-            width='50%',
+            url=reverse('device:real_time') + '?id={id}'.format(id=model.hash),
+            height='60%',
+            width='80%',
             show_cancel=True
         )
         return MultipleCellDialog([login, real])
@@ -72,7 +73,7 @@ class DeviceInfoAdmin(PublicModelAdmin, admin.ModelAdmin):
         modal.width = '800px'
         modal.cell = f"{model.id}-异步加载"
         modal.show_cancel = False
-        modal.url = reverse('public:test2') + "?id=%s" % model.id
+        modal.url = reverse('public:test2') + "?id={id}".format(id=model.hash)
         return modal
 
     async_load.short_description = '异步加载'
@@ -102,7 +103,7 @@ class DevicePhotoAdmin(PublicModelAdmin, admin.ModelAdmin):
         query = ModalDialog(
             cell='<el-link type="primary">查询</el-link>',
             title='抓拍记录',
-            url=reverse('device:photo_search') + '?id=%s' % model.id,
+            url=reverse('device:photo_search') + '?id={id}'.format(id=model.hash),
             height='450px',
             width='1200px',
             show_cancel=True
@@ -110,7 +111,7 @@ class DevicePhotoAdmin(PublicModelAdmin, admin.ModelAdmin):
         detail = ModalDialog(
             cell='<el-link type="primary">详情</el-link>',
             title='数据详情',
-            url=reverse('device:photo_detail') + '?id=%s' % model.id,
+            url=reverse('device:photo_detail') + '?id={id}&detail_type={detail_type}'.format(id=model.hash, detail_type=DETAIL_TYPE['DEVICE_PHOTO_DETAIL']),
             height='450px',
             width='1200px',
             show_cancel=False
@@ -118,7 +119,7 @@ class DevicePhotoAdmin(PublicModelAdmin, admin.ModelAdmin):
         back = ModalDialog(
             cell='<el-link type="primary">回放视频</el-link>',
             title='回放视频',
-            url=reverse('device:video_playback') + '?id=%s' % model.id,  # 暂时写死。后期写活
+            url=reverse('device:video_playback') + '?id={id}&video_play_type={video_play_type}'.format(id=model.hash, video_play_type=VIDEO_PLAY_TYPE['DEVICE_PHOTO_VIDEO_PLAY']),  # 暂时写死。后期写活
             height='435px',
             width='800px',
             show_cancel=True
@@ -187,7 +188,7 @@ class VehicleAdmin(PublicModelAdmin, admin.ModelAdmin):
         query = ModalDialog(
             cell='<el-link type="primary">查询</el-link>',
             title='机动车搜索',
-            url=reverse('device:vehicle_search') + '?id=%s' % model.id,
+            url=reverse('device:vehicle_search') + '?id={id}'.format(id=model.hash),
             height='450px',
             width='1200px',
             show_cancel=True
@@ -195,7 +196,7 @@ class VehicleAdmin(PublicModelAdmin, admin.ModelAdmin):
         detail = ModalDialog(
             cell='<el-link type="primary">详情</el-link>',
             title='机动车详情',
-            url=reverse('device:vehicle_detail') + '?id=%s' % model.id,
+            url=reverse('device:vehicle_detail') + '?id={id}&detail_type={detail_type}'.format(id=model.hash, detail_type=DETAIL_TYPE['DEVICE_VEHICLE_DETAIL']),
             height='450px',
             width='1200px',
             show_cancel=True
@@ -203,7 +204,7 @@ class VehicleAdmin(PublicModelAdmin, admin.ModelAdmin):
         back = ModalDialog(
             cell='<el-link type="primary">回放视频</el-link>',
             title='回放视频',
-            url=reverse('device:video_playback') + '?id=%s' % model.id,
+            url=reverse('device:video_playback') + '?id={id}&video_play_type={video_play_type}'.format(id=model.hash, video_play_type=VIDEO_PLAY_TYPE['DEVICE_VEHICLE_VIDEO_PLAY']),
             height='435px',
             width='800px',
             show_cancel=True

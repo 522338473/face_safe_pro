@@ -64,7 +64,6 @@
             </div>
         </el-row>
         <el-divider></el-divider>
-
         <el-row>
             <el-col :span="3">
                 <div class="upload-div">
@@ -215,22 +214,31 @@
         <el-dialog
                 title="抓拍详情"
                 :visible.sync="detail_dialog_visible"
-                width="1200"
-                height="450"
+                :append-to-body="true"
+                width="1200px"
         >
-            <span>抓拍详情</span>
+            <div style="width: 100%; height: 450px; overflow: hidden">
+                <iframe src="{% url 'device:photo_detail' %}?id=1" frameborder="0" height="100%" width="100%"></iframe>
+            </div>
+
             <span slot="footer" class="dialog-footer">
                 <el-button type="primary" @click="detail_dialog_visible = false">确定</el-button>
-        </span>
+            </span>
         </el-dialog>
-
         <el-dialog
                 title="回放视频"
                 :visible.sync="video_dialog_visible"
-                width="1200"
-                height="450"
+                @closed="closed"
+                @opened="opened"
+                :append-to-body="true"
+                :destroy-on-close="true"
+                :show-close="true"
+                width="800px"
         >
-            <video src="http://vfx.mtime.cn/Video/2019/03/21/mp4/190321153853126488.mp4" controls autoplay width="100%"></video>
+            <div style="width: 100%; height: 435px; overflow: hidden">
+                <iframe src="{% url 'device:video_playback' %}?id=1" frameborder="0" height="100%" width="100%"></iframe>
+{#                <el-link type="primary" :href="`{% url 'device:video_playback' %}?id=` +scope.row.id">回放视频</el-link>#}
+            </div>
             <span slot="footer" class="dialog-footer">
                 <el-button type="primary" @click="video_dialog_visible = false">确定</el-button>
             </span>
@@ -253,7 +261,9 @@
                 current_page: 1,
                 now_days_snap_total: 0,
                 all_days_snap_total: 0,
-                imageUrl: 'http://192.168.2.95/fast_dfs/2022/01/19/491c13ce185f3002e390db91853c659e?download=0',
+                video_url: 'http://vfx.mtime.cn/Video/2019/03/21/mp4/190321153853126488.mp4',
+                {#imageUrl: 'https://wimg.588ku.com/gif620/21/01/17/c6b7bf2325af6e5d1aa43cee95014721.gif',#}
+                imageUrl: 'https://wimg.588ku.com/gif620/20/12/15/b0f831231ece9b4e422adf9bcb271c51.gif',
                 paginator: {
                     count: 0,
                     page_size: 12,
@@ -339,7 +349,26 @@
                     }).finally(() => {
                         self.loading = false;
                     })
-                }
+                },
+                closeDialog() {
+                    this.video_dialog_visible = false;
+                    parent.postMessage({type: 'refresh'}, '*');
+                    parent.postMessage({type: 'close'}, '*');
+                },
+                opened: function () {
+                    let video = document.getElementById("video_mp4");
+                    if (video) {
+                        video["src"] = this.video_url;
+                        video["play"]();
+                    }
+                },
+                closed: function () {
+                    let video = document.getElementById("video_mp4");
+                    if (video) {
+                        video["pause"]();
+                    }
+                    this.$emit('close');
+                },
             }
 
         })

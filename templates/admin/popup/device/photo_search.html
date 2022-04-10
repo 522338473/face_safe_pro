@@ -78,7 +78,7 @@
                     let data = JSON.stringify({
                         'current_page': page,
                         'page_size': self.paginator.page_size,
-                        'id': {{ request.GET.id }},
+                        'id': '{{ request.GET.id }}',
                         'paginate': self.paginator.paginate
                     })
 

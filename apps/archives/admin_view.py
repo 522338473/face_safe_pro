@@ -38,5 +38,6 @@ class AccessPassDetailView(ParseJsonView, View):
     def get(self, request):
         """门禁通行详情模板"""
         _id = request.GET.get('id')
-        instance = models.AccessDiscover.objects.get(id=_id)
+        detail_type = request.GET.get('detail_type')
+        instance = models.AccessDiscover.objects.get(id=self.hash_to_pk(_id))
         return render(request, 'admin/popup/archives/access_pass_detail.html', locals())

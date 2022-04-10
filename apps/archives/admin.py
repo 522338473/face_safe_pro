@@ -8,6 +8,7 @@ from simplepro.dialog import ModalDialog, MultipleCellDialog
 from apps.archives import models as archives_models
 from apps.public.admin import PublicModelAdmin
 from apps.public.resources import PersonnelResources
+from apps.utils.constant import VIDEO_PLAY_TYPE, DETAIL_TYPE
 
 
 # Register your models here.
@@ -25,7 +26,7 @@ class ArchivesGroupAdmin(PublicModelAdmin, admin.ModelAdmin):
         modal.cell = '<el-link type="primary">点击查看</el-link>'
         modal.title = "详情对话框"
         # 这里的url可以写死，也可以用django的方向获取url，可以根据model的数据，传到url中
-        modal.url = reverse('public:test1') + "?id=%s" % model.id
+        modal.url = reverse('public:test1') + "?id={id}".format(id=model.hash)
         modal.show_cancel = True
         return modal
 
@@ -39,7 +40,7 @@ class ArchivesGroupAdmin(PublicModelAdmin, admin.ModelAdmin):
         modal.width = '800px'
         modal.cell = f"{model.id}-异步加载"
         modal.show_cancel = False
-        modal.url = reverse('public:test2') + "?id=%s" % model.id
+        modal.url = reverse('public:test2') + "?id={id}".format(id=model.hash)
         return modal
 
     async_load.short_description = '异步加载'
@@ -99,7 +100,7 @@ class PersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin, AjaxAdmin):
         trail = ModalDialog(
             cell='<el-link type="primary">轨迹搜索</el-link>',
             title='人员档案轨迹搜索',
-            url='/v1/device/search_image/',
+            url=reverse('device:search_image') + '?id={id}'.format(id=model.hash),  # 暂时写死。后期写活
             height='450px',
             width='1200px',
             show_cancel=True
@@ -133,7 +134,7 @@ class AccessDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
         detail = ModalDialog(
             cell='<el-link type="primary">通行详情</el-link>',
             title='门禁人员通行详情',
-            url=reverse('archives:access_pass_detail') + '?id=%s' % model.id,
+            url=reverse('archives:access_pass_detail') + '?id={id}&detail_type={detail_type}'.format(id=model.hash, detail_type=DETAIL_TYPE['ACCESS_DISCOVER_DETAIL']),
             height='450px',
             width='1200px',
             show_cancel=True
@@ -141,7 +142,7 @@ class AccessDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
         back = ModalDialog(
             cell='<el-link type="primary">回放视频</el-link>',
             title='回放视频',
-            url=reverse('device:video_playback') + '?id=%s' % model.id,  # 暂时写死。后期写活
+            url=reverse('device:video_playback') + '?id={id}&video_play_type={video_play_type}'.format(id=model.record.hash, video_play_type=VIDEO_PLAY_TYPE['ACCESS_DISCOVER_VIDEO_PLAY']),  # 暂时写死。后期写活
             height='435px',
             width='800px',
             show_cancel=True

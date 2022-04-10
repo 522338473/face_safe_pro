@@ -82,6 +82,17 @@ class ParseJsonView:
             }
             return JsonResponse(data, safe=False)
 
+    @staticmethod
+    def hash_to_pk(hash_id):
+        """Hash 转 id"""
+        try:
+            pk = Hasher.to_object_pk(hash_id)
+        except ValueError:
+            pk = hash_id
+        except Exception:
+            raise ParseError('parse error')
+        return pk
+
 
 def page_not_found(request, *args, **kwargs):
     return render(request, '404/404.html')

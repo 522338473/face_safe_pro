@@ -10,8 +10,10 @@
 from django.views import View
 from django.shortcuts import render
 from django.core.paginator import Paginator
+from rest_framework.response import Response
 
 from apps.device import models
+from apps.device import serializers
 from apps.public.views import ParseJsonView
 
 
@@ -46,7 +48,7 @@ class PhotoDetailView(ParseJsonView, View):
     def get(self, request):
         """以图搜图页面详情"""
         _id = request.GET.get('id')
-        instance = models.DevicePhoto.objects.get(id=_id)
+        instance = models.DevicePhoto.objects.get(id=self.hash_to_pk(_id))
         return render(request, 'admin/popup/device/photo_detail.html', locals())
 
 
@@ -55,16 +57,12 @@ class SearchImageView(ParseJsonView, View):
 
     def get(self, request):
         """以图搜图模板返回"""
-        current_page = 1
-        page_size = 10
-        photo_page = Paginator(models.DevicePhoto.objects.order_by('-id'), page_size)
-        if photo_page.page_range.start <= current_page < photo_page.page_range.stop:
-            photo_list = photo_page.page(current_page).object_list
-            return render(request, 'admin/device/other/search_image.html', locals())
+        return render(request, 'admin/device/other/search_image.html', locals())
 
-    def post(self, request):
-        """以图搜图数据返回"""
-        pass
+
+def post(self, request):
+    """以图搜图数据返回"""
+    pass
 
 
 class VehicleSearchView(ParseJsonView, View):
@@ -80,7 +78,7 @@ class VehicleSearchView(ParseJsonView, View):
         page_size = request_data.get('page_size', 10)
         paginate = request_data.get('paginate')
         _id = request_data.get('id')
-        _plate = models.Vehicle.objects.get(id=_id).plate
+        _plate = models.Vehicle.objects.get(id=self.hash_to_pk(_id)).plate
         # _photo_list = models.Vehicle.objects.filter(plate=_plate).order_by('-id').values('id', 'device__name', 'address', 'take_photo_time', 'plate_path')
         _photo_list = models.Vehicle.objects.order_by('-id').values('id', 'device__name', 'address', 'take_photo_time', 'plate_path')
         photo_page = Paginator(_photo_list, page_size)
@@ -93,7 +91,7 @@ class VehicleDetailView(ParseJsonView, View):
 
     def get(self, request):
         _id = request.GET.get('id')
-        instance = models.Vehicle.objects.get(id=_id)
+        instance = models.Vehicle.objects.get(id=self.hash_to_pk(_id))
         return render(request, 'admin/popup/device/vehicle_detail.html', locals())
 
 
@@ -110,13 +108,7 @@ class RealTimeView(ParseJsonView, View):
     """实时监控View"""
 
     def get(self, request):
-        current_page = 1  # self.get_current_page(request, 1)
-        page_size = 10  # self.get_page_size(request, 10)
-        page_name = 'real_time'
-        device_page = Paginator(models.DeviceInfo.objects.order_by('id'), page_size)
-        if device_page.page_range.start <= current_page < device_page.page_range.stop:
-            device_list = device_page.page(current_page).object_list
-            return render(request, 'admin/device/other/real_time.html', locals())
+        return render(request, 'admin/device/other/real_time.html', locals())
 
     def post(self, request):
         """监控页面获取数据接口"""

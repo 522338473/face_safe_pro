@@ -24,7 +24,7 @@ class PhotoClusterView(ParseJsonView, View):
     def get(self, request):
         """轨迹档案页面返回"""
         _id = request.GET.get('id')
-        personnel_path = models.ArchivesPersonnel.objects.get(id=_id).photo
+        personnel_path = models.ArchivesPersonnel.objects.get(id=self.hash_to_pk(_id)).photo
         return render(request, 'admin/popup/monitor/photo_search.html', locals())
 
     def post(self, request):
@@ -46,7 +46,7 @@ class PhotoDetailView(ParseJsonView, View):
     def get(self, request):
         """轨迹档案详情"""
         _id = request.GET.get('id')
-        instance = models.PhotoCluster.objects.get(id=_id)
+        instance = models.PhotoCluster.objects.get(id=self.hash_to_pk(_id))
         return render(request, 'admin/popup/monitor/photo_detail.html', locals())
 
 
@@ -77,5 +77,5 @@ class VehicleDetailView(ParseJsonView, View):
 
     def get(self, request):
         _id = request.GET.get('id')
-        instance = models.VehicleMonitorDiscover.objects.get(id=_id)
+        instance = models.VehicleMonitorDiscover.objects.get(id=self.hash_to_pk(_id))
         return render(request, 'admin/popup/monitor/vehicle_detail.html', locals())

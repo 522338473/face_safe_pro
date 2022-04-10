@@ -60,3 +60,21 @@ VEHICLE_TYPES = (
 
 # fast-dfs 文件路径前缀|适配域名
 FILE_PATH_PREFIX = 'fast_dfs'
+
+# 回放视频详情类型|视频弹出框
+VIDEO_PLAY_TYPE = {
+    'DEVICE_PHOTO_VIDEO_PLAY': 0,  # 设备人脸回放视频
+    'DEVICE_VEHICLE_VIDEO_PLAY': 1,  # 设备车辆回放视频
+    'ACCESS_DISCOVER_VIDEO_PLAY': 2,  # 门禁通行回放视频
+    'MONITOR_VEHICLE_VIDEO_PLAY': 3,  # 重点车辆报警回放视频
+    'MONITOR_DISCOVER_VIDEO_PLAY': 4  # 重点人员报警回放视频
+}
+
+# 抓拍详情类型|详情弹出框
+DETAIL_TYPE = {
+    'DEVICE_PHOTO_DETAIL': 0,  # 设备人脸抓拍详情
+    'DEVICE_VEHICLE_DETAIL': 1,  # 设备车辆抓拍详情
+    'ACCESS_DISCOVER_DETAIL': 2,  # 门禁通行详情
+    'MONITOR_VEHICLE_DETAIL': 3,  # 重点车辆报警详情
+    'MONITOR_DISCOVER_DETAIL': 4,  # 重点人员报警详情
+}

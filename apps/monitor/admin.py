@@ -6,6 +6,7 @@ from simplepro.dialog import ModalDialog, MultipleCellDialog
 from apps.monitor import models as monitor_models
 from apps.public.admin import PublicModelAdmin
 from apps.public.resources import MonitorResources, ArchivesPersonnelResources
+from apps.utils.constant import VIDEO_PLAY_TYPE, DETAIL_TYPE
 
 
 # Register your models here.
@@ -88,7 +89,7 @@ class MonitorDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
         detail = ModalDialog(
             cell='<el-link type="primary">详情</el-link>',
             title='当前数据详情',
-            url=reverse('device:photo_detail') + "?id=%s" % model.id,
+            url=reverse('device:photo_detail') + "?id={id}&detail_type={detail_type}".format(id=model.hash, detail_type=DETAIL_TYPE['MONITOR_DISCOVER_DETAIL']),
             height='450px',
             width='1200px',
             show_cancel=True
@@ -96,7 +97,7 @@ class MonitorDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
         back = ModalDialog(
             cell='<el-link type="primary">回放视频</el-link>',
             title='回放视频',
-            url=reverse('device:video_playback') + '?id=%s' % model.id,
+            url=reverse('device:video_playback') + '?id={id}&video_play_type={video_play_type}'.format(id=model.hash, video_play_type=VIDEO_PLAY_TYPE['MONITOR_DISCOVER_VIDEO_PLAY']),
             height='435px',
             width='800px',
             show_cancel=True
@@ -133,7 +134,7 @@ class VehicleMonitorAdmin(PublicModelAdmin, admin.ModelAdmin):
         record = ModalDialog(
             cell='<el-link type="primary">抓拍记录</el-link>',
             title='重点车辆抓拍记录',
-            url=reverse('monitor:vehicle_search') + "?id=%s" % model.id,
+            url=reverse('monitor:vehicle_search') + "?id={id}".format(id=model.hash),
             height='450px',
             width='1200px',
             show_cancel=True
@@ -164,7 +165,7 @@ class VehicleMonitorDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
         detail = ModalDialog(
             cell='<el-link type="primary">查看详情</el-link>',
             title='当前数据详情',
-            url=reverse('monitor:vehicle_detail') + "?id=%s" % model.id,
+            url=reverse('monitor:vehicle_detail') + "?id={id}&detail_type={detail_type}".format(id=model.hash, detail_type=DETAIL_TYPE['MONITOR_VEHICLE_DETAIL']),
             height='450px',
             width='1200px',
             show_cancel=True
@@ -172,7 +173,7 @@ class VehicleMonitorDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
         back = ModalDialog(
             cell='<el-link type="primary">回放视频</el-link>',
             title='回放视频',
-            url=reverse('device:video_playback') + '?id=%s' % model.id,
+            url=reverse('device:video_playback') + '?id={id}&video_play_type={video_play_type}'.format(id=model.hash, video_play_type=VIDEO_PLAY_TYPE['MONITOR_VEHICLE_VIDEO_PLAY']),
             height='435px',
             width='800px',
             show_cancel=True
@@ -265,7 +266,7 @@ class ArchivesPersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin):
         trail = ModalDialog(
             cell='<el-link type="primary">轨迹档案</el-link>',
             title='轨迹档案',
-            url=reverse('monitor:photo_search') + '?id=%s' % model.id,
+            url=reverse('monitor:photo_search') + '?id={id}'.format(id=model.hash),
             height='450px',
             width='1200px',
             show_cancel=True
