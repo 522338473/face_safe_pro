@@ -47,7 +47,7 @@ class DeviceInfoAdmin(PublicModelAdmin, admin.ModelAdmin):
 
     def operation(self, model):
         login = ModalDialog(
-            cell='<el-link type="primary" {status}>登录</el-link>'.format(status='disabled' if model.status == 0 else ''),
+            cell='<el-button type="text" {status}>登录</el-button>'.format(status='disabled' if model.status == 0 else ''),
             title='摄像头登录',
             url='http://{ip}'.format(ip=model.ip),
             height='80%',
@@ -55,7 +55,7 @@ class DeviceInfoAdmin(PublicModelAdmin, admin.ModelAdmin):
             show_cancel=True
         )
         real = ModalDialog(
-            cell='<el-link type="primary" {status}>实况</el-link>'.format(status='disabled' if model.status == 0 else ''),
+            cell='<el-button type="text" {status}>实况</el-button>'.format(status='disabled' if model.status == 0 else ''),
             title='摄像头实况',
             url=reverse('device:real_time') + '?id={id}'.format(id=model.hash),
             height='60%',
@@ -101,7 +101,7 @@ class DevicePhotoAdmin(PublicModelAdmin, admin.ModelAdmin):
 
     def operation(self, model):
         query = ModalDialog(
-            cell='<el-link type="primary">查询</el-link>',
+            cell='<el-button type="text">查询</el-button>',
             title='抓拍记录',
             url=reverse('device:photo_search') + '?id={id}'.format(id=model.hash),
             height='450px',
@@ -109,7 +109,7 @@ class DevicePhotoAdmin(PublicModelAdmin, admin.ModelAdmin):
             show_cancel=True
         )
         detail = ModalDialog(
-            cell='<el-link type="primary">详情</el-link>',
+            cell='<el-button type="text">详情</el-button>',
             title='数据详情',
             url=reverse('device:photo_detail') + '?id={id}&detail_type={detail_type}'.format(id=model.hash, detail_type=DETAIL_TYPE['DEVICE_PHOTO_DETAIL']),
             height='450px',
@@ -117,7 +117,7 @@ class DevicePhotoAdmin(PublicModelAdmin, admin.ModelAdmin):
             show_cancel=False
         )
         back = ModalDialog(
-            cell='<el-link type="primary">回放视频</el-link>',
+            cell='<el-button type="text">回放视频</el-button>',
             title='回放视频',
             url=reverse('device:video_playback') + '?id={id}&video_play_type={video_play_type}'.format(id=model.hash, video_play_type=VIDEO_PLAY_TYPE['DEVICE_PHOTO_VIDEO_PLAY']),  # 暂时写死。后期写活
             height='435px',
@@ -186,7 +186,7 @@ class VehicleAdmin(PublicModelAdmin, admin.ModelAdmin):
 
     def operation(self, model):
         query = ModalDialog(
-            cell='<el-link type="primary">查询</el-link>',
+            cell='<el-button type="text">查询</el-button>',
             title='机动车搜索',
             url=reverse('device:vehicle_search') + '?id={id}'.format(id=model.hash),
             height='450px',
@@ -194,7 +194,7 @@ class VehicleAdmin(PublicModelAdmin, admin.ModelAdmin):
             show_cancel=True
         )
         detail = ModalDialog(
-            cell='<el-link type="primary">详情</el-link>',
+            cell='<el-button type="text">详情</el-button>',
             title='机动车详情',
             url=reverse('device:vehicle_detail') + '?id={id}&detail_type={detail_type}'.format(id=model.hash, detail_type=DETAIL_TYPE['DEVICE_VEHICLE_DETAIL']),
             height='450px',
@@ -202,7 +202,7 @@ class VehicleAdmin(PublicModelAdmin, admin.ModelAdmin):
             show_cancel=True
         )
         back = ModalDialog(
-            cell='<el-link type="primary">回放视频</el-link>',
+            cell='<el-button type="text">回放视频</el-button>',
             title='回放视频',
             url=reverse('device:video_playback') + '?id={id}&video_play_type={video_play_type}'.format(id=model.hash, video_play_type=VIDEO_PLAY_TYPE['DEVICE_VEHICLE_VIDEO_PLAY']),
             height='435px',

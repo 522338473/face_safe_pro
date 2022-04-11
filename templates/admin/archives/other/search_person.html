@@ -151,50 +151,61 @@
                 </el-tree>
 
             </el-col>
-            <el-col :span="20" style=" padding-top: 10px; height: 560px; overflow: auto;" class="box-group">
+            <el-col :span="20" style="overflow: auto;" class="box-group">
                 <el-table
                         :data="archives_personnel_list"
+                        :highlight-current-row="true"
                         stripe
+                        max-height="500"
                         style="width: 100%"
                 >
                     <el-table-column
                             type="index"
                             label="序号"
-                            width="50">
+                            min-width="5%"
+                    >
                     </el-table-column>
                     <el-table-column
                             prop="name"
                             label="人名姓名"
-                            width="100">
+                            min-width="15%"
+                    >
                     </el-table-column>
                     <el-table-column
                             prop="phone"
                             label="手机号"
-                            width="120">
+                            min-width="20%"
+                    >
                     </el-table-column>
                     <el-table-column
                             prop="date_of_birth"
                             label="出生年月"
-                            width="120">
+                            min-width="20%"
+                    >
                     </el-table-column>
                     <el-table-column
                             prop="nationality"
                             label="国籍"
-                            width="100">
+                            min-width="10%"
+                    >
                     </el-table-column>
                     <el-table-column
                             prop="address"
                             label="居住地址"
-                            width="160">
+                            min-width="20%"
+                    >
                     </el-table-column>
                     <el-table-column
                             prop="id_card"
                             label="身份证号"
-                            width="200">
+                            min-width="25%"
+                    >
                     </el-table-column>
                     <el-table-column
                             prop="photo"
-                            label="头像显示">
+                            label="头像显示"
+                            min-width="15%"
+                    >
                         <template slot-scope="scope">
                             <el-image :src="scope.row.photo" style="width: 50px; height: 50px">
                             </el-image>

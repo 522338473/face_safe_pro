@@ -38,6 +38,6 @@ urlpatterns = [
                   path('sp/', include('simplepro.urls')),  # simplepro
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-admin.site.site_header = 'SimpleUI'
-admin.site.site_title = 'SimpleUI'
+admin.site.site_header = 'CSIA智能视图平台'
+admin.site.site_title = 'CSIA智能视图平台'
 # admin.site.empty_value_display = None

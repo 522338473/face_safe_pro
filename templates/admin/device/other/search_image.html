@@ -128,36 +128,42 @@
             </el-col>
         </el-row>
         <el-divider></el-divider>
-        <el-row style="margin-left: 50px; margin-right: 100px; height: 560px; overflow: auto">
+        <el-row style="overflow: auto">
             <el-table
                     :data="photo_list"
+                    :highlight-current-row="true"
                     stripe
+                    max-height="500"
                     style="width: 100%"
             >
                 <el-table-column
                         type="index"
                         label="序号"
-                        width="60">
+                        min-width="5%"
+                >
                 </el-table-column>
                 <el-table-column
                         prop="device.name"
                         label="抓拍设备"
-                        width="200">
+                        min-width="12%"
+                >
                 </el-table-column>
                 <el-table-column
                         prop="address"
                         label="抓拍地址"
-                        width="350">
+                        min-width="20%"
+                >
                 </el-table-column>
                 <el-table-column
                         prop="take_photo_time"
                         label="抓拍时间"
-                        width="160">
+                        min-width="12%"
+                >
                 </el-table-column>
                 <el-table-column
                         prop="head_path"
                         label="抓拍头像"
-                        width="70"
+                        min-width="5%"
                 >
                     <template slot-scope="scope">
                         <el-image :src="scope.row.head_path" style="width: 50px; height: 50px">
@@ -167,13 +173,14 @@
                 <el-table-column
                         prop="similarity"
                         label=""
-                        width="70">
-                    20.00%
+                        min-width="5%"
+                >
+                    <span style="background-color: red; color: white">20.00%</span>
                 </el-table-column>
                 <el-table-column
                         prop="head_path"
                         label="原头像"
-                        width="70"
+                        min-width="5%"
                 >
                     <template slot-scope="scope">
                         <el-image :src="scope.row.head_path" style="width: 50px; height: 50px">
@@ -182,13 +189,12 @@
                 </el-table-column>
                 <el-table-column
                         prop="id"
-                        label="操作">
+                        label="操作"
+                        min-width="10%"
+                >
                     <template slot-scope="scope" style="margin-left: 30px">
-                        {#                        <el-link type="primary" :href="`{% url 'device:photo_detail' %}?id=` +scope.row.id">详情</el-link>#}
-                        {#                        <el-link type="primary" :href="`{% url 'device:video_playback' %}?id=` +scope.row.id">回放视频</el-link>#}
-
-                        <el-link type="primary" @click="detail_dialog(scope.row)">详情</el-link>
-                        <el-link type="primary" @click="video_dialog(scope.row)">回放视频</el-link>
+                        <el-button type="text" size="mini" @click="detail_dialog(scope.row)">详情</el-button>
+                        <el-button type="text" size="mini" @click="video_dialog(scope.row)">回放视频</el-button>
                     </template>
                 </el-table-column>
 
@@ -220,7 +226,7 @@
             </div>
 
             <span slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="detail_dialog_visible = false">确定</el-button>
+                <el-button type="primary" size="mini" @click="detail_dialog_visible = false">确定</el-button>
             </span>
         </el-dialog>
         <el-dialog
@@ -234,11 +240,10 @@
                 width="800px"
         >
             <div style="width: 100%; height: 435px; overflow: hidden">
-                {#                <iframe :src="`{% url 'device:video_playback' %}?id=` +detail_id " frameborder="0" height="100%" width="100%"></iframe>#}
                 <video id="video_mp4" controls autoplay width="100%"></video>
             </div>
             <span slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="video_dialog_visible = false">确定</el-button>
+                <el-button type="primary" size="mini" @click="video_dialog_visible = false">确定</el-button>
             </span>
         </el-dialog>
 

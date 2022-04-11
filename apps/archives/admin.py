@@ -23,7 +23,7 @@ class ArchivesGroupAdmin(PublicModelAdmin, admin.ModelAdmin):
 
     def dialog_url(self, model):
         modal = ModalDialog()
-        modal.cell = '<el-link type="primary">点击查看</el-link>'
+        modal.cell = '<el-button type="text">点击查看</el-button>'
         modal.title = "详情对话框"
         # 这里的url可以写死，也可以用django的方向获取url，可以根据model的数据，传到url中
         modal.url = reverse('public:test1') + "?id={id}".format(id=model.hash)
@@ -98,7 +98,7 @@ class PersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin, AjaxAdmin):
 
     def operation(self, model):
         trail = ModalDialog(
-            cell='<el-link type="primary">轨迹搜索</el-link>',
+            cell='<el-button type="text">轨迹搜索</el-button>',
             title='人员档案轨迹搜索',
             url=reverse('device:search_image') + '?id={id}'.format(id=model.hash),  # 暂时写死。后期写活
             height='450px',
@@ -132,7 +132,7 @@ class AccessDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
 
     def operation(self, model):
         detail = ModalDialog(
-            cell='<el-link type="primary">通行详情</el-link>',
+            cell='<el-button type="text">通行详情</el-button>',
             title='门禁人员通行详情',
             url=reverse('archives:access_pass_detail') + '?id={id}&detail_type={detail_type}'.format(id=model.hash, detail_type=DETAIL_TYPE['ACCESS_DISCOVER_DETAIL']),
             height='450px',
@@ -140,7 +140,7 @@ class AccessDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
             show_cancel=True
         )
         back = ModalDialog(
-            cell='<el-link type="primary">回放视频</el-link>',
+            cell='<el-button type="text">回放视频</el-button>',
             title='回放视频',
             url=reverse('device:video_playback') + '?id={id}&video_play_type={video_play_type}'.format(id=model.record.hash, video_play_type=VIDEO_PLAY_TYPE['ACCESS_DISCOVER_VIDEO_PLAY']),  # 暂时写死。后期写活
             height='435px',
