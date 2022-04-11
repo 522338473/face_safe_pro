@@ -99,9 +99,9 @@ def snap_count(*args, **kwargs):
 
     if end_date - start_date <= days:
         face_list = face_query.filter(take_photo_time__range=(start_date, end_date)) \
-            .annotate(date=TruncHour('take_photo_time')).values('date').annotate(count=Count('date'))
+            .annotate(date=TruncHour('take_photo_time')).values('date').annotate(count=Count('date')).order_by()
         vehicle_list = vehicle_query.filter(take_photo_time__range=(start_date, end_date)) \
-            .annotate(date=TruncHour('take_photo_time')).values('date').annotate(count=Count('date'))
+            .annotate(date=TruncHour('take_photo_time')).values('date').annotate(count=Count('date')).order_by()
         for face in face_list:
             count_list['people_count'].append({
                 'date': face['date'].strftime('%Y-%m-%d %H'),
@@ -114,9 +114,9 @@ def snap_count(*args, **kwargs):
             })
     else:
         face_list = face_query.filter(take_photo_time__range=(start_date, end_date)) \
-            .annotate(date=TruncDay('take_photo_time')).values('date').annotate(count=Count('date'))
+            .annotate(date=TruncDay('take_photo_time')).values('date').annotate(count=Count('date')).order_by()
         vehicle_list = vehicle_query.filter(take_photo_time__range=(start_date, end_date)) \
-            .annotate(date=TruncDay('take_photo_time')).values('date').annotate(count=Count('date'))
+            .annotate(date=TruncDay('take_photo_time')).values('date').annotate(count=Count('date')).order_by()
         for face in face_list:
             count_list['people_count'].append({
                 'date': face['date'].strftime('%Y-%m-%d'),
