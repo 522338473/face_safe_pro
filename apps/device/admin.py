@@ -49,7 +49,7 @@ class DeviceInfoAdmin(PublicModelAdmin, admin.ModelAdmin):
         login = ModalDialog(
             cell='<el-link type="primary" {status}>登录</el-link>'.format(status='disabled' if model.status == 0 else ''),
             title='摄像头登录',
-            url=model.ip,
+            url='http://{ip}'.format(ip=model.ip),
             height='80%',
             width='90%',
             show_cancel=True

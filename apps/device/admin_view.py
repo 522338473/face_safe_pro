@@ -100,8 +100,13 @@ class VideoPlaybackView(ParseJsonView, View):
 
     def get(self, request):
         _id = request.GET.get('id')
+        print(_id)
         url = 'http://vfx.mtime.cn/Video/2019/03/21/mp4/190321153853126488.mp4'
         return render(request, 'admin/popup/device/video_playback.html', locals())
+
+    def post(self, request):
+        """返回视频url"""
+        pass
 
 
 class RealTimeView(ParseJsonView, View):
