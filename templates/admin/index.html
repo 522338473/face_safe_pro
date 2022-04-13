@@ -1,125 +1,37 @@
 {% extends "admin/index.html" %}
-{% load static simpletags sptags %}
-{% block css %}
-    {{ block.super }}
-    <link rel="stylesheet" href="{% static '/admin/simplepro/css/index.css' %}?_={% get_sp_version %}">
-    <link rel="stylesheet" href="{% static '/admin/simplepro/nprogress/nprogress.css' %}">
-{% endblock %}
-{% block script %}
-    <script type="text/javascript" src="{% static '/admin/simplepro/nprogress/nprogress.js' %}"></script>
-    <script type="text/javascript">
-        NProgress.start();
-    </script>
-{% endblock %}
-{% block icon %}
-        <link rel="icon" href="{% static '/admin/simplepro/images/favicon.ico' %}">
-{% endblock %}
+{% load static %}
 
-{% block theme_css %}
-    {% include 'admin/results/dynamic_theme.html' %}
-{% endblock %}
-
-{% block menu_style %} :style="!fold?'width: 256px':'auto'" {% endblock %}
-{% block logo %}
-    <div class="logo-wrap" v-if="!fold">
-        <div class="float-wrap">
-            <div class="left">
-                {% if "SIMPLEUI_LOGO"|get_config %}
-                    <img src="{{ "SIMPLEUI_LOGO"|get_config |safe }}">
-                {% else %}
-                    <img src="{% static '/admin/simplepro/images/logo.png' %}">
-                {% endif %}
-            </div>
-            <div class="left">
-                <span>{{ site_header }}</span>
-            </div>
-        </div>
-    </div>
-{% endblock %}
-
-
-{% block header %}
-    {% include 'admin/parts/header.html' %}
-{% endblock %}
-
-{% block tab-item %}
-    <span v-refresh="item">
-         <a v-if="item.hover" href="javascript:;" class="tab-refresh">
-            <i class="el-icon-refresh"></i>
-         </a>
-         <i v-else :class="item.loading?'el-icon-loading':item.icon"></i>
-        <span v-text="item.name"></span>
-    </span>
-{% endblock %}
-
-{% block font_dialog %}{% endblock %}
 
 {% block index_js %}
 
-    {% block custom_theme %}
-        {% include 'admin/parts/custom_theme.html' %}
-    {% endblock %}
+    <!-- 在需要的页面 引入这两个JS，是用来显示高德地图的 -->
+    <script src="{% static "amap/loader.js" %}"></script>
 
-    <script type="text/javascript" src="{% static '/admin/simplepro/js/g2plot.min.js' %}?_={% get_sp_version %}"></script>
-    <script type="text/javascript" src="{% static '/admin/simplepro/js/monitor.js' %}?_={% get_sp_version %}"></script>
-    <script type="text/javascript" src="{% static '/admin/simplepro/js/search.js' %}?_={% get_sp_version %}"></script>
-    <script type="text/javascript" src="{% static '/admin/simplepro/js/index.js' %}?_={% get_sp_version %}"></script>
-    <script type="text/javascript" src="{% static '/admin/simplepro/js/axios.min.js' %}"></script>
+    <!-- 封装的高德地图组件 -->
+    <script type="text/javascript" src="{% static "amap/amap.js" %}"></script>
 
-    {% csrf_token %}
+    <!-- simplepro中的图表 -->
+    <script type="text/javascript" src="{% static "/admin/simplepro/echarts/echarts.js" %}"></script>
+    <script type="text/javascript" src="{% static "/admin/simplepro/js/chart.js" %}"></script>
 
+    <!-- 这个属于业务组件了，把地图的key和ajax接口 都放在这里面操作 -->
+    <script type="text/javascript" src="{% static "amap/device.map.js" %}"></script>
+    <script type="text/javascript" src="{% static "amap/track.map.js" %}"></script>
 
-    <script type="text/javascript">
+    <!-- 图表的业务组件，调用接口操作数据 -->
+    <script type="text/javascript" src="{% static "chart/home.pie.js" %}"></script>
+    <script type="text/javascript" src="{% static "chart/home.line.js" %}"></script>
+    <script type="text/javascript" src="{% static "chart/home.bar.js" %}"></script>
+    <script type="text/javascript" src="{% static "chart/home.survey.js" %}"></script>
+    <script type="text/javascript" src="{% static "chart/home.check.js" %}"></script>
+    <script type="text/javascript" src="{% static "chart/home.alarm.js" %}"></script>
 
-        var less_url = "{% static '/admin/simplepro/js/less.min.js' %}";
-        var js_callback_url = '{% static '/admin/simplepro/js/callback.js' %}?_={% get_sp_version %}';
-
-        window.addEventListener('message', function (event) {
-            if (event.data.type !== 'saveData') {
-                return;
-            }
-            //用ajax 存起来
-            let formData = new FormData();
-            formData.append('data', event.data.data);
-            formData.append('csrfmiddlewaretoken', document.querySelector('[name="csrfmiddlewaretoken"]').value);
-            axios.post('{% url 'sp:bawa_save' %}', formData).then(res => {
-
-                if (res.data.success) {
-                    app.$message.success(res.data.msg);
-                } else {
-                    app.$message.error(res.data.msg);
-                }
-
-            }).catch(err => console.error(err));
-        });
-
-    </script>
     {{ block.super }}
 {% endblock %}
 
-{% block theme_dialog %}
-    {% include 'admin/parts/theme.html' %}
-{% endblock %}
-
-
-{% block tabs_type %} type="card" {% endblock %}
-
-{% block menus %}
-    {% autoescape off %}
-        {% if request.menus %}
-            {{ request.menus }}
-        {% else %}
-            {% menus %}
-        {% endif %}
-    {% endautoescape %}
-{% endblock %}
 
 {% block home_content %}
-    <!-- 判断 -->
-    {% is_enable_bawa as enable_bawa %}
-    {% if enable_bawa %}
-        <iframe src="{% url 'sp:bawa_page' %}"></iframe>
-    {% else %}
-        {{ block.super }}
-    {% endif %}
+
+    {{ block.super }}
+
 {% endblock %}

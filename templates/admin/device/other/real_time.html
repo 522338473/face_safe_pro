@@ -60,7 +60,7 @@
 
 {% block main %}
     <div id="app">
-        <el-row :gutter="20" style="height: 710px; margin: 0; padding: 0; min-width: 1100px">
+        <el-row :gutter="20" style="height: 710px; margin: 0; padding: 0; min-width: 1300px; width: auto">
             <el-col :span="4" style="height: 710px;" class="box-group">
                 <div style="width: 100%; height: 425px; text-align: left;">
                     <div>
@@ -92,14 +92,9 @@
 
 
                 </div>
-                <div style="width: 100%; height: 275px; text-align: center; background-color: yellow">
-                    <h3 style="text-align: left; color: #333333; margin-top: 0">摄像头位置</h3>
-                    {% for device in device_page.object_list %}
-                        <div>
-                            {{ device.geo }}
-                        </div>
-                    {% endfor %}
-
+                <div style="width: 100%; height: 275px; overflow: hidden">
+                    <h3 style="text-align: left; margin-top: 0">摄像头位置</h3>
+                    <device-map style="width: 100%; height: 250px;"></device-map>
                 </div>
             </el-col>
             <el-col :span="13" style="height: 710px; margin-left: 20px; padding: 0" class="box-group">
@@ -108,7 +103,8 @@
                     <h3 style="text-align: left; color: #333333; margin: 0; background-color: royalblue; height: 35px; line-height: 35px">${ device_title }(IP: ${ device_ip })</h3>
                     <h4 style="text-align: center; color: #333333; margin: 0; background-color: white; height: 30px; line-height: 30px">地址: ${ device_address }</h4>
                     <div style="height: 480px; width: 100%; background: gray;">
-                        <p>${ device_video_url }</p>
+{#                        <p>${ device_video_url }</p>#}
+                        <webrtc style="font-size: 16px; font-weight: 500;" :url="device_video_url"></webrtc>
                     </div>
 
                 </div>
@@ -141,6 +137,7 @@
                             style="max-width: 200px; margin-left: 20px; margin-top: 15px"
                             class="row"
                             v-for="(item, index) in monitor_discover_list"
+                            :key="index"
                     >
                         <el-col :span="12">
                             <el-image

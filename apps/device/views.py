@@ -1,11 +1,15 @@
 import datetime
 
+from django.db.models import Count
+from django.db.models.functions import TruncDay, TruncHour
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 
-from apps.device import models
-from apps.device import serializers
+from apps.device import models as device_model
+from apps.archives import models as archives_model
+from apps.monitor import models as monitor_model
+from apps.device import serializers as device_serializer
 from apps.public.views import HashRetrieveViewSetMixin
 
 
@@ -14,8 +18,8 @@ from apps.public.views import HashRetrieveViewSetMixin
 
 class DeviceInfoViewSet(HashRetrieveViewSetMixin, ModelViewSet):
     """设备信息ViewSet"""
-    queryset = models.DeviceInfo.objects.filter(delete_at__isnull=True).order_by('create_at')
-    serializer_class = serializers.DeviceInfoSerializers
+    queryset = device_model.DeviceInfo.objects.filter(delete_at__isnull=True).order_by('create_at')
+    serializer_class = device_serializer.DeviceInfoSerializers
 
     def filter_queryset(self, queryset):
         name = self.request.query_params.get('name', None)
@@ -43,11 +47,16 @@ class DeviceInfoViewSet(HashRetrieveViewSetMixin, ModelViewSet):
         device = self.request.query_params.get('device', None)
         return Response({'url': 'http://192.168.2.95:8083/stream/f1ddee0d7cf3a88f42b958a4053ea566/channel/0/webrtc?uuid=f1ddee0d7cf3a88f42b958a4053ea566&channel=0%s' % device})
 
+    @action(methods=['GET'], detail=False, url_path='device_status')
+    def device_status(self, request, *args, **kwargs):
+        """摄像头状态"""
+        return Response(self.get_queryset().values('status').annotate(count=Count('status')).order_by().values('status', 'count'))
+
 
 class DevicePhotoViewSet(HashRetrieveViewSetMixin, ModelViewSet):
     """人脸抓拍ViewSet"""
-    queryset = models.DevicePhoto.objects.select_related('device').order_by('-take_photo_time')
-    serializer_class = serializers.DevicePhotoSerializers
+    queryset = device_model.DevicePhoto.objects.select_related('device').order_by('-take_photo_time')
+    serializer_class = device_serializer.DevicePhotoSerializers
 
     def filter_queryset(self, queryset):
         device = self.request.query_params.get('device', None)
@@ -79,3 +88,68 @@ class DevicePhotoViewSet(HashRetrieveViewSetMixin, ModelViewSet):
             'all_days_snap_total': all_days_snap_total
         }
         return Response(data)
+
+    @action(methods=['GET'], detail=False, url_path='survey')
+    def survey(self, request, *args, **kwargs):
+        """首页概况统计"""
+        now_days_snap_total = device_model.DevicePhoto.objects.filter(take_photo_time__gte=datetime.datetime.now().date()).count()
+        all_days_snap_total = device_model.DevicePhoto.objects.count()
+        monitor_total = monitor_model.Monitor.objects.count()
+        personnel_total = monitor_model.ArchivesPersonnel.objects.count()
+        archives_total = archives_model.Personnel.objects.count()
+        data = {
+            'now_days_snap_total': now_days_snap_total,
+            'all_days_snap_total': all_days_snap_total,
+            'monitor_total': monitor_total,
+            'personnel_total': personnel_total,
+            'archives_total': archives_total
+        }
+        return Response(data)
+
+    @action(methods=['GET'], detail=False, url_path='snap_count')
+    def snap_count(self, request, *args, **kwargs):
+        """首页抓拍折线图统计"""
+        start_time = self.request.query_params.get('start_time', None)
+        end_time = self.request.query_params.get('end_time', None)
+        days = datetime.timedelta(days=1)
+        try:
+            start_date = datetime.datetime.strptime(start_time, '%Y%m%d%H%M%S')
+            end_date = datetime.datetime.strptime(end_time, '%Y%m%d%H%M%S')
+        except ValueError:
+            start_date = datetime.datetime.strptime(datetime.datetime.now().date().strftime('%Y%m%d%H%M%S'), '%Y%m%d%H%M%S')
+            end_date = datetime.datetime.strptime(datetime.datetime.now().strftime('%Y%m%d%H%M%S'), '%Y%m%d%H%M%S')
+        count_list = {
+            'dates': {
+                'start_date': start_date.strftime('%Y%m%d%H%M%S'),
+                'end_date': end_date.strftime('%Y%m%d%H%M%S')
+            },
+            'people_count': [],
+            'vehicle_count': []
+        }
+        face_query = device_model.DevicePhoto.objects.all()
+        vehicle_query = device_model.Vehicle.objects.all()
+
+        if end_date - start_date <= days:
+            format_str = '%Y-%m-%d %H'
+            face_list = face_query.filter(take_photo_time__range=(start_date, end_date)) \
+                .annotate(date=TruncHour('take_photo_time')).values('date').annotate(count=Count('date')).order_by()
+            vehicle_list = vehicle_query.filter(take_photo_time__range=(start_date, end_date)) \
+                .annotate(date=TruncHour('take_photo_time')).values('date').annotate(count=Count('date')).order_by()
+        else:
+            format_str = '%Y-%m-%d'
+            face_list = face_query.filter(take_photo_time__range=(start_date, end_date)) \
+                .annotate(date=TruncDay('take_photo_time')).values('date').annotate(count=Count('date')).order_by()
+            vehicle_list = vehicle_query.filter(take_photo_time__range=(start_date, end_date)) \
+                .annotate(date=TruncDay('take_photo_time')).values('date').annotate(count=Count('date')).order_by()
+        for face in face_list:
+            count_list['people_count'].append({
+                'date': face['date'].strftime(format_str),
+                'count': face['count']
+            })
+        for vehicle in vehicle_list:
+            count_list['vehicle_count'].append({
+                'date': vehicle['date'].strftime(format_str),
+                'count': vehicle['count']
+            })
+
+        return Response(count_list)

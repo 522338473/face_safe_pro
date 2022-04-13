@@ -15,6 +15,22 @@
     <!-- axios -->
     <script src="{% static 'axios/axios.min.js' %}"></script>
 
+    <!-- 在需要的页面 引入这两个JS，是用来显示高德地图的 -->
+    <script src="{% static "amap/loader.js" %}"></script>
+
+    <!-- 封装的高德地图组件 -->
+    <script type="text/javascript" src="{% static "amap/amap.js" %}"></script>
+
+    <!-- simplepro中的图表 -->
+    <script type="text/javascript" src="{% static "/admin/simplepro/echarts/echarts.js" %}"></script>
+    <script type="text/javascript" src="{% static "/admin/simplepro/js/chart.js" %}"></script>
+
+    <!-- 这个属于业务组件了，把地图的key和ajax接口 都放在这里面操作 -->
+    <script type="text/javascript" src="{% static "amap/device.map.js" %}"></script>
+
+    <!-- webrtc视频播放组件 -->
+    <script type="text/javascript" src="{% static "webrtc/webrtc.js" %}"></script>
+
     {% block style %}
 
     {% endblock %}

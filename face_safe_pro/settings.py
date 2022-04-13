@@ -189,28 +189,7 @@ SIMPLEUI_CONFIG = {
         {
             'name': '实时监控',
             'icon': 'fa fa-desktop',
-            'url': '/v1/device/real_time/',  # '/admin/device/deviceinfo/real_time/',
-            # 'models': [
-            #     {
-            #         'name': '实时监控',
-            #         'icon': 'fa fa-desktop',
-            #         'url': '/admin/device/deviceinfo/real_time/'
-            #     },
-            #     {
-            #         'name': '设备列表',
-            #         'icon': 'fa fa-video',
-            #         'url': '/admin/device/deviceinfo/'
-            #     },
-            #     {
-            #         'name': '抓拍图像',
-            #         'icon': 'fas fa-camera-retro',
-            #         'url': '/admin/device/devicephoto/'
-            #     },
-            #     {
-            #         'name': '报警记录',
-            #         'url': '/admin/monitor/monitordiscover/'
-            #     }
-            # ]
+            'url': '/v1/device/real_time/'
         },
         {
             'name': '抓拍记录',
@@ -283,19 +262,7 @@ SIMPLEUI_CONFIG = {
         {
             'name': '图像搜索',
             'icon': 'fa fa-search',
-            'url': '/v1/device/search_image/',
-            # 'models': [
-            #     {
-            #         'name': '以图搜图',
-            #         'icon': 'fa fa-image',
-            #         'url': '/admin/device/devicephoto/search_image/'
-            #     },
-            #     {
-            #         'name': '以时间搜图',
-            #         'icon': 'fas fa-clock',
-            #         'url': '/admin/device/devicephoto/search_time/'
-            #     }
-            # ]
+            'url': '/v1/device/search_image/'
         },
         {
             'name': '门禁管理',
