@@ -45,7 +45,10 @@ class DeviceInfoViewSet(HashRetrieveViewSetMixin, ModelViewSet):
     def device_video(self, request, *args, **kwargs):
         """实时监控"""
         device = self.request.query_params.get('device', None)
-        return Response({'url': 'http://192.168.2.95:8083/stream/f1ddee0d7cf3a88f42b958a4053ea566/channel/0/webrtc?uuid=f1ddee0d7cf3a88f42b958a4053ea566&channel=0%s' % device})
+        if self.hash_to_pk(device) == 1:
+            return Response({'url': 'http://192.168.2.84:8083/stream/6f9155485a1f85b8d2d801badf7ae09b/channel/0/webrtc?uuid=6f9155485a1f85b8d2d801badf7ae09b&channel=0&device_id=%s' % device})
+        else:
+            return Response({'url': 'http://192.168.2.84:8083/stream/580cfe817d3cf0ea2edc98e36e356642/channel/0/webrtc?uuid=580cfe817d3cf0ea2edc98e36e356642&channel=0&device_id=%s' % device})
 
     @action(methods=['GET'], detail=False, url_path='device_status')
     def device_status(self, request, *args, **kwargs):

@@ -39,7 +39,7 @@ Vue.component('home-alarm', {
                 <el-col :span="8" style="margin-left: 10px; min-width: 120px; overflow: auto">
                     <p style="font-size: 28px; font-weight: 500; color: #606266; margin: 0;">{{ item.target.name }}</p>
                     <p style="font-size: 14px; color: #909399; overflow: hidden; height: 30px;line-height: 30px; margin: 0">{{ item.record.take_photo_time }}</p>
-                    <el-link>查看详情>></el-link>
+                    <el-link href="javascript:alert('首页详情接口开发中.')">查看详情>></el-link>
                 </el-col>
             </el-row>
         </div>

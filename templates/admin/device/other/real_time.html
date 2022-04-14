@@ -100,11 +100,10 @@
             <el-col :span="13" style="height: 710px; margin-left: 20px; padding: 0" class="box-group">
 
                 <div style="width: 100%; height: 500px; text-align: center;" class="box-group">
-                    <h3 style="text-align: left; color: #333333; margin: 0; background-color: royalblue; height: 35px; line-height: 35px">${ device_title }(IP: ${ device_ip })</h3>
-                    <h4 style="text-align: center; color: #333333; margin: 0; background-color: white; height: 30px; line-height: 30px">地址: ${ device_address }</h4>
-                    <div style="height: 480px; width: 100%; background: gray;">
-{#                        <p>${ device_video_url }</p>#}
-                        <webrtc style="font-size: 16px; font-weight: 500;" :url="device_video_url"></webrtc>
+                    <h3 style="text-align: left; color: #303133; margin: 0; background-color: #409EFF; height: 35px; line-height: 35px">${ device_title }(IP: ${ device_ip })</h3>
+                    <h4 style="text-align: center; color: #333333; margin: 0; background-color: #EBEEF5; height: 30px; line-height: 30px">地址: ${ device_address }</h4>
+                    <div style="width: 100%; height: 430px; overflow: hidden; background: rgb(45, 45, 45);">
+                        <webrtc v-if="device_video_url" style="width: 100%; height: 430px;" :url="device_video_url"></webrtc>
                     </div>
 
                 </div>
@@ -128,7 +127,7 @@
 
 
             </el-col>
-            <el-col :span="6" style="height: 710px; margin-left: 20px; max-width: 260px; overflow: auto" class="box-group">
+            <el-col :span="5" style="height: 710px; margin-left: 20px; max-width: 260px; overflow: auto" class="box-group">
                 <div>
                     <h3 style="text-align: left; color: #333333; margin-top: 0; position: absolute; top: 10px">通知</h3>
                 </div>
@@ -159,7 +158,7 @@
                             ${ item.target.name }
                         </el-col>
                         <el-col :span="12" style="text-align: right">
-                            <el-link>详情</el-link>
+                            <el-link href="javascript:alert('通知详情接口开发中.')">详情</el-link>
                         </el-col>
                         <el-col :span="6" class="notice_col">
                             ${ item.similarity }%
@@ -226,6 +225,7 @@
                     this.device_title = params.name;
                     this.device_ip = params.ip;
                     this.device_address = params.address;
+                    this.device_video_url = '';
                     this.device_video(params);
                     this.device_photo(params);
                 },
