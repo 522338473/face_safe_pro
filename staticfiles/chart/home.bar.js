@@ -81,6 +81,11 @@ Vue.component('home-bar', {
                         }
                     }
                 ]
+            },
+            total_dict: {
+                monitor_discovery_total: '重点人员',
+                vehicle_discovery_total: '重点车辆',
+                area_discovery_total: '重点区域'
             }
         }
     },
@@ -91,7 +96,14 @@ Vue.component('home-bar', {
         axios.get("/v1/monitor/monitor/count/?format=json", {params: {}}, {
             'Content-Type': 'application/json;charset=UTF-8'
         }).then(res => {
-            // console.log(res.data)
+            let bar_title = [];
+            let bar_list = [];
+            for (let key in res.data) {
+                bar_title.push(self.total_dict[key]);
+                bar_list.push(res.data[key]);
+            }
+            self.option.xAxis[0].data = bar_title;
+            self.option.series[0].data = bar_list;
         });
     },
     template:

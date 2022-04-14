@@ -1,4 +1,5 @@
 Vue.component('home-line', {
+    props: ['time_choice'],
     data() {
         return {
             option: {
@@ -117,7 +118,7 @@ Vue.component('home-line', {
         }
     },
     mounted() {
-
+        console.log(this.time_choice)
         //请求数据 伪代码
         let self = this;
         axios.get("/v1/device/photo/snap_count/?format=json", {
@@ -128,7 +129,7 @@ Vue.component('home-line', {
         }, {
             'Content-Type': 'application/json;charset=UTF-8'
         }).then(res => {
-            // console.log(res.data);
+            console.log(res.data);
         });
     },
     template:

@@ -22,8 +22,10 @@
     <script type="text/javascript" src="{% static "chart/home.pie.js" %}"></script>
     <script type="text/javascript" src="{% static "chart/home.line.js" %}"></script>
     <script type="text/javascript" src="{% static "chart/home.bar.js" %}"></script>
-    <script type="text/javascript" src="{% static "chart/home.survey.js" %}"></script>
-    <script type="text/javascript" src="{% static "chart/home.check.js" %}"></script>
+
+    <!-- 自定义业务组件，调用接口操作数据 -->
+    <script type="text/javascript" src="{% static "alarm/home.survey.js" %}"></script>
+    <script type="text/javascript" src="{% static "alarm/home.check.js" %}"></script>
     <script type="text/javascript" src="{% static "alarm/home.alarm.js" %}"></script>
 
     {{ block.super }}
