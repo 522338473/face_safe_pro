@@ -114,7 +114,13 @@ Vue.component('home-line', {
                         }
                     }
                 ]
-            }
+            },
+            type_dict: {
+                people_count: '人员',
+                vehicle_count: '车辆'
+            },
+            people_point_list: [],  // 人员
+            vehicle_point_list: [],  // 车辆
         }
     },
     mounted() {
@@ -129,9 +135,112 @@ Vue.component('home-line', {
         }, {
             'Content-Type': 'application/json;charset=UTF-8'
         }).then(res => {
-            console.log(res.data);
+            console.time('consume');
+            let dates = res.data.dates;
+            let people_list = res.data.people_count;
+            let vehicle_list = res.data.vehicle_count;
+            let start_date = new Date(Date.parse(dates['start_date']));  // 开始时间
+            let vehicle_start_date = new Date(Date.parse(dates['start_date']));  // 开始时间
+            let end_date = new Date(Date.parse(dates['end_date']));  // 结束时间
+            let days = 24 * 60 * 60 * 1000;  // 一天的毫秒时间戳
+            let dlt_day = (end_date - start_date) / days;  // 起止日期差
+            let people_hour_list = [];  // 人脸数组元数据
+            let vehicle_hour_list = [];  // 车辆数组数据
+            let x_title = [];  // 横坐标轴
+
+            let _start_date = start_date;
+            if ((end_date - start_date) <= days) {
+                for (let item = 0; item < 24; item++) {
+                    people_hour_list.push({
+                        'date': String(item) + '点',
+                        'count': 0
+                    })
+                }
+                for (let item = 0; item < 24; item++) {
+                    vehicle_hour_list.push({
+                        'date': String(item) + '点',
+                        'count': 0
+                    })
+                }
+
+                for (let item in people_list) {
+                    people_hour_list[parseInt(people_list[item].date.split(':')[1])].count = people_list[item].count
+                }
+
+                for (let item in vehicle_list) {
+                    vehicle_hour_list[parseInt(vehicle_list[item].date.split(':')[1])].count = vehicle_list[item].count
+                }
+            } else {
+                for (let item = 0; item < dlt_day; item++) {
+                    if (item !== 0) {
+                        people_hour_list.push({
+                            'date': new Date(start_date.setDate(start_date.getDate() + 1)).format('YYYY-MM-DD'),
+                            'count': 0
+                        })
+                    } else {
+                        people_hour_list.push({
+                            'date': new Date(start_date.setDate(start_date.getDate())).format('YYYY-MM-DD'),
+                            'count': 0
+                        })
+                    }
+
+                }
+                for (let item = 0; item < dlt_day; item++) {
+                    if (item !== 0) {
+                        vehicle_hour_list.push({
+                            'date': new Date(vehicle_start_date.setDate(vehicle_start_date.getDate() + 1)).format('YYYY-MM-DD'),
+                            'count': 0
+                        })
+                    } else {
+                        vehicle_hour_list.push({
+                            'date': new Date(vehicle_start_date.setDate(vehicle_start_date.getDate())).format('YYYY-MM-DD'),
+                            'count': 0
+                        })
+                    }
+
+                }
+
+                for (let i in people_hour_list) {
+                    for (let j in people_list) {
+                        if (people_hour_list[i].date === people_list[j].date) {
+                            people_hour_list[i].count = people_list[j].count;
+                            break
+                        }
+                    }
+
+                }
+
+                for (let i in vehicle_hour_list) {
+                    for (let j in vehicle_list) {
+                        if (vehicle_hour_list[i].date === vehicle_list[j].date) {
+                            vehicle_hour_list[i].count = vehicle_list[j].count;
+                        }
+                    }
+                }
+
+            }
+
+            // X轴坐标轴
+            for (let item in people_hour_list) {
+                x_title.push(people_hour_list[item].date)
+            }
+            // 人脸点坐标
+            for (let item in people_hour_list) {
+                self.people_point_list.push(people_hour_list[item].count)
+            }
+            // 车辆点坐标
+            for (let item in vehicle_hour_list) {
+                self.vehicle_point_list.push(vehicle_hour_list[item].count)
+            }
+
+
+            self.option.xAxis[0].data = x_title;
+            self.option.series[0].data = self.people_point_list;
+            self.option.series[1].data = self.vehicle_point_list;
+            console.timeEnd('consume');
         });
     },
+    methods: {},
     template:
         `<div style="display: flex">
     <echarts :option="option" style="width: 100%;height: 280px"></echarts>

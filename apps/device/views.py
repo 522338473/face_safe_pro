@@ -123,8 +123,8 @@ class DevicePhotoViewSet(HashRetrieveViewSetMixin, ModelViewSet):
             end_date = datetime.datetime.strptime(datetime.datetime.now().strftime('%Y%m%d%H%M%S'), '%Y%m%d%H%M%S')
         count_list = {
             'dates': {
-                'start_date': start_date.strftime('%Y%m%d%H%M%S'),
-                'end_date': end_date.strftime('%Y%m%d%H%M%S')
+                'start_date': start_date.strftime('%Y-%m-%dT%H:%M:%S'),
+                'end_date': end_date.strftime('%Y-%m-%dT%H:%M:%S')
             },
             'people_count': [],
             'vehicle_count': []
