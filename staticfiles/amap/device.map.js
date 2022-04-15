@@ -44,6 +44,9 @@ Vue.component('device-map', {
         },
         getData() {
             let self = this;
+            axios.get('/v1/device/info/?format=json&paginate=off').then(res => {
+                self.markers = res.data;
+            })
         }
     },
     template: `
