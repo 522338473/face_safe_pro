@@ -212,11 +212,8 @@
                 defaultProps: {
                     label: 'name',
                     disabled: function (data, node) {
-                        if (data.status === 0) {  // 只显示在线设备
-                            console.log(node)
-                            node.visible = false;
-                        }
-                        {#return data.status === 0;#}
+                        {#node.visible = data.status !== 0;#}  // 默认隐藏不显示
+                        return data.status === 0;
                     }
                 },
                 device_list: [],
