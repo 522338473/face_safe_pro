@@ -3,6 +3,8 @@ Vue.component('home-alarm', {
         return {
             loading: false,
             monitor_list: [],
+            dialogVisible: false,
+            detail_id: '',
         }
     },
     mounted() {
@@ -20,6 +22,20 @@ Vue.component('home-alarm', {
         }).finally(() => {
             self.loading = false;
         })
+    },
+    methods: {
+        handleClose(done) {
+            this.$confirm('确认关闭？')
+                .then(_ => {
+                    done();
+                })
+                .catch(_ => {
+                });
+        },
+        detail_dialog: function (id) {
+            this.detail_id = id;
+            this.dialogVisible = true;
+        },
     },
     template:
         `
@@ -39,8 +55,25 @@ Vue.component('home-alarm', {
                 <el-col :span="8" style="margin-left: 10px; min-width: 120px; overflow: auto">
                     <p style="font-size: 28px; font-weight: 500; color: #606266; margin: 0;">{{ item.target.name }}</p>
                     <p style="font-size: 14px; color: #909399; overflow: hidden; height: 30px;line-height: 30px; margin: 0">{{ item.record.take_photo_time }}</p>
-                    <el-link href="javascript:alert('首页详情接口开发中.')">查看详情>></el-link>
+                    <el-link @click="detail_dialog(item.id)" size="mini">详情</el-link>
                 </el-col>
+            </el-row>
+            <el-row>
+                <el-dialog
+                        title="报警详情"
+                        :visible.sync="dialogVisible"
+                        :append-to-body="true"
+                        :destroy-on-close="true"
+                        :show-close="true"
+                        width="1200px">
+                    <div style="width: 100%; height: 450px; overflow: hidden">
+                <iframe :src='"/v1/device/photo_detail/?id=" + detail_id' frameborder="0" height="100%" width="100%"></iframe>
+            </div>
+                    <span slot="footer" class="dialog-footer">
+                        <el-button @click="dialogVisible = false">取 消</el-button>
+                        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+                    </span>
+                </el-dialog>
             </el-row>
         </div>
 `
