@@ -119,20 +119,27 @@ Vue.component('home-line', {
                 people_count: '人员',
                 vehicle_count: '车辆'
             },
-            people_point_list: [],  // 人员
-            vehicle_point_list: [],  // 车辆
+
             options: [
                 {
                     value: 1,
                     label: '最近一天'
                 },
                 {
-                    value: 2,
+                    value: 3,
                     label: '最近三天'
                 },
                 {
-                    value: 3,
+                    value: 7,
                     label: '最近七天'
+                },
+                {
+                    value: 15,
+                    label: '最近半个月'
+                },
+                {
+                    value: 30,
+                    label: '最近一个月'
                 }
             ],
             value: 1
@@ -144,16 +151,19 @@ Vue.component('home-line', {
     methods: {
         time_change: function () {
             //请求数据 伪代码
+            let start_time = new Date(new Date(new Date(new Date().setHours(0, 0, 0, 0)).setDate(new Date(new Date().setHours(0, 0, 0, 0)).getDate() - this.value))).format("YYYYMMDDhhmmss");
+            let end_time = new Date(new Date().setHours(0, 0, 0, 0)).format("YYYYMMDDhhmmss");
             let self = this;
+            let params = {
+                start_time: start_time,
+                end_time: end_time
+            }
             axios.get("/v1/device/photo/snap_count/?format=json", {
-                params: {
-                    start_time: '20220402000000',
-                    end_time: '20220422000000'
-                }
+                params: params
             }, {
                 'Content-Type': 'application/json;charset=UTF-8'
             }).then(res => {
-                console.time('consume');
+                // console.time('consume');
                 let dates = res.data.dates;
                 let people_list = res.data.people_count;
                 let vehicle_list = res.data.vehicle_count;
@@ -165,6 +175,8 @@ Vue.component('home-line', {
                 let people_hour_list = [];  // 人脸数组元数据
                 let vehicle_hour_list = [];  // 车辆数组数据
                 let x_title = [];  // 横坐标轴
+                let people_point_list = [];  // 人员
+                let vehicle_point_list = [];  // 车辆
 
                 let _start_date = start_date;
                 if ((end_date - start_date) <= days) {
@@ -244,18 +256,18 @@ Vue.component('home-line', {
                 }
                 // 人脸点坐标
                 for (let item in people_hour_list) {
-                    self.people_point_list.push(people_hour_list[item].count)
+                    people_point_list.push(people_hour_list[item].count)
                 }
                 // 车辆点坐标
                 for (let item in vehicle_hour_list) {
-                    self.vehicle_point_list.push(vehicle_hour_list[item].count)
+                    vehicle_point_list.push(vehicle_hour_list[item].count)
                 }
 
 
                 self.option.xAxis[0].data = x_title;
-                self.option.series[0].data = self.people_point_list;
-                self.option.series[1].data = self.vehicle_point_list;
-                console.timeEnd('consume');
+                self.option.series[0].data = people_point_list;
+                self.option.series[1].data = vehicle_point_list;
+                // console.timeEnd('consume');
             });
         }
     },
