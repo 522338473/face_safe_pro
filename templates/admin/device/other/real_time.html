@@ -210,7 +210,14 @@
                     paginate: 'on',
                 },
                 defaultProps: {
-                    label: 'name'
+                    label: 'name',
+                    disabled: function (data, node) {
+                        if (data.status === 0) {  // 只显示在线设备
+                            console.log(node)
+                            node.visible = false;
+                        }
+                        {#return data.status === 0;#}
+                    }
                 },
                 device_list: [],
                 device_photo_list: [],
@@ -262,6 +269,12 @@
                     this.device_photo(params);
                 },
                 device_video: function (params) {
+                    if (params.status === 0) {
+                        this.$message({
+                            message: '该设备已离线! 请稍后重试',
+                            type: 'warning'
+                        })
+                    }
                     let self = this;
                     self.loading = true;
                     axios.get('/v1/device/info/device_video/', {
