@@ -128,91 +128,104 @@
             </el-col>
         </el-row>
         <el-divider></el-divider>
-        <el-row style="overflow: auto">
-            <el-table
-                    :data="photo_list"
-                    :highlight-current-row="true"
-                    stripe
-                    max-height="500"
-                    style="width: 100%"
-            >
-                <el-table-column
-                        type="index"
-                        label="序号"
-                        min-width="5%"
-                >
-                </el-table-column>
-                <el-table-column
-                        prop="device.name"
-                        label="抓拍设备"
-                        min-width="12%"
-                >
-                </el-table-column>
-                <el-table-column
-                        prop="address"
-                        label="抓拍地址"
-                        min-width="20%"
-                >
-                </el-table-column>
-                <el-table-column
-                        prop="take_photo_time"
-                        label="抓拍时间"
-                        min-width="12%"
-                >
-                </el-table-column>
-                <el-table-column
-                        prop="head_path"
-                        label="抓拍头像"
-                        min-width="5%"
-                >
-                    <template slot-scope="scope">
-                        <el-image :src="scope.row.head_path" style="width: 50px; height: 50px">
-                        </el-image>
-                    </template>
-                </el-table-column>
-                <el-table-column
-                        prop="similarity"
-                        label=""
-                        min-width="5%"
-                >
-                    <span style="background-color: red; color: white">20.00%</span>
-                </el-table-column>
-                <el-table-column
-                        prop="head_path"
-                        label="原头像"
-                        min-width="5%"
-                >
-                    <template slot-scope="scope">
-                        <el-image :src="scope.row.head_path" style="width: 50px; height: 50px">
-                        </el-image>
-                    </template>
-                </el-table-column>
-                <el-table-column
-                        prop="id"
-                        label="操作"
-                        min-width="10%"
-                >
-                    <template slot-scope="scope" style="margin-left: 30px">
-                        <el-button type="text" size="mini" @click="detail_dialog(scope.row)">详情</el-button>
-                        <el-button type="text" size="mini" @click="video_dialog(scope.row)">回放视频</el-button>
-                    </template>
-                </el-table-column>
 
-                <div slot="empty">
-                    <el-empty description="这里没有搜索到数据吖!"></el-empty>
-                </div>
-            </el-table>
-            <div v-if="paginator.page_count>1" class="paginator" style="text-align: center; margin-top: 20px">
-                <el-pagination
-                        background
-                        layout="total, prev, pager, next"
-                        :page-size="paginator.page_size"
-                        :total="paginator.count"
-                        @current-change="search_photo_list"
-                >
-                </el-pagination>
-            </div>
-        </el-row>
+
+        <el-tabs v-model="active_table" @tab-click="handleClick">
+            <el-tab-pane label="列表展示" name="list">
+                <el-row style="overflow: auto">
+                    <el-table
+                            :data="photo_list"
+                            :highlight-current-row="true"
+                            stripe
+                            max-height="500"
+                            style="width: 100%"
+                            row-key="id"
+                            :lazy="true"
+                            ref="list"
+                    >
+                        <el-table-column
+                                type="index"
+                                label="序号"
+                                min-width="5%"
+                        >
+                        </el-table-column>
+                        <el-table-column
+                                prop="device.name"
+                                label="抓拍设备"
+                                min-width="12%"
+                        >
+                        </el-table-column>
+                        <el-table-column
+                                prop="address"
+                                label="抓拍地址"
+                                min-width="20%"
+                        >
+                        </el-table-column>
+                        <el-table-column
+                                prop="take_photo_time"
+                                label="抓拍时间"
+                                min-width="12%"
+                        >
+                        </el-table-column>
+                        <el-table-column
+                                prop="head_path"
+                                label="抓拍头像"
+                                min-width="5%"
+                        >
+                            <template slot-scope="scope">
+                                <el-image :src="scope.row.head_path" style="width: 50px; height: 50px">
+                                </el-image>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                prop="similarity"
+                                label=""
+                                min-width="5%"
+                        >
+                            <span style="background-color: red; color: white">20.00%</span>
+                        </el-table-column>
+                        <el-table-column
+                                prop="head_path"
+                                label="原头像"
+                                min-width="5%"
+                        >
+                            <template slot-scope="scope">
+                                <el-image :src="scope.row.head_path" style="width: 50px; height: 50px">
+                                </el-image>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                prop="id"
+                                label="操作"
+                                min-width="10%"
+                        >
+                            <template slot-scope="scope" style="margin-left: 30px">
+                                <el-button type="text" size="mini" @click="detail_dialog(scope.row)">详情</el-button>
+                                <el-button type="text" size="mini" @click="video_dialog(scope.row)">回放视频</el-button>
+                            </template>
+                        </el-table-column>
+
+                        <div slot="empty">
+                            <el-empty description="这里没有搜索到数据吖!"></el-empty>
+                        </div>
+                    </el-table>
+                    <div v-if="paginator.page_count>1" class="paginator" style="text-align: center; margin-top: 20px">
+                        <el-pagination
+                                background
+                                layout="total, prev, pager, next"
+                                :page-size="paginator.page_size"
+                                :total="paginator.count"
+                                @current-change="search_photo_list"
+                        >
+                        </el-pagination>
+                    </div>
+                </el-row>
+            </el-tab-pane>
+            <el-tab-pane label="地图轨迹" name="track" :lazy="true">
+                <track-map v-if="map_show" :markers="markers" style="width: 100%; height: 500px;"></track-map>
+            </el-tab-pane>
+        </el-tabs>
+
         <el-dialog
                 title="抓拍详情"
                 :visible.sync="detail_dialog_visible"
@@ -257,7 +270,9 @@
             el: '#app',
             delimiters: ['${', '}'],
             data: {
+                active_table: 'list',
                 loading: false,
+                map_show: false,
                 detail_dialog_visible: false,
                 video_dialog_visible: false,
                 detail_id: '',
@@ -270,7 +285,7 @@
                 imageUrl: '{{ url }}',
                 paginator: {
                     count: 0,
-                    page_size: 12,
+                    page_size: 20,
                     page_count: 0,
                     paginate: 'on'
                 },
@@ -286,6 +301,7 @@
                     {value: 'seven', label: '最近七天'},
                 ],
                 photo_list: [],
+                markers: [],
             },
             created() {
                 this.device_snap_count();
@@ -350,6 +366,8 @@
                         self.paginator.count = res.data.count;
                         self.paginator.page_count = self.paginator.count / self.paginator.page_size;
                         self.photo_list = res.data.results;
+                        self.markers = self.photo_list;
+                        self.map_show = true;
                     }).finally(() => {
                         self.loading = false;
                     })
@@ -384,6 +402,9 @@
                 },
                 video_dialog_close: function () {
                     Object.assign(this.$data, this.$options.data());
+                },
+                handleClick(tab, event) {
+                    this.map_show = this.active_table === 'track';
                 }
             }
 

@@ -1,5 +1,5 @@
 Vue.component('track-map', {
-    props: ['style'],
+    props: ['style', 'markers'],
     data() {
         return {
             //去高德开放平台申请的key

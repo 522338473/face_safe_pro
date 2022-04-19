@@ -27,8 +27,9 @@ class DevicePhotoSerializers(serializers.ModelSerializer):
 
     id = serializers.ReadOnlyField(source='hash')
     take_photo_time = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S')
+    create_at = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S')
     device = DeviceInfoSerializers()
 
     class Meta:
         model = models.DevicePhoto
-        fields = ['id', 'device', 'take_photo_time', 'head_path', 'body_path', 'back_path', 'face_data', 'human_data', 'address', 'geo']
+        fields = ['id', 'device', 'take_photo_time', 'head_path', 'body_path', 'back_path', 'face_data', 'human_data', 'address', 'geo', 'create_at']
