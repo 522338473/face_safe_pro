@@ -67,18 +67,6 @@ class DeviceInfoAdmin(PublicModelAdmin, admin.ModelAdmin):
 
     operation.short_description = '操作'
 
-    # 这个自定义的对话框，可以在admin也可以在model中声明
-    def async_load(self, model):
-        modal = ModalDialog()
-        modal.height = '500px'
-        modal.width = '800px'
-        modal.cell = f"{model.id}-异步加载"
-        modal.show_cancel = False
-        modal.url = reverse('public:test2') + "?id={id}".format(id=model.hash)
-        return modal
-
-    async_load.short_description = '异步加载'
-
 
 @admin.register(device_models.DevicePhoto)
 class DevicePhotoAdmin(PublicModelAdmin, admin.ModelAdmin):

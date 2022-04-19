@@ -20,12 +20,7 @@ class SearchPersonnelView(ParseJsonView, View):
 
     def get(self, request):
         """以人搜图模板"""
-        current_page = 1
-        page_size = 10
-        library_page = Paginator(models.ArchivesGroup.objects.order_by('-id'), page_size)
-        if library_page.page_range.start <= current_page <= library_page.page_range.stop:
-            library_list = library_page.page(current_page).object_list
-            return render(request, 'admin/archives/other/search_person.html', locals())
+        return render(request, 'admin/archives/other/search_person.html', locals())
 
     def post(self, request):
         """数据返回"""
