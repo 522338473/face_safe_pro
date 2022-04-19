@@ -50,7 +50,7 @@ class MonitorAdmin(PublicModelAdmin, ImportExportModelAdmin):
         record = ModalDialog(
             cell='<el-button type="text">抓拍记录</el-button>',
             title='抓拍记录',
-            url=reverse('device:photo_search') + "?id={id}".format(id=model.hash),
+            url=reverse('device:photo_search') + "?id={id}&detail_type={detail_type}".format(id=model.hash, detail_type=DETAIL_TYPE['MONITOR_DETAIL']),
             height='450px',
             width='1200px',
             show_cancel=True

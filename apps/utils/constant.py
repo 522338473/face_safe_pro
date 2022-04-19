@@ -77,4 +77,5 @@ DETAIL_TYPE = {
     'ACCESS_DISCOVER_DETAIL': 2,  # 门禁通行详情
     'MONITOR_VEHICLE_DETAIL': 3,  # 重点车辆报警详情
     'MONITOR_DISCOVER_DETAIL': 4,  # 重点人员报警详情
+    'MONITOR_DETAIL': 5,  # 重点人员抓拍记录详情
 }

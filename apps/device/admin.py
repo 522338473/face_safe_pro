@@ -110,7 +110,7 @@ class DevicePhotoAdmin(PublicModelAdmin, admin.ModelAdmin):
         query = ModalDialog(
             cell='<el-button type="text">查询</el-button>',
             title='抓拍记录',
-            url=reverse('device:photo_search') + '?id={id}'.format(id=model.hash),
+            url=reverse('device:photo_search') + '?id={id}&detail_type={detail_type}'.format(id=model.hash, detail_type=DETAIL_TYPE['DEVICE_PHOTO_DETAIL']),
             height='450px',
             width='1200px',
             show_cancel=True
