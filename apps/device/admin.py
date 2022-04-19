@@ -1,5 +1,6 @@
 from django.urls import reverse
 from django.contrib import admin
+from django.utils.safestring import mark_safe
 from simplepro.dialog import ModalDialog, MultipleCellDialog
 
 from apps.device import models as device_models
@@ -81,15 +82,16 @@ class DeviceInfoAdmin(PublicModelAdmin, admin.ModelAdmin):
 
 @admin.register(device_models.DevicePhoto)
 class DevicePhotoAdmin(PublicModelAdmin, admin.ModelAdmin):
-    list_display = ['id', 'address', 'take_photo_time', 'head_path', 'operation']
+    list_display = ['id', 'address', 'take_photo_time', 'image', 'operation']
     list_filter = ['device', 'take_photo_time']
     fields_options = {
         'id': {
             'fixed': 'left',
             'width': '60px'
         },
-        'head_path': {
-            'label': '人脸照'
+        'image': {
+            'label': '抓拍人脸',
+            'width': '120px'
         },
         'take_photo_time': {
             'width': '170px'
@@ -98,6 +100,11 @@ class DevicePhotoAdmin(PublicModelAdmin, admin.ModelAdmin):
             'width': '200px'
         }
     }
+
+    def image(self, obj):
+        return mark_safe('<img src={url} width=30px;>'.format(url=obj.head_path))
+
+    image.short_description = '抓拍人脸'
 
     def operation(self, model):
         query = ModalDialog(
@@ -146,23 +153,27 @@ class DeviceOffLineAdmin(PublicModelAdmin, admin.ModelAdmin):
 
 @admin.register(device_models.Motor)
 class MotorAdmin(PublicModelAdmin, admin.ModelAdmin):
-    list_display = ['id', 'device', 'address', 'take_photo_time', 'motor_path']
+    list_display = ['id', 'device', 'address', 'take_photo_time', 'image']
     list_filter = ['device', 'create_at']
     fields_options = {
         'id': {
             'fixed': 'left',
             'width': '80px'
         },
-        'device': {
-            'width': '160px'
-        },
-
+        'image': {
+            'width': '120px'
+        }
     }
+
+    def image(self, obj):
+        return mark_safe('<img src={url} width=30px;>'.format(url=obj.motor_path))
+
+    image.short_description = '照片'
 
 
 @admin.register(device_models.Vehicle)
 class VehicleAdmin(PublicModelAdmin, admin.ModelAdmin):
-    list_display = ['id', 'device', 'address', 'take_photo_time', 'plate', 'plate_path', 'operation']
+    list_display = ['id', 'device', 'address', 'take_photo_time', 'plate', 'image', 'operation']
     list_filter = ['device', 'create_at']
     search_fields = ['plate', 'color', 'types']
     fields_options = {
@@ -183,6 +194,11 @@ class VehicleAdmin(PublicModelAdmin, admin.ModelAdmin):
             'width': '180px'
         }
     }
+
+    def image(self, obj):
+        return mark_safe('<img src={url} width=30px;>'.format(url=obj.plate_path))
+
+    image.short_description = '照片'
 
     def operation(self, model):
         query = ModalDialog(

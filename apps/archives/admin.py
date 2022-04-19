@@ -92,9 +92,9 @@ class PersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin, AjaxAdmin):
     bottom_html = ' <el-alert title="这是底部的" type="warning"></el-alert>'
 
     def image(self, obj):
-        return mark_safe('<img src="%s" width=30px;>' % obj.photo)
+        return mark_safe('<img src={url} width=30px;>'.format(url=obj.photo))
 
-    image.short_description = 'Admin头像'
+    image.short_description = '照片'
 
     def operation(self, model):
         trail = ModalDialog(
@@ -112,7 +112,7 @@ class PersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin, AjaxAdmin):
 
 @admin.register(archives_models.AccessDiscover)
 class AccessDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
-    list_display = ['id', 'target', 'record', 'checked', 'similarity', 'operation']
+    list_display = ['id', 'target', 'checked', 'similarity', 'image', 'operation']
     list_filter = ['target']
     fields_options = {
         'id': {
@@ -120,15 +120,18 @@ class AccessDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
             'width': '80px'
         },
         'target': {
-            'width': '140px'
+            'label': '门禁人员'
         },
-        'checked': {
+        'image': {
+            'label': '通行抓拍',
             'width': '120px'
-        },
-        'similarity': {
-            'width': '100px'
         }
     }
+
+    def image(self, obj):
+        return mark_safe('<img src={url} width=30px;>'.format(url=obj.record.head_path))
+
+    image.short_description = '通行抓拍'
 
     def operation(self, model):
         detail = ModalDialog(

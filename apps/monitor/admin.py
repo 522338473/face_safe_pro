@@ -1,5 +1,6 @@
 from django.urls import reverse
 from django.contrib import admin
+from django.utils.safestring import mark_safe
 from import_export.admin import ImportExportModelAdmin
 from simplepro.dialog import ModalDialog, MultipleCellDialog
 
@@ -20,7 +21,7 @@ class PersonnelTypeAdmin(PublicModelAdmin, admin.ModelAdmin):
 
 @admin.register(monitor_models.Monitor)
 class MonitorAdmin(PublicModelAdmin, ImportExportModelAdmin):
-    list_display = ['id', 'name', 'personnel_types', 'gender', 'phone', 'photo', 'operation']
+    list_display = ['id', 'name', 'personnel_types', 'gender', 'phone', 'image', 'operation']
     list_filter = ['personnel_types', 'create_at']
     exclude = ['num_values', 'area_personnel']
     search_fields = ['name']
@@ -30,22 +31,20 @@ class MonitorAdmin(PublicModelAdmin, ImportExportModelAdmin):
             'fixed': 'left',
             'width': '80px'
         },
-        'name': {
-            'width': '120px'
-        },
-        'personnel_types': {
-            'width': '160px'
-        },
         'gender': {
             'width': '80px'
         },
-        'phone': {
+        'image': {
+            'label': '照片',
             'width': '120px'
         },
-        'operation': {
-            'width': '120px'
-        }
+
     }
+
+    def image(self, obj):
+        return mark_safe('<img src={url} width=30px;>'.format(url=obj.photo))
+
+    image.short_description = '照片'
 
     def operation(self, model):
         record = ModalDialog(
@@ -63,7 +62,7 @@ class MonitorAdmin(PublicModelAdmin, ImportExportModelAdmin):
 
 @admin.register(monitor_models.MonitorDiscover)
 class MonitorDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
-    list_display = ['id', 'target', 'record', 'checked', 'similarity', 'operation']
+    list_display = ['id', 'target', 'image', 'checked', 'similarity', 'operation']
     list_filter = ['record__take_photo_time', 'target']
     search_fields = ['target__name']
     fields_options = {
@@ -71,19 +70,15 @@ class MonitorDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
             'fixed': 'left',
             'width': '80px'
         },
-        'target': {
+        'image': {
             'width': '120px'
-        },
-        'checked': {
-            'width': '120px'
-        },
-        'similarity': {
-            'width': '100px'
-        },
-        'operation': {
-            'width': '300px'
         }
     }
+
+    def image(self, obj):
+        return mark_safe('<img src={url} width=30px;>'.format(url=obj.record.head_path))
+
+    image.short_description = '抓拍人脸'
 
     def operation(self, model):
         detail = ModalDialog(
@@ -146,20 +141,22 @@ class VehicleMonitorAdmin(PublicModelAdmin, admin.ModelAdmin):
 
 @admin.register(monitor_models.VehicleMonitorDiscover)
 class VehicleMonitorDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
-    list_display = ['id', 'target', 'record', 'checked', 'detail', 'operation']
+    list_display = ['id', 'target', 'image', 'checked', 'detail', 'operation']
     list_filter = ['target', 'create_at']
     fields_options = {
         'id': {
             'fixed': 'left',
             'width': '80px'
         },
-        'target': {
-            'width': '120px'
-        },
-        'checked': {
+        'image': {
             'width': '120px'
         }
     }
+
+    def image(self, obj):
+        return mark_safe('<img src={url} width=30px;>'.format(url=obj.record.plate_path))
+
+    image.short_description = '抓拍照片'
 
     def operation(self, model):
         detail = ModalDialog(
@@ -239,7 +236,7 @@ class ArchivesLibraryAdmin(PublicModelAdmin, admin.ModelAdmin):
 
 @admin.register(monitor_models.ArchivesPersonnel)
 class ArchivesPersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin):
-    list_display = ['id', 'library', 'name', 'phone', 'id_card', 'operation']
+    list_display = ['id', 'library', 'name', 'phone', 'id_card', 'image', 'operation']
     list_filter = ['library']
     search_fields = ['name']
     resource_class = ArchivesPersonnelResources
@@ -248,19 +245,16 @@ class ArchivesPersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin):
             'fixed': 'left',
             'width': '80px'
         },
-        'library': {
-            'width': '160px'
-        },
-        'name': {
+        'image': {
+            'label': '抓拍人脸',
             'width': '120px'
         },
-        'phone': {
-            'width': '120px'
-        },
-        'id_card': {
-            'width': '180px'
-        }
     }
+
+    def image(self, obj):
+        return mark_safe('<img src={url} width=30px;>'.format(url=obj.photo))
+
+    image.short_description = '抓拍人脸'
 
     def operation(self, model):
         trail = ModalDialog(
@@ -279,26 +273,20 @@ class ArchivesPersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin):
 
 @admin.register(monitor_models.PhotoCluster)
 class PhotoClusterAdmin(PublicModelAdmin, admin.ModelAdmin):
-    list_display = ['id', 'archives_personnel', 'device_name', 'device_address', 'device_ip', 'similarity']
+    list_display = ['id', 'archives_personnel', 'device_name', 'device_address', 'device_ip', 'device_take_photo_time', 'similarity', 'image']
     list_filter = ['archives_personnel', 'device_take_photo_time']
     fields_options = {
         'id': {
             'fixed': 'left',
             'width': '80px'
         },
-        'archives_personnel': {
-            'width': '180px'
-        },
-        'device_name': {
-            'width': '160px'
-        },
-        'device_address': {
-            'width': 'auto',
-        },
-        'device_ip': {
+        'image': {
+            'label': '抓拍人脸',
             'width': '120px'
-        },
-        'similarity': {
-            'width': '100px'
         }
     }
+
+    def image(self, obj):
+        return mark_safe('<img src={url} width=30px;>'.format(url=obj.device_head_path))
+
+    image.short_description = '抓拍人脸'
