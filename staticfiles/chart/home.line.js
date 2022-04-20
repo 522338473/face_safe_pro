@@ -275,7 +275,7 @@ Vue.component('home-line', {
         `
 <div style="display: flex; position: relative">
     <echarts :option="option" style="width: 100%;height: 280px"></echarts>
-    <el-select v-model="value" @change="time_change" size="mini" style="position: absolute; top: -20px; right: 0">
+    <el-select v-model="value" @change="time_change" size="mini" style="position: absolute; top: -20px; right: 20px; width: 120px;">
         <el-option
           v-for="item in options"
           :key="item.value"

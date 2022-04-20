@@ -77,7 +77,7 @@ Vue.component('home-alarm', {
                     <img :src="item.record.head_path" alt="" width="100px" height="100px">
                 </el-col>
                 <el-col :span="8" style="margin-left: 10px; min-width: 120px; overflow: auto">
-                    <p style="font-size: 28px; font-weight: 500; color: #606266; margin: 0;">{{ item.target.name }}</p>
+                    <p style="font-size: 21px; font-weight: 500; color: #606266; margin: 0;">{{ item.target.name }}</p>
                     <p style="font-size: 14px; color: #909399; overflow: hidden; height: 30px;line-height: 30px; margin: 0">{{ item.record.take_photo_time }}</p>
                     <el-link @click="detail_dialog(item)">详情</el-link>
                 </el-col>
