@@ -153,3 +153,15 @@ class RealTimeView(ParseJsonView, View):
     def post(self, request):
         """监控页面获取数据接口"""
         pass
+
+
+class WebRtcView(ParseJsonView, View):
+    """单摄像头webrtc视频流"""
+
+    def get(self, request):
+        _id = request.GET.get('id')
+        if self.hash_to_pk(_id) == 1:
+            device_video_url = 'http://192.168.2.84:8083/stream/6f9155485a1f85b8d2d801badf7ae09b/channel/0/webrtc?uuid=6f9155485a1f85b8d2d801badf7ae09b&channel=0&device_id=%s' % _id
+        else:
+            device_video_url = 'http://192.168.2.84:8083/stream/580cfe817d3cf0ea2edc98e36e356642/channel/0/webrtc?uuid=580cfe817d3cf0ea2edc98e36e356642&channel=0&device_id=%s' % _id
+        return render(request, 'admin/device/other/webrtc.html', locals())

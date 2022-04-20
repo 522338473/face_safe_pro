@@ -58,9 +58,9 @@ class DeviceInfoAdmin(PublicModelAdmin, admin.ModelAdmin):
         real = ModalDialog(
             cell='<el-button type="text" {status}>实况</el-button>'.format(status='disabled' if model.status == 0 else ''),
             title='摄像头实况',
-            url=reverse('device:real_time') + '?id={id}'.format(id=model.hash),
-            height='60%',
-            width='80%',
+            url=reverse('device:webrtc') + '?id={id}'.format(id=model.hash),
+            height='430px',
+            width='50%',
             show_cancel=True
         )
         return MultipleCellDialog([login, real])

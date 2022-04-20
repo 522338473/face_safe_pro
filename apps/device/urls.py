@@ -25,7 +25,8 @@ urlpatterns = [
     path('photo_search/', csrf_exempt(admin_view.PhotoSearchView.as_view()), name='photo_search'),
     path('photo_detail/', csrf_exempt(admin_view.PhotoDetailView.as_view()), name='photo_detail'),
     path('search_image/', csrf_exempt(admin_view.SearchImageView.as_view()), name='search_image'),
-    path('real_time/', csrf_exempt(admin_view.RealTimeView.as_view()), name='real_time')
+    path('real_time/', csrf_exempt(admin_view.RealTimeView.as_view()), name='real_time'),
+    path('webrtc/', csrf_exempt(admin_view.WebRtcView.as_view()), name='webrtc')
 
 ]
 
