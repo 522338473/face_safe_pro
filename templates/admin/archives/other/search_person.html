@@ -94,7 +94,7 @@
                                     class="uploader-img"
                                     action="#"
                                     :http-request="upload_file"
-                                    :auto-upload="false"
+                                    :auto-upload="true"
                                     :show-file-list="false"
                             >
                                 <img v-if="imageUrl" :src="imageUrl" class="avatar-photo"/>
@@ -242,7 +242,7 @@
                 group_name: '',
                 archives_group_id: '',
                 current_page: 1,
-                {#imageUrl: 'https://wimg.588ku.com/gif620/21/01/17/c6b7bf2325af6e5d1aa43cee95014721.gif',#}
+                // imageUrl: 'https://wimg.588ku.com/gif620/21/01/17/c6b7bf2325af6e5d1aa43cee95014721.gif',
                 imageUrl: 'https://wimg.588ku.com/gif620/20/12/15/b0f831231ece9b4e422adf9bcb271c51.gif',
                 archives_group_total: 0,
                 archives_personnel_total: 0,
@@ -330,7 +330,6 @@
                 },
                 search_person: function (params) {
                     console.log(params)
-                    this.upload_file()
                     console.log('以图搜人接口正在开发中...')
                 },
                 changePic(file) {
@@ -345,7 +344,21 @@
                     alert(params + ': ' + '轨迹回溯页面正在开发中....')
                 },
                 upload_file: function () {
-                    console.log(this.file)
+                    let self = this;
+                    let data = new FormData();
+                    data.append('file', this.file)
+                    self.loading = true;
+                    axios.post('{% url "web_upload" %}', data, {
+                        headers: {
+                            "Content-Type": "multipart/form-data"
+                        }
+                    }).then(res => {
+                        if (res.data.success === 1) {
+                            self.imageUrl = res.data.url;
+                        }
+                    }).finally(() => {
+                        self.loading = false;
+                    })
                 }
             }
         })

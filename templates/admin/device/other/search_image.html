@@ -72,7 +72,7 @@
                             class="uploader-img"
                             action="#"
                             :http-request="upload_file"
-                            :auto-upload="false"
+                            :auto-upload="true"
                             :show-file-list="false"
                             width="100%"
                     >
@@ -281,7 +281,7 @@
                 now_days_snap_total: 0,
                 all_days_snap_total: 0,
                 video_url: 'http://vfx.mtime.cn/Video/2019/03/21/mp4/190321153853126488.mp4',
-                {#imageUrl: 'https://wimg.588ku.com/gif620/21/01/17/c6b7bf2325af6e5d1aa43cee95014721.gif',#}
+                // imageUrl: 'https://wimg.588ku.com/gif620/21/01/17/c6b7bf2325af6e5d1aa43cee95014721.gif',
                 imageUrl: '{{ url }}',
                 paginator: {
                     count: 0,
@@ -323,7 +323,6 @@
                 },
                 search_person: function (params) {
                     console.log(params)
-                    this.upload_file()
                     console.log('以图搜人接口正在开发中...')
                 },
                 changePic(file) {
@@ -332,7 +331,21 @@
                     this.file = file.raw;
                 },
                 upload_file: function () {
-                    console.log(this.file)
+                    let self = this;
+                    let data = new FormData();
+                    data.append('file', this.file)
+                    self.loading = true;
+                    axios.post('{% url "web_upload" %}', data, {
+                        headers: {
+                            "Content-Type": "multipart/form-data"
+                        }
+                    }).then(res => {
+                        if (res.data.success === 1) {
+                            self.imageUrl = res.data.url;
+                        }
+                    }).finally(() => {
+                        self.loading = false;
+                    })
                 },
                 search_reset: function () {
                     this.photo_list = [];

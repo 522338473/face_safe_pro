@@ -130,3 +130,28 @@ def upload_image(request, file_types=None):
     res = requests.post('http://192.168.2.95:8089/upload', data=options, files=files).json()
     res_upload['url'] = res['path']
     return JsonResponse(res_upload)
+
+
+@csrf_exempt
+def web_upload_image(request, *args, **kwargs):
+    """浏览器上传"""
+    res_upload = {
+        'success': 1,
+        'message': '上传成功哈哈哈',
+        'url': None
+    }
+    file = request.FILES.get('file')
+    path = ''.join([FILE_PATH_PREFIX, '/other/'])
+    if isinstance(file, InMemoryUploadedFile):
+        file = base64.b64encode(file.read()).decode()
+
+    photo = base64.b64decode(file)
+    files = {'file': photo}
+    options = {
+        'output': 'json',
+        'path': path,
+        'scene': ''
+    }
+    res = requests.post('http://192.168.2.95:8089/upload', data=options, files=files).json()
+    res_upload['url'] = res['url']
+    return JsonResponse(res_upload)
