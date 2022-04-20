@@ -33,9 +33,9 @@
                 </div>
             </div>
             {% if detail_type == '4' %}
-                <h5 style="margin-top: 10px; margin-bottom: 10px">相似度: 91.99%</h5>
+                <h5 style="margin-top: 10px; margin-bottom: 10px">相似度: {{ similarity }}%</h5>
             {% elif detail_type == '5' %}
-                <h5 style="margin-top: 10px; margin-bottom: 10px">相似度: 91.99%</h5>
+                <h5 style="margin-top: 10px; margin-bottom: 10px">相似度: {{ similarity }}%</h5>
             {% else %}
                 <h5 style="margin-top: 10px; margin-bottom: 10px">全身照</h5>
             {% endif %}
@@ -50,6 +50,14 @@
         </el-col>
         <el-col :span="3">
             <div style="width: 100%; height: 430px; margin-left: 20px">
+                {% if monitor_name %}
+                    <div style="padding-top: 19px">
+                        <el-tooltip class="item" effect="dark" content="{{ monitor_name }}" placement="left">
+                            <el-button>人员姓名</el-button>
+                        </el-tooltip>
+                    </div>
+                {% else %}
+                {% endif %}
                 {% if face_data %}
                     <div style="padding-top: 19px">
                         <el-tooltip class="item" effect="dark" content="{{ face_data }}" placement="left">

@@ -66,11 +66,17 @@ class PhotoDetailView(ParseJsonView, View):
             pass
 
         elif detail_type == '4':
-            sample_url = monitor_models.MonitorDiscover.objects.get(id=self.hash_to_pk(_id)).target.photo
+            monitor_ins = monitor_models.MonitorDiscover.objects.get(id=self.hash_to_pk(_id))
+            similarity = monitor_ins.similarity
+            sample_url = monitor_ins.target.photo
+            monitor_name = monitor_ins.target.name
 
         elif detail_type == '5':
             monitor_id = request.GET.get('monitor_id')
-            sample_url = monitor_models.Monitor.objects.get(id=self.hash_to_pk(monitor_id)).photo
+            monitor_ins = monitor_models.Monitor.objects.get(id=self.hash_to_pk(monitor_id))
+            similarity = '70'
+            monitor_name = monitor_ins.name
+            sample_url = monitor_ins.photo
 
         return render(request, 'admin/popup/device/photo_detail.html', locals())
 
