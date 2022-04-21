@@ -1,0 +1,240 @@
+version: "3"
+
+services:
+  portainer:
+    image: nightz/portainer:latest
+    restart: always
+    hostname: portainer
+    ports:
+      - "9000:9000"
+    volumes:
+      - /mnt/data/portainer:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50M"
+        max-file: "1"
+  ntpd:
+    image: nightz/ntpd:latest
+    restart: always
+    hostname: ntpd
+    cap_add:
+      - "SYS_TIME"
+    ports:
+      - "123:123/udp"
+  nginx:
+    image: nightz/nginx:latest
+    restart: always
+    hostname: nginx
+    ports:
+      - "80:80"
+      - "10081:10081"
+      - "8088:8088"
+    volumes:
+      - ./deveploy/nginx:/etc/nginx/conf.d
+      - ./static/dist:/app/face_safe/dist
+      - /srv/stream/mp4:/srv/stream/mp4
+      - ./deveploy/docs:/app/face_safe/docs
+    depends_on:
+      - face-safe
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50M"
+        max-file: "1"
+  redis:
+    image: nightz/redis:latest
+    restart: always
+    hostname: redis
+    ports:
+      - "6379:6379"  # 暴露主机端口 如果不指定，可以在启动容器的时候指定
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50M"
+        max-file: "1"
+  rabbitmq:
+    image: nightz/rabbitmq:latest
+    restart: always
+    hostname: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50M"
+        max-file: "1"
+  postgresql:
+    image: nightz/postgres:latest
+    restart: always
+    hostname: postgresql
+    volumes:
+      - /mnt/data/postgresql:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=face_safe
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50M"
+        max-file: "1"
+  fastdfs:
+    image: nightz/fds:latest
+    restart: always
+    hostname: fastdfs
+    volumes:
+      - /mnt/data/fastdfs:/var/lib/fastdfs/data
+    environment:
+      - GO_FASTDFS_DIR=/var/lib/fastdfs/data
+    ports:
+      - "8089:8080"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50M"
+        max-file: "1"
+  hwface:
+    image: nightz/hwface:latest
+    restart: always
+    hostname: hwface
+    network_mode: host
+    environment:
+      - MQ_HOST=172.17.0.1  # 修改为内网ip非127ip
+      - SDK_HOST=172.17.0.1  # 修改为内网ip非127ip
+    depends_on:
+      - rabbitmq
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50M"
+        max-file: "1"
+  cisa-live:
+    image: nightz/csia_live:latest
+    restart: always
+    hostname: cisa-live
+    volumes:
+      - /srv/stream/mp4:/srv/csia-live/stream
+    environment:
+      - NVR_IP=172.17.0.1
+      - NVR_USERNAME=admin
+      - NVR_PASSWORD=Yishi9086
+      - NVR_SAVE_PATH=/srv/csia-live/stream
+    ports:
+      - "3000:3000"
+      - "1935:1935"
+      - "7001:7001"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50M"
+        max-file: "1"
+  rtsp2web:
+    image: nightz/rtsp2web:latest
+    restart: always
+    hostname: rtsp2web
+    network_mode: host
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50M"
+        max-file: "1"
+  face-safe:
+    image: nightz/face_safe:latest
+    restart: always
+    hostname: face-safe
+    volumes:
+      - .:/app
+      - /mnt/data/fastdfs/:/mnt/data/fastdfs/
+    command: sh start.sh
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+      - rabbitmq
+      - fastdfs
+      - postgresql
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50M"
+        max-file: "1"
+  face-safe-celery:
+    image: nightz/face_safe:latest
+    restart: always
+    hostname: face-safe-celery
+    volumes:
+      - .:/app
+      - /mnt/data/fastdfs/:/mnt/data/fastdfs/
+    command: sh start.sh celery
+    depends_on:
+      - redis
+      - rabbitmq
+      - fastdfs
+      - postgresql
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50M"
+        max-file: "1"
+  face-safe-mq_image:
+    image: nightz/face_safe:latest
+    restart: always
+    hostname: face-safe-mq_image
+    volumes:
+      - .:/app
+      - /mnt/data/fastdfs/:/mnt/data/fastdfs/
+    command: sh start.sh mq_image
+    depends_on:
+      - redis
+      - rabbitmq
+      - fastdfs
+      - postgresql
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50M"
+        max-file: "1"
+  face-safe-redis_image:
+    image: nightz/face_safe:latest
+    restart: always
+    hostname: face-safe-redis_image
+    volumes:
+      - .:/app
+      - /mnt/data/fastdfs/:/mnt/data/fastdfs/
+    command: sh start.sh redis_image
+    depends_on:
+      - redis
+      - rabbitmq
+      - fastdfs
+      - postgresql
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50M"
+        max-file: "1"
+  face-safe-warning_queue:
+    image: nightz/face_safe:latest
+    restart: always
+    hostname: face-safe-warning_queue
+    volumes:
+      - .:/app
+      - /mnt/data/fastdfs/:/mnt/data/fastdfs/
+    command: sh start.sh warning_queue
+    depends_on:
+      - redis
+      - rabbitmq
+      - fastdfs
+      - postgresql
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50M"
+        max-file: "1"
