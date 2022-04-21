@@ -12,6 +12,8 @@ django-simpleui = "*"
 basehash = "*"
 djangorestframework = "*"
 simplepro = "*"
+pika = "*"
+django-redis = "*"
 
 [requires]
 python_version = "3.6"

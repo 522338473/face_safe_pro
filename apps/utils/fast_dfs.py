@@ -15,10 +15,10 @@ from django.conf import settings
 from utils.constant import FILE_PATH_PREFIX
 
 
-def upload_image(request, file_types=None):
+def upload_image(image, file_types=None):
     """
     图片上传并返回图片路径
-    :param request:
+    :param image: 图片base64
     :param file_types: 文件上传类型
     :return:
     """
@@ -33,7 +33,7 @@ def upload_image(request, file_types=None):
     else:
         path = ''.join([FILE_PATH_PREFIX, '/other/'])
 
-    files = {'file': request.FILES.get('file')}
+    files = {'file': image}
 
     options = {
         'output': 'json',

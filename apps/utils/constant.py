@@ -79,3 +79,19 @@ DETAIL_TYPE = {
     'MONITOR_DISCOVER_DETAIL': 4,  # 重点人员报警详情
     'MONITOR_DETAIL': 5,  # 重点人员抓拍记录详情
 }
+
+# 上传人脸后缀格式
+PHOTO_SUFFIX = ['jpg', 'png', 'jpeg', 'bmp']
+
+# 上传人脸大小限制2M
+PHOTO_SIZE = 2 * 1024 * 1024
+
+# IP地址正则
+IP_PATTERN = r'((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)'
+
+# Http 请求方式
+GET = 'GET'
+POST = 'POST'
+PATCH = 'PATCH'
+PUT = 'PUT'
+DELETE = 'DELETE'
