@@ -7,6 +7,8 @@
 @time: 2022/3/5 17:11
 """
 
+import re
+
 GENDER = (
     (1, '男'),
     (2, '女'),
@@ -87,7 +89,12 @@ PHOTO_SUFFIX = ['jpg', 'png', 'jpeg', 'bmp']
 PHOTO_SIZE = 2 * 1024 * 1024
 
 # IP地址正则
-IP_PATTERN = r'((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)'
+IP_PATTERN = re.compile(r'((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)')
+
+# 手机号正则匹配规则
+# 匹配所有支持短信功能的号码（手机卡 + 上网卡）
+# 参考: https://github.com/VincentSit/ChinaMobilePhoneNumberRegex v1.0.2
+PHONE_REGEX = re.compile(r'^(?:\+?86)?1(?:3\d{3}|5[^4\D]\d{2}|8\d{3}|7(?:[01356789]\d{2}|4(?:0\d|1[0-2]|9\d))|9[189]\d{2}|6[567]\d{2}|4[579]\d{2})\d{6}$')
 
 # Http 请求方式
 GET = 'GET'

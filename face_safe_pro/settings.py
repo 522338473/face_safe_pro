@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 import os
 import sys
+import datetime
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,6 +21,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # 将apps目录加入系统环境变量
 sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
 
+# logs目录配置
+LOG_PATH = os.path.join(BASE_DIR, 'logs')
+if not os.path.exists(LOG_PATH):
+    os.mkdir(LOG_PATH)
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
@@ -27,7 +33,7 @@ sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
 SECRET_KEY = '-e)(zf09nkj)s^8nt+2wpcibw^3f)55l-hg4fc6mr4yt%@w-ox'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(int(os.getenv('DJANGO_DEBUG', 1)))
 
 ALLOWED_HOSTS = ['*']
 
@@ -37,6 +43,7 @@ INSTALLED_APPS = [
     'simplepro',
     'simpleui',
     'import_export',
+    'corsheaders',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -45,6 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_celery_beat',
 
     'apps.public',
     'apps.account',
@@ -56,6 +64,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -84,16 +93,27 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'face_safe_pro.wsgi.application'
+ASGI_APPLICATION = 'face_safe_pro.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
+    'pg': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME', 'face_safe_pro_test'),
+        'USER': os.getenv('DB_USER', 'postgres'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'postgres'),
+        'HOST': os.getenv('DB_HOST', '192.168.3.19'),
+        'PORT': int(os.getenv('DB_PORT', 5432)),
+    },
+    'sqlite': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+DATABASES['default'] = DATABASES[os.getenv('DJANGO_DATABASE', 'sqlite')]
 
 # django3.2之前主键默认int类型，3.2之后默认bigint
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -151,6 +171,105 @@ STATICFILES_DIRS = [
 # 图片上传配置
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media')
+
+REDIS_SITE = ("redis://{}:{}/{}".format(
+    os.getenv('REDIS_SERVER_HOST', '192.168.2.95'),
+    os.getenv('REDIS_SERVER_PORT', '6379'),
+    os.getenv('REDIS_CACHE_DB', '1'))
+)
+REDIS_SERVER_HOST = os.getenv('REDIS_SERVER_HOST', '192.168.2.95')
+REDIS_SERVER_PORT = os.getenv('REDIS_SERVER_PORT', 6379)
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": REDIS_SITE,
+        "TIMEOUT": 60 * 60,
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "CONNECTION_POOL_KWARGS": {"max_connections": 100}  # 连接池
+        }
+    }
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '[%(asctime)s - %(levelname)s - %(lineno)03d] %(message)s'
+        }
+    },
+    'filters': {
+
+    },
+    'handlers': {
+        'default': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(LOG_PATH, 'server.log'),
+            'maxBytes': 1024 * 1024 * 5,
+            'backupCount': 5,
+            'formatter': 'verbose',
+            'encoding': 'utf-8',
+        },
+        'error': {
+            'level': 'ERROR',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(LOG_PATH, 'error.log'),
+            'maxBytes': 1024 * 1024 * 5,
+            'backupCount': 5,
+            'formatter': 'verbose',
+            'encoding': 'utf-8',
+        },
+        'redis': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(LOG_PATH, 'redis.log'),
+            'maxBytes': 1024 * 1024 * 5,
+            'backupCount': 5,
+            'formatter': 'verbose',
+            'encoding': 'utf-8',
+        },
+        'celery': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(LOG_PATH, 'celery.log'),
+            'maxBytes': 1024 * 1024 * 5,
+            'backupCount': 5,
+            'formatter': 'verbose',
+            'encoding': 'utf-8',
+        }
+    },
+    'loggers': {
+        'server.default': {
+            'handlers': ['default'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'server.error': {
+            'handlers': ['error'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'server.redis': {
+            'handlers': ['redis'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'server.celery': {
+            'handlers': ['celery'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        # # SQL输出调试
+        # 'django.db.backends': {
+        #     'handlers': ['console'],
+        #     'propagate': True,
+        #     'level': 'DEBUG',
+        # },
+    }
+}
 
 # 文件存储FastDFS_CONFIG
 FAST_DFS_HOST = os.getenv('FAST_DFS_HOST', 'http://192.168.2.95')
@@ -360,10 +479,40 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 10,
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.AllowAny',
     ),
+    'EXCEPTION_HANDLER': 'utils.exception_handler.custom_exception_handler',
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.AutoSchema',
 }
+
+if DEBUG is False:
+    REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] = ('rest_framework.renderers.JSONRenderer',)
+
+# Jwt配置
+JWT_AUTH = {
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=7),
+    # 'JWT_ALLOW_REFRESH': False,
+    'JWT_AUTH_HEADER_PREFIX': 'JWT',
+    'JWT_VERIFY_EXPIRATION': False
+}
+
+# Celery
+CELERY_BROKER_URL = REDIS_SITE
+CELERY_RESULT_BACKEND = REDIS_SITE
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_RESULT_EXPIRES = 60  # result_expires
+CELERY_TIMEZONE = TIME_ZONE  # 时区统一
+CELERYD_MAX_TASKS_PER_CHILD = 20  # work数量
+CELERYD_TASK_TIME_LIMIT = 60  # 任务超时时间
+DJANGO_CELERY_BEAT_TZ_AWARE = False
+CELERY_ENABLE_UTC = False  # 是否启动UTC时间
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+CELERY_BEAT_SCHEDULE = {}
+
+# CORS 跨域配合
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_ALLOW_ALL = True
