@@ -33,7 +33,7 @@ class Personnel(BaseModel):
     name = fields.CharField(null=False, blank=False, max_length=32, show_word_limit=True, suffix_icon='el-icon-coffee', verbose_name='姓名', placeholder='请输入人员名称')
     gender = fields.IntegerField(choices=constant.GENDER, default=1, verbose_name='性别')
     phone = fields.CharField(null=True, blank=True, max_length=32, show_word_limit=True, suffix_icon='el-icon-coffee', verbose_name='手机号', placeholder='请输入手机号')
-    photo = fields.ImageField(drag=True, action='/upload/archives/', null=True, blank=True, max_length=128, verbose_name='照片')
+    photo = fields.ImageField(drag=True, action='/f_upload/archives/', null=True, blank=True, max_length=128, verbose_name='照片')
     id_card = fields.CharField(null=True, blank=True, max_length=32, show_word_limit=True, suffix_icon='el-icon-coffee', verbose_name='身份证号', placeholder='请输入身份证号码')
     household_register = fields.CharField(null=True, blank=True, max_length=32, show_word_limit=True, suffix_icon='el-icon-coffee', verbose_name='户籍', placeholder='请输入户籍所在地')
     date_of_birth = fields.CharField(null=True, blank=True, max_length=12, suffix_icon='el-icon-coffee', verbose_name='出生年月', placeholder='请输入出生年月: 1900-01-01')

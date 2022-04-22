@@ -32,7 +32,7 @@ urls_v1 = [
 
 urlpatterns = [
                   path('web_upload/', public_view.web_upload_image, name='web_upload'),
-                  path('upload/<file_types>/', public_view.upload_image),
+                  path('f_upload/<file_types>/', public_view.upload_image),
                   path('v1/', include(urls_v1)),  # RestApi
                   path('favicon.ico', RedirectView.as_view(url=r'static/favicon.ico')),  # favicon
                   path('admin/', admin.site.urls, name='admin'),  # admin管理后台
