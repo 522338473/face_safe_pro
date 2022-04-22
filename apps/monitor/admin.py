@@ -59,6 +59,23 @@ class MonitorAdmin(PublicModelAdmin, ImportExportModelAdmin):
 
     operation.short_description = '操作'
 
+    def save_model(self, request, obj, form, change):
+        """重点人员新增"""
+        if change:
+            print('重点人员修改', change)
+        else:
+            print('重点人员新增', change)
+        obj.create_by = request.user.username
+        super(MonitorAdmin, self).save_model(request, obj, form, change)
+
+    def delete_model(self, request, obj):
+        """重点人员删除"""
+        print('重点人员删除')
+        if request.user.is_superuser:
+            obj.delete()
+        else:
+            obj.set_delete()
+
 
 @admin.register(monitor_models.MonitorDiscover)
 class MonitorDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
@@ -269,6 +286,23 @@ class ArchivesPersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin):
         return MultipleCellDialog([trail])
 
     operation.short_description = '操作'
+
+    def save_model(self, request, obj, form, change):
+        """关注人员新增"""
+        if change:
+            print('关注人员修改', change)
+        else:
+            print('关注人员新增', change)
+        obj.create_by = request.user.username
+        super(ArchivesPersonnelAdmin, self).save_model(request, obj, form, change)
+
+    def delete_model(self, request, obj):
+        """关注人员删除"""
+        print('关注人员删除')
+        if request.user.is_superuser:
+            obj.delete()
+        else:
+            obj.set_delete()
 
 
 @admin.register(monitor_models.PhotoCluster)

@@ -109,6 +109,23 @@ class PersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin, AjaxAdmin):
 
     operation.short_description = '操作'
 
+    def save_model(self, request, obj, form, change):
+        """人员档案新增"""
+        if change:
+            print('人员档案修改', change)
+        else:
+            print('人员档案新增', change)
+        obj.create_by = request.user.username
+        super(PersonnelAdmin, self).save_model(request, obj, form, change)
+
+    def delete_model(self, request, obj):
+        """人员档案删除"""
+        print('人员档案删除')
+        if request.user.is_superuser:
+            obj.delete()
+        else:
+            obj.set_delete()
+
 
 @admin.register(archives_models.AccessDiscover)
 class AccessDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
