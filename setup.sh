@@ -47,6 +47,7 @@ echo "初始化配置参数"
 if type docker-compose >/dev/null 2>&1; then
     sed -i 's/"support_group_manage": true/"support_group_manage": false/g' /mnt/data/fastdfs/conf/cfg.json >/dev/null 2>&1
     sed -i 's/"rename_file": false/"rename_file": true/g' /mnt/data/fastdfs/conf/cfg.json >/dev/null 2>&1
+    sed -i 's/"default_download": true/"default_download": false/g' /mnt/data/fastdfs/conf/cfg.json >/dev/null 2>&1
     echo "初始化配置完成, 服务重启中."
 
     if ! type docker-compose restart >/dev/null 2>&1; then
