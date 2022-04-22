@@ -72,7 +72,7 @@
 	"下载是否认证": "默认不认证(注意此选项是在auth_url不为空的情况下生效)",
 	"enable_download_auth": false,
 	"默认是否下载": "默认下载",
-	"default_download": true,
+	"default_download": false,
 	"本机是否只读": "默认可读可写",
 	"read_only": false,
 	"是否开启断点续传": "默认开启",

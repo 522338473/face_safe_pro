@@ -53,9 +53,9 @@ class DevicePhoto(BaseModel):
     device = fields.ForeignKey(to='DeviceInfo', null=True, blank=True, on_delete=models.SET_NULL, verbose_name='所属设备')
 
     take_photo_time = fields.DateTimeField(verbose_name='抓拍时间')
-    head_path = fields.ImageField(drag=True, null=True, blank=True, max_length=64, verbose_name='大头照')
-    body_path = fields.ImageField(drag=True, null=True, blank=True, max_length=64, verbose_name='全身照')
-    back_path = fields.ImageField(drag=True, null=True, blank=True, max_length=64, verbose_name='背景照')
+    head_path = fields.ImageField(drag=True, action='/upload/snap/', null=True, blank=True, max_length=64, verbose_name='大头照')
+    body_path = fields.ImageField(drag=True, action='/upload/snap/', null=True, blank=True, max_length=64, verbose_name='全身照')
+    back_path = fields.ImageField(drag=True, action='/upload/snap/', null=True, blank=True, max_length=64, verbose_name='背景照')
     face_data = models.JSONField(null=True, blank=True, verbose_name='面部属性')
     human_data = models.JSONField(null=True, blank=True, verbose_name='身体属性')
     address = fields.AMapField(max_length=128, null=True, blank=True, pick_type='address', verbose_name='抓拍地址')
@@ -102,9 +102,9 @@ class Vehicle(BaseModel):
     types = fields.CharField(null=True, blank=True, max_length=8, verbose_name='车辆类型')
     color = fields.CharField(null=True, blank=True, max_length=8, verbose_name='车辆颜色')
     plate = fields.CharField(null=True, blank=True, max_length=8, verbose_name='车牌号')
-    plate_path = fields.ImageField(drag=True, null=True, blank=True, max_length=64, verbose_name='车牌照')
-    vehicle_path = fields.ImageField(drag=True, null=True, blank=True, max_length=64, verbose_name='车辆特写照')
-    panorama_path = fields.ImageField(drag=True, null=True, blank=True, max_length=64, verbose_name='车辆全景照')
+    plate_path = fields.ImageField(drag=True, action='/upload/snap/', null=True, blank=True, max_length=64, verbose_name='车牌照')
+    vehicle_path = fields.ImageField(drag=True, action='/upload/snap/', null=True, blank=True, max_length=64, verbose_name='车辆特写照')
+    panorama_path = fields.ImageField(drag=True, action='/upload/snap/', null=True, blank=True, max_length=64, verbose_name='车辆全景照')
     address = fields.AMapField(max_length=128, null=True, blank=True, pick_type='address', verbose_name='抓拍地址')
     geo = fields.AMapField(max_length=32, null=True, blank=True, verbose_name='经纬度坐标')
 
@@ -147,8 +147,8 @@ class Motor(BaseModel):
 
     take_photo_time = fields.DateTimeField(verbose_name='抓拍时间')
     types = fields.CharField(null=True, blank=True, max_length=8, verbose_name='车辆类型')
-    motor_path = fields.ImageField(drag=True, null=True, blank=True, max_length=64, verbose_name='车辆特写照')
-    panorama_path = fields.ImageField(drag=True, null=True, blank=True, max_length=64, verbose_name='车辆全景照')
+    motor_path = fields.ImageField(drag=True, action='/upload/snap/', null=True, blank=True, max_length=64, verbose_name='车辆特写照')
+    panorama_path = fields.ImageField(drag=True, action='/upload/snap/', null=True, blank=True, max_length=64, verbose_name='车辆全景照')
     address = fields.AMapField(max_length=128, null=True, blank=True, pick_type='address', verbose_name='抓拍地址')
     geo = fields.AMapField(max_length=32, null=True, blank=True, verbose_name='经纬度经纬度')
 
@@ -181,7 +181,7 @@ class DeviceOffLine(BaseModel):
 
     checked = fields.SwitchField(default=False, verbose_name='已读未读')
     alarm_type = fields.CharField(max_length=32, show_word_limit=True, suffix_icon='el-icon-coffee', default='设备离线', verbose_name='报警类型')
-    photo_path = fields.ImageField(drag=True, null=True, blank=True, max_length=64, verbose_name='图片路径')
+    photo_path = fields.ImageField(drag=True, action='/upload/snap/', null=True, blank=True, max_length=64, verbose_name='图片路径')
 
     class Meta:
         verbose_name = "设备报警"

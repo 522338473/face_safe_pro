@@ -34,7 +34,7 @@ class Monitor(BaseModel):
     name = fields.CharField(null=False, blank=False, max_length=32, show_word_limit=True, suffix_icon='el-icon-coffee', verbose_name='姓名', placeholder='请输入重点人员姓名')
     gender = fields.IntegerField(choices=constant.GENDER, default=1, verbose_name='性别')
     types = fields.IntegerField(choices=constant.PERSON_TYPES, default=0, verbose_name='人员分类')
-    photo = fields.ImageField(drag=True, null=True, blank=True, max_length=128, verbose_name='照片')
+    photo = fields.ImageField(drag=True, action='/upload/monitor/', null=True, blank=True, max_length=128, verbose_name='照片')
     area = fields.SwitchField(default=False, verbose_name='是否禁区')
     area_personnel = fields.IntegerField(null=True, blank=True, verbose_name='禁区关联人员ID')
     num_values = fields.IntegerField(default=0, verbose_name='关联次数')
@@ -224,7 +224,7 @@ class ArchivesPersonnel(BaseModel):
     gender = fields.IntegerField(choices=constant.GENDER, default=1, verbose_name='性别')
     phone = fields.CharField(null=True, blank=True, max_length=32, show_word_limit=True, suffix_icon='el-icon-coffee', verbose_name='电话号码', placeholder='请输入电话号码')
     id_card = fields.CharField(null=True, blank=True, max_length=32, show_word_limit=True, suffix_icon='el-icon-coffee', verbose_name='身份证号', placeholder='请输入身份证号码')
-    photo = fields.ImageField(drag=True, null=True, blank=True, max_length=128, verbose_name='照片')
+    photo = fields.ImageField(drag=True, action='/upload/personnel/', null=True, blank=True, max_length=128, verbose_name='照片')
 
     class Meta:
         verbose_name = '归档人员'
@@ -250,9 +250,9 @@ class PhotoCluster(BaseModel):
     device_ip = models.GenericIPAddressField(null=True, blank=True, verbose_name='IP地址')
     device_channel = fields.IntegerField(default=0, verbose_name='通道号')
     device_take_photo_time = fields.DateTimeField(verbose_name='抓拍时间')
-    device_head_path = fields.ImageField(drag=True, null=True, blank=True, max_length=64, verbose_name='大头照')
-    device_body_path = fields.ImageField(drag=True, null=True, blank=True, max_length=64, verbose_name='全身照')
-    device_back_path = fields.ImageField(drag=True, null=True, blank=True, max_length=64, verbose_name='背景照')
+    device_head_path = fields.ImageField(drag=True, action='/upload/snap/', null=True, blank=True, max_length=64, verbose_name='大头照')
+    device_body_path = fields.ImageField(drag=True, action='/upload/snap/', null=True, blank=True, max_length=64, verbose_name='全身照')
+    device_back_path = fields.ImageField(drag=True, action='/upload/snap/', null=True, blank=True, max_length=64, verbose_name='背景照')
     device_face_data = models.JSONField(null=True, blank=True, verbose_name='面部属性')
     device_human_data = models.JSONField(null=True, blank=True, verbose_name='身体属性')
     similarity = fields.CharField(null=True, blank=True, max_length=12, verbose_name='相似度')

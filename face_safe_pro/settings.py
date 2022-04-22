@@ -547,3 +547,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 # 搜索服务器地址
 SEARCH_SERVER_HOST = os.getenv('SEARCH_SERVER_HOST', 'http://192.168.2.95:5000')
+
+# 双网卡配置
+DOUBLE_NETWORK = os.getenv('DOUBLE_NETWORK', 0)  # 是否双网卡
+D_REDIS_SERVER_HOST = os.getenv('D_REDIS_SERVER_HOST', '192.168.4.10')  # 双网卡IP
