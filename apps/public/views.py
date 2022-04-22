@@ -107,7 +107,7 @@ def upload_image(request, file_types=None):
         'message': '上传成功哈哈哈',
         'url': None
     }
-    if not file_types:  # 默认抓拍抓拍路径
+    if file_types == 'snap':  # 默认抓拍抓拍路径
         path = ''.join([FILE_PATH_PREFIX, '/snap/', time.strftime('%Y/%m/%d', time.localtime())])
     elif file_types == 'archives':  # 人员档案路径
         path = ''.join([FILE_PATH_PREFIX, '/archives/'])
