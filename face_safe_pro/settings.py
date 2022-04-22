@@ -15,6 +15,8 @@ import sys
 import datetime
 from pathlib import Path
 
+from celery.schedules import crontab
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -511,7 +513,33 @@ CELERYD_TASK_TIME_LIMIT = 60  # 任务超时时间
 DJANGO_CELERY_BEAT_TZ_AWARE = False
 CELERY_ENABLE_UTC = False  # 是否启动UTC时间
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
-CELERY_BEAT_SCHEDULE = {}
+CELERY_BEAT_SCHEDULE = {
+    'device_status': {  # 5分钟更新设备状态
+        'task': 'device.tasks.device_status',
+        'schedule': datetime.timedelta(minutes=5),
+        'args': None
+    },
+    'device_count': {  # 1小时更新设备抓拍
+        'task': 'device.tasks.device_count',
+        'schedule': datetime.timedelta(hours=1),
+        'args': None
+    },
+    'photo_cluster': {  # 每日 2:30 自动对昨天的数据进行归类处理
+        'task': 'monitor.tasks.photo_cluster',
+        'schedule': crontab(hour=2, minute=30),
+        'args': None
+    },
+    'clear_disk': {  # 30分钟检查磁盘并清理过期数据
+        'task': 'public.tasks.clear_disk',
+        'schedule': datetime.timedelta(minutes=30),
+        'args': None
+    },
+    'device_alarm': {  # 30s更新设备事件报警
+        'task': 'device.tasks.device_alarm',
+        'schedule': datetime.timedelta(seconds=30),
+        'args': None
+    },
+}
 
 # CORS 跨域配合
 CORS_ALLOW_CREDENTIALS = True
