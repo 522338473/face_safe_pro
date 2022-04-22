@@ -6,6 +6,7 @@ import requests
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from django.http import JsonResponse
+from django.conf import settings
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.generics import get_object_or_404
@@ -127,7 +128,7 @@ def upload_image(request, file_types=None):
         'path': path,
         'scene': ''
     }
-    res = requests.post('http://192.168.2.95:8089/upload', data=options, files=files).json()
+    res = requests.post(url=''.join([settings.FAST_DFS_HOST, '/upload']), data=options, files=files).json()
     res_upload['url'] = res['path']
     return JsonResponse(res_upload)
 
@@ -152,6 +153,6 @@ def web_upload_image(request, *args, **kwargs):
         'path': path,
         'scene': ''
     }
-    res = requests.post('http://192.168.2.95:8089/upload', data=options, files=files).json()
+    res = requests.post(url=''.join([settings.FAST_DFS_HOST, '/upload']), data=options, files=files).json()
     res_upload['url'] = res['url']
     return JsonResponse(res_upload)
