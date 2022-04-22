@@ -19,6 +19,7 @@ django-cors-headers = "*"
 django-celery-beat = "*"
 djangorestframework-jwt = "*"
 channels = "*"
+psycopg2-binary = "*"
 
 [requires]
 python_version = "3.6"
