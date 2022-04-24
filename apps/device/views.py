@@ -133,26 +133,28 @@ class DevicePhotoViewSet(HashRetrieveViewSetMixin, ModelViewSet):
         vehicle_query = device_model.Vehicle.objects.all()
 
         if end_date - start_date <= days:
-            format_str = '%Y-%m-%d:%H'
             face_list = face_query.filter(take_photo_time__range=(start_date, end_date)) \
-                .annotate(date=TruncHour('take_photo_time')).values('date').annotate(count=Count('date')).order_by()
-            vehicle_list = vehicle_query.filter(take_photo_time__range=(start_date, end_date)) \
-                .annotate(date=TruncHour('take_photo_time')).values('date').annotate(count=Count('date')).order_by()
+                .extra(select={"take_photo_time": "to_char(take_photo_time, 'yyyy-mm-dd:HH24')"}).values('take_photo_time') \
+                .annotate(count=Count('take_photo_time')).values('take_photo_time', 'count').order_by()
+            car_list = vehicle_query.filter(take_photo_time__range=(start_date, end_date)) \
+                .extra(select={"take_photo_time": "to_char(take_photo_time, 'yyyy-mm-dd:HH24')"}).values('take_photo_time') \
+                .annotate(count=Count('take_photo_time')).values('take_photo_time', 'count').order_by()
         else:
-            format_str = '%Y-%m-%d'
             face_list = face_query.filter(take_photo_time__range=(start_date, end_date)) \
-                .annotate(date=TruncDay('take_photo_time')).values('date').annotate(count=Count('date')).order_by()
-            vehicle_list = vehicle_query.filter(take_photo_time__range=(start_date, end_date)) \
-                .annotate(date=TruncDay('take_photo_time')).values('date').annotate(count=Count('date')).order_by()
-        for face in face_list:
-            count_list['people_count'].append({
-                'date': face['date'].strftime(format_str),
-                'count': face['count']
-            })
-        for vehicle in vehicle_list:
-            count_list['vehicle_count'].append({
-                'date': vehicle['date'].strftime(format_str),
-                'count': vehicle['count']
-            })
+                .extra(select={"take_photo_time": "to_char(take_photo_time, 'yyyy-mm-dd')"}).values('take_photo_time') \
+                .annotate(count=Count('take_photo_time')).values('take_photo_time', 'count').order_by()
+            car_list = vehicle_query.filter(take_photo_time__range=(start_date, end_date)) \
+                .extra(select={"take_photo_time": "to_char(take_photo_time, 'yyyy-mm-dd')"}).values('take_photo_time') \
+                .annotate(count=Count('take_photo_time')).values('take_photo_time', 'count').order_by()
 
+        for result in face_list:
+            count_list['people_count'].append({
+                'date': result['take_photo_time'],
+                'count': result['count'],
+            })
+        for car in car_list:
+            count_list['vehicle_count'].append({
+                'date': car['take_photo_time'],
+                'count': car['count']
+            })
         return Response(count_list)

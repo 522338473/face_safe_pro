@@ -122,27 +122,27 @@ Vue.component('home-line', {
 
             options: [
                 {
-                    value: 1,
+                    value: 0,
                     label: '最近一天'
                 },
                 {
-                    value: 3,
+                    value: 2,
                     label: '最近三天'
                 },
                 {
-                    value: 7,
+                    value: 6,
                     label: '最近七天'
                 },
                 {
-                    value: 15,
+                    value: 14,
                     label: '最近半个月'
                 },
                 {
-                    value: 30,
+                    value: 29,
                     label: '最近一个月'
                 }
             ],
-            value: 1
+            value: 0
         }
     },
     mounted() {
@@ -152,7 +152,7 @@ Vue.component('home-line', {
         time_change: function () {
             //请求数据 伪代码
             let start_time = new Date(new Date(new Date(new Date().setHours(0, 0, 0, 0)).setDate(new Date(new Date().setHours(0, 0, 0, 0)).getDate() - this.value))).format("YYYYMMDDhhmmss");
-            let end_time = new Date(new Date().setHours(0, 0, 0, 0)).format("YYYYMMDDhhmmss");
+            let end_time = new Date(new Date().setHours(23, 59, 59, 0)).format("YYYYMMDDhhmmss");
             let self = this;
             let params = {
                 start_time: start_time,
