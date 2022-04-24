@@ -1,7 +1,9 @@
-from django.contrib import messages
+import base64
+import requests
 
-# Register your models here.
+from django.contrib import messages
 from django.http import JsonResponse
+from django.conf import settings
 
 
 class PublicModelAdmin:
@@ -59,6 +61,7 @@ class PublicModelAdmin:
         """
         obj.create_by = request.user.username
         obj.save()
+        return obj
 
     def get_query_params(self, request, name, default=None):
         """
@@ -69,6 +72,15 @@ class PublicModelAdmin:
         :return:
         """
         return request.POST.get(name, default) or request.GET.get(name, default)
+
+    @staticmethod
+    def get_head_url(request):
+        """返回人脸完整路径"""
+        return ''.join([settings.FAST_DFS_HOST, request.POST.get('photo')])
+
+    def get_b64_image(self, request):
+        """获取人脸b64"""
+        return base64.b64encode(requests.get(url=self.get_head_url(request)).content).decode()
 
     def get_current_page(self, request):
         """获取当前页码"""

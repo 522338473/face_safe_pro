@@ -10,7 +10,6 @@ from django.conf import settings
 
 from rest_framework.exceptions import ParseError
 
-from device.models import DevicePhoto
 from utils.hasher import Hasher
 from utils.job_queue import redis_cache
 from utils.search_status import search_status

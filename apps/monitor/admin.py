@@ -8,6 +8,7 @@ from apps.monitor import models as monitor_models
 from apps.public.admin import PublicModelAdmin
 from apps.public.resources import MonitorResources, ArchivesPersonnelResources
 from apps.utils.constant import VIDEO_PLAY_TYPE, DETAIL_TYPE
+from apps.utils.face_discern import face_discern
 
 
 # Register your models here.
@@ -61,20 +62,49 @@ class MonitorAdmin(PublicModelAdmin, ImportExportModelAdmin):
 
     def save_model(self, request, obj, form, change):
         """重点人员新增"""
-        if change:
-            print('重点人员修改', change)
-        else:
-            print('重点人员新增', change)
         obj.create_by = request.user.username
-        super(MonitorAdmin, self).save_model(request, obj, form, change)
+        instance = super(MonitorAdmin, self).save_model(request, obj, form, change)
+        if not change:
+            try:
+                image = self.get_b64_image(request)
+                result = face_discern.face_warning_add(
+                    image=image, user_id=instance.hash
+                )
+                if result.get('error') == -1:
+                    instance.set_delete()
+                    self.message_user(request, '人脸注册失败')
+            except Exception as e:
+                instance.set_delete()
+                self.message_user(request, '人脸注册失败')
 
     def delete_model(self, request, obj):
         """重点人员删除"""
-        print('重点人员删除')
-        if request.user.is_superuser:
-            obj.delete()
-        else:
-            obj.set_delete()
+        try:
+            result = face_discern.face_warning_detect(user_id=obj.hash)
+            if result.get('error') == -1:
+                pass
+        except Exception as e:
+            pass
+        finally:
+            if request.user.is_superuser:
+                obj.delete()
+            else:
+                obj.set_delete()
+
+    def delete_queryset(self, request, queryset):
+
+        for query in queryset:
+            try:
+                result = face_discern.face_warning_detect(user_id=query.hash)
+                if result.get('error') == -1:
+                    pass
+            except Exception as e:
+                pass
+            finally:
+                if request.user.is_superuser:
+                    query.delete()
+                else:
+                    query.set_delete()
 
 
 @admin.register(monitor_models.MonitorDiscover)
@@ -289,20 +319,48 @@ class ArchivesPersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin):
 
     def save_model(self, request, obj, form, change):
         """关注人员新增"""
-        if change:
-            print('关注人员修改', change)
-        else:
-            print('关注人员新增', change)
         obj.create_by = request.user.username
-        super(ArchivesPersonnelAdmin, self).save_model(request, obj, form, change)
+        instance = super(ArchivesPersonnelAdmin, self).save_model(request, obj, form, change)
+        if not change:
+            try:
+                image = self.get_b64_image(request)
+                result = face_discern.face_focus_add(
+                    image=image, user_id=instance.hash
+                )
+                if result.get('error') == -1:
+                    instance.set_delete()
+                    self.message_user(request, '人脸注册失败')
+            except Exception as e:
+                instance.set_delete()
+                self.message_user(request, '人脸注册失败')
 
     def delete_model(self, request, obj):
         """关注人员删除"""
-        print('关注人员删除')
-        if request.user.is_superuser:
-            obj.delete()
-        else:
-            obj.set_delete()
+        try:
+            result = face_discern.face_focus_del(user_id=obj.hash)
+            if result.get('error') == -1:
+                pass
+        except Exception as e:
+            pass
+        finally:
+            if request.user.is_superuser:
+                obj.delete()
+            else:
+                obj.set_delete()
+
+    def delete_queryset(self, request, queryset):
+        for query in queryset:
+            try:
+                result = face_discern.face_focus_del(user_id=query.hash)
+                if result.get('error') == -1:
+                    pass
+            except Exception as e:
+                pass
+            finally:
+                if request.user.is_superuser:
+                    query.delete()
+                else:
+                    query.set_delete()
 
 
 @admin.register(monitor_models.PhotoCluster)

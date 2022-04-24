@@ -9,6 +9,7 @@ from apps.archives import models as archives_models
 from apps.public.admin import PublicModelAdmin
 from apps.public.resources import PersonnelResources
 from apps.utils.constant import VIDEO_PLAY_TYPE, DETAIL_TYPE
+from apps.utils.face_discern import face_discern
 
 
 # Register your models here.
@@ -111,20 +112,49 @@ class PersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin, AjaxAdmin):
 
     def save_model(self, request, obj, form, change):
         """人员档案新增"""
-        if change:
-            print('人员档案修改', change)
-        else:
-            print('人员档案新增', change)
         obj.create_by = request.user.username
-        super(PersonnelAdmin, self).save_model(request, obj, form, change)
+        instance = super(PersonnelAdmin, self).save_model(request, obj, form, change)
+        if not change:
+            try:
+                image = self.get_b64_image(request)
+                result = face_discern.face_add(
+                    image=image, user_id=instance.hash
+                )
+                if result.get('error') == -1:
+                    instance.set_delete()
+                    self.message_user(request, '人脸注册失败')
+            except Exception as e:
+                instance.set_delete()
+                self.message_user(request, '人脸注册失败')
 
     def delete_model(self, request, obj):
-        """人员档案删除"""
-        print('人员档案删除')
-        if request.user.is_superuser:
-            obj.delete()
-        else:
-            obj.set_delete()
+        """人员档案表单删除: 无论算法删除与否。页面必须删除"""
+        try:
+            result = face_discern.face_del(user_id=obj.hash)
+            if result.get('error') == -1:
+                pass
+        except Exception as e:
+            pass
+        finally:
+            if request.user.is_superuser:
+                obj.delete()
+            else:
+                obj.set_delete()
+
+    def delete_queryset(self, request, queryset):
+        """人员档案列表删除: 无论算法删除与否。页面必须删除"""
+        for query in queryset:
+            try:
+                result = face_discern.face_del(user_id=query.hash)
+                if result.get('error') == -1:
+                    pass
+            except Exception as e:
+                pass
+            finally:
+                if request.user.is_superuser:
+                    query.delete()
+                else:
+                    query.set_delete()
 
 
 @admin.register(archives_models.AccessDiscover)
