@@ -6,6 +6,7 @@ from simplepro.dialog import ModalDialog, MultipleCellDialog
 from apps.device import models as device_models
 from apps.public.admin import PublicModelAdmin
 from apps.utils.constant import VIDEO_PLAY_TYPE, DETAIL_TYPE
+from apps.utils.job_queue import redis_queue
 
 
 # Register your models here.
@@ -67,6 +68,42 @@ class DeviceInfoAdmin(PublicModelAdmin, admin.ModelAdmin):
 
     operation.short_description = '操作'
 
+    def save_model(self, request, obj, form, change):
+        """保存数据之前做点额外的操作"""
+        obj.create_by = request.user.username
+        instance = super(DeviceInfoAdmin, self).save_model(request, obj, form, change)
+        if instance.device_type == 0 or instance.device_type == 3:  # 普通设备触发
+            if change:
+                self.push_device_info(ip=instance.ip, rtsp_address=instance.rtsp_address, device_type=instance.device_type, command='del')
+                self.push_device_info(ip=instance.ip, rtsp_address=instance.rtsp_address, device_type=instance.device_type, command='add')
+            else:
+                self.push_device_info(ip=instance.ip, rtsp_address=instance.rtsp_address, device_type=instance.device_type, command='add')
+
+    def delete_queryset(self, request, queryset):
+        for query in queryset:
+            if query.device_type == 0 or query.device_type == 3:  # 普通设备触发
+                self.push_device_info(ip=query.ip, rtsp_address=query.rtsp_address, device_type=query.device_type)
+                if request.user.is_superuser:
+                    query.delete()
+                else:
+                    query.set_delete()
+
+    def delete_model(self, request, obj):
+        if obj.device_type == 0 or obj.device_type == 3:  # 普通设备触发
+            self.push_device_info(ip=obj.ip, rtsp_address=obj.rtsp_address, device_type=obj.device_type)
+            if request.user.is_superuser:
+                obj.delete()
+            else:
+                obj.set_delete()
+
+    @staticmethod
+    def push_device_info(ip=None, rtsp_address=None, device_type=None, command=None):
+        """设备rtsp流推送"""
+        device_info = {
+            'command': command,
+            'data': [ip, rtsp_address, device_type]
+        }
+        redis_queue.device_enqueue(device_info)
 
 @admin.register(device_models.DevicePhoto)
 class DevicePhotoAdmin(PublicModelAdmin, admin.ModelAdmin):
