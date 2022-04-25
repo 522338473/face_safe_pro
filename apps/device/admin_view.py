@@ -33,7 +33,6 @@ class PhotoSearchView(ParseJsonView, View):
             photo = monitor_models.Monitor.objects.get(id=self.hash_to_pk(id)).get_head_url()
         else:
             photo = device_models.DevicePhoto.objects.get(id=self.hash_to_pk(id)).get_head_url()
-        print(detail_type, photo)
         return render(request, 'admin/popup/device/photo_search.html', locals())
 
 
@@ -58,10 +57,11 @@ class PhotoDetailView(ParseJsonView, View):
         face_data = instance.face_data
         take_photo_time = instance.take_photo_time
         if detail_type == '0':
+            similarity = similarity
             if request.GET.get('monitor_id'):
                 sample_url = device_models.DevicePhoto.objects.get(id=self.hash_to_pk(request.GET.get('monitor_id'))).get_head_url()
-                similarity = similarity
-
+            if request.GET.get('photo'):
+                sample_url = request.GET.get('photo')
         elif detail_type == '4':
             monitor_ins = monitor_models.MonitorDiscover.objects.get(id=self.hash_to_pk(_id))
             similarity = monitor_ins.similarity

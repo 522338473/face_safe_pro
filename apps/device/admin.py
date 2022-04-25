@@ -17,7 +17,7 @@ class DeviceInfoAdmin(PublicModelAdmin, admin.ModelAdmin):
     list_display = ['id', 'name', 'ip', 'address', 'status', 'channel', 'operation']
     list_filter = ['name', 'device_type', 'create_at']
     exclude = ['last_login', 'last_logout', 'snap_count', 'monitor_count']
-    list_per_page = 3
+    list_per_page = 10
     change_list_template = 'admin/device/deviceinfo/change_list.html'
     fields_options = {
         'id': {
