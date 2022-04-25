@@ -29,20 +29,8 @@ class PhotoSearchView(ParseJsonView, View):
         """以图搜图页面返回"""
         id = request.GET.get('id')
         detail_type = request.GET.get('detail_type')
+        photo = monitor_models.Monitor.objects.get(id=self.hash_to_pk(id)).get_head_url()
         return render(request, 'admin/popup/device/photo_search.html', locals())
-
-    def post(self, request):
-        """以图搜图数据获取"""
-        request_data = self.parse_body(request)
-        current_page = request_data.get('current_page', 1)
-        page_size = request_data.get('page_size', 10)
-        paginate = request_data.get('paginate')
-        _id = request_data.get('id')
-        _photo_list = device_models.DevicePhoto.objects.filter(id=self.hash_to_pk(_id)).order_by('-id').values()
-        # _photo_list = device_models.DevicePhoto.objects.order_by('-id').values()
-        photo_page = Paginator(_photo_list, page_size)
-        if photo_page.page_range.start <= current_page <= photo_page.page_range.stop:
-            return self.paginate_response(photo_page, current_page, paginate)
 
 
 class PhotoDetailView(ParseJsonView, View):
@@ -51,9 +39,12 @@ class PhotoDetailView(ParseJsonView, View):
     def get(self, request):
         """以图搜图页面详情"""
         _id = request.GET.get('id')
-
+        similarity = request.GET.get('similarity')
         detail_type = request.GET.get('detail_type')
-        instance = monitor_models.MonitorDiscover.objects.get(id=self.hash_to_pk(_id)).record
+        if detail_type in ['0', '5']:
+            instance = device_models.DevicePhoto.objects.get(id=self.hash_to_pk(_id))
+        else:
+            instance = monitor_models.MonitorDiscover.objects.get(id=self.hash_to_pk(_id)).record
         head_path = instance.head_path
         body_path = instance.body_path
         back_path = instance.back_path
@@ -74,7 +65,7 @@ class PhotoDetailView(ParseJsonView, View):
         elif detail_type == '5':
             monitor_id = request.GET.get('monitor_id')
             monitor_ins = monitor_models.Monitor.objects.get(id=self.hash_to_pk(monitor_id))
-            similarity = '70'
+            similarity = similarity
             monitor_name = monitor_ins.name
             sample_url = monitor_ins.photo
 
