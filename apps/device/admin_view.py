@@ -38,8 +38,8 @@ class PhotoSearchView(ParseJsonView, View):
         page_size = request_data.get('page_size', 10)
         paginate = request_data.get('paginate')
         _id = request_data.get('id')
-        # _photo_list = models.DevicePhoto.objects.filter(id=_id).order_by('-id').values()
-        _photo_list = device_models.DevicePhoto.objects.order_by('-id').values()
+        _photo_list = device_models.DevicePhoto.objects.filter(id=self.hash_to_pk(_id)).order_by('-id').values()
+        # _photo_list = device_models.DevicePhoto.objects.order_by('-id').values()
         photo_page = Paginator(_photo_list, page_size)
         if photo_page.page_range.start <= current_page <= photo_page.page_range.stop:
             return self.paginate_response(photo_page, current_page, paginate)
@@ -89,15 +89,11 @@ class SearchImageView(ParseJsonView, View):
         _id = request.GET.get('id')
 
         if _id:
-            url = archives_models.Personnel.objects.get(id=self.hash_to_pk(_id)).photo
+            url = archives_models.Personnel.objects.get(id=self.hash_to_pk(_id)).get_head_url()
         else:
             url = 'https://wimg.588ku.com/gif620/20/12/15/b0f831231ece9b4e422adf9bcb271c51.gif'
 
         return render(request, 'admin/device/other/search_image.html', locals())
-
-    def post(self, request):
-        """以图搜图数据返回"""
-        pass
 
 
 class VehicleSearchView(ParseJsonView, View):
@@ -114,8 +110,8 @@ class VehicleSearchView(ParseJsonView, View):
         paginate = request_data.get('paginate')
         _id = request_data.get('id')
         _plate = device_models.Vehicle.objects.get(id=self.hash_to_pk(_id)).plate
-        # _photo_list = models.Vehicle.objects.filter(plate=_plate).order_by('-id').values('id', 'device__name', 'address', 'take_photo_time', 'plate_path')
-        _photo_list = device_models.Vehicle.objects.order_by('-id').values('id', 'device__name', 'address', 'take_photo_time', 'plate_path')
+        _photo_list = device_models.Vehicle.objects.filter(plate=_plate).order_by('-id').values('id', 'device__name', 'address', 'take_photo_time', 'plate_path')
+        # _photo_list = device_models.Vehicle.objects.order_by('-id').values('id', 'device__name', 'address', 'take_photo_time', 'plate_path')
         photo_page = Paginator(_photo_list, page_size)
         if photo_page.page_range.start <= current_page <= photo_page.page_range.stop:
             return self.paginate_response(photo_page, current_page, paginate)

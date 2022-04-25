@@ -105,6 +105,7 @@ class DeviceInfoAdmin(PublicModelAdmin, admin.ModelAdmin):
         }
         redis_queue.device_enqueue(device_info)
 
+
 @admin.register(device_models.DevicePhoto)
 class DevicePhotoAdmin(PublicModelAdmin, admin.ModelAdmin):
     list_display = ['id', 'address', 'take_photo_time', 'image', 'operation']
