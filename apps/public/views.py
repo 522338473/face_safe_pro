@@ -94,6 +94,15 @@ class ParseJsonView:
             raise ParseError('parse error')
         return pk
 
+    @staticmethod
+    def get_head_url(request):
+        """返回人脸url"""
+        return request.POST.get('photo')
+
+    def get_b64_image(self, request):
+        """获取人脸b64"""
+        return base64.b64encode(requests.get(url=self.get_head_url(request)).content).decode()
+
 
 def page_not_found(request, *args, **kwargs):
     return render(request, '404/404.html')

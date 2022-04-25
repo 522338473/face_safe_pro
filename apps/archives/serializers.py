@@ -26,8 +26,17 @@ class PersonnelSerializer(serializers.ModelSerializer):
     """人员serializer管理器"""
 
     id = serializers.ReadOnlyField(source='hash')
-    archives_group = ArchivesGroupSerializer()
+    archives_group = ArchivesGroupSerializer(read_only=True)
+    similarity = serializers.SerializerMethodField()
+
+    @staticmethod
+    def get_similarity(obj):
+        """增加扩展字段"""
+        try:
+            return obj.similarity
+        except Exception as e:
+            return ''
 
     class Meta:
         model = models.Personnel
-        fields = ['id', 'archives_group', 'name', 'photo', 'gender', 'phone', 'id_card', 'address', 'date_of_birth', 'household_register', 'nationality']
+        fields = ['id', 'archives_group', 'name', 'photo', 'gender', 'phone', 'id_card', 'address', 'date_of_birth', 'household_register', 'nationality', 'similarity']

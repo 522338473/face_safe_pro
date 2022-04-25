@@ -9,7 +9,6 @@
 
 from django.views import View
 from django.shortcuts import render
-from django.core.paginator import Paginator
 
 from apps.archives import models
 from apps.public.views import ParseJsonView
@@ -21,10 +20,6 @@ class SearchPersonnelView(ParseJsonView, View):
     def get(self, request):
         """以人搜图模板"""
         return render(request, 'admin/archives/other/search_person.html', locals())
-
-    def post(self, request):
-        """数据返回"""
-        return
 
 
 class AccessPassDetailView(ParseJsonView, View):

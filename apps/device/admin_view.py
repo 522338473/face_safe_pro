@@ -95,10 +95,9 @@ class SearchImageView(ParseJsonView, View):
 
         return render(request, 'admin/device/other/search_image.html', locals())
 
-
-def post(self, request):
-    """以图搜图数据返回"""
-    pass
+    def post(self, request):
+        """以图搜图数据返回"""
+        pass
 
 
 class VehicleSearchView(ParseJsonView, View):

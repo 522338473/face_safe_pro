@@ -1,3 +1,6 @@
+import requests
+import base64
+
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -5,6 +8,7 @@ from rest_framework.response import Response
 from apps.archives import models
 from apps.archives import serializers
 from apps.public.views import HashRetrieveViewSetMixin
+from apps.utils.face_discern import  face_discern
 
 
 # Create your views here.
@@ -70,4 +74,22 @@ class PersonnelViewSet(HashRetrieveViewSetMixin, ModelViewSet):
                 return self.get_paginated_response(serializer.data)
 
             serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @action(methods=['POST'], detail=False, url_path='search-identity')
+    def search_identity(self, request):
+        """以图搜身份"""
+        photo = request.POST.get('photo')
+        image = base64.b64encode(requests.get(url=photo).content).decode()
+        face_id_list = face_discern.face_search(image=image)
+        check_id_list = [face[0] for face in face_id_list]
+        check_similarity_list = [face[1] for face in face_id_list]
+        query_list = list(self.queryset.in_bulk(check_id_list).values())
+        query_list.sort(key=lambda x: x.id)
+        if check_similarity_list is not None:
+            for query in query_list:
+                query.similarity = check_similarity_list[query_list.index(query)]
+            query_list.sort(key=lambda x: x.similarity, reverse=True)
+
+        serializer = self.get_serializer(query_list, many=True)
         return Response(serializer.data)
