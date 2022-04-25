@@ -53,7 +53,7 @@ class PhotoDetailView(ParseJsonView, View):
         _id = request.GET.get('id')
 
         detail_type = request.GET.get('detail_type')
-        instance = device_models.DevicePhoto.objects.get(id=self.hash_to_pk(_id))
+        instance = monitor_models.MonitorDiscover.objects.get(id=self.hash_to_pk(_id)).record
         head_path = instance.head_path
         body_path = instance.body_path
         back_path = instance.back_path
