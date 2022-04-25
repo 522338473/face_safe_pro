@@ -15,12 +15,7 @@
     <div id="app">
         <el-col :span="4">
             <div style="width: 190px; height: 110px; text-align: center;">
-                {% if detail_type == '4' %}
-                    <div style="width: 95px; height: 110px; float: left; overflow: hidden">
-                        <h5>原图像</h5>
-                        <el-image src="{{ sample_url }}" style="width: 100%;"></el-image>
-                    </div>
-                {% elif detail_type == '5' %}
+                {% if sample_url %}
                     <div style="width: 95px; height: 110px; float: left; overflow: hidden">
                         <h5>原图像</h5>
                         <el-image src="{{ sample_url }}" style="width: 100%;"></el-image>
@@ -32,9 +27,7 @@
                     <el-image src="{{ head_path }}" style="width: 100%"></el-image>
                 </div>
             </div>
-            {% if detail_type == '4' %}
-                <h5 style="margin-top: 10px; margin-bottom: 10px">相似度: {{ similarity }}%</h5>
-            {% elif detail_type == '5' %}
+            {% if similarity %}
                 <h5 style="margin-top: 10px; margin-bottom: 10px">相似度: {{ similarity }}%</h5>
             {% else %}
                 <h5 style="margin-top: 10px; margin-bottom: 10px">全身照</h5>

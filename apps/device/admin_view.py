@@ -29,7 +29,11 @@ class PhotoSearchView(ParseJsonView, View):
         """以图搜图页面返回"""
         id = request.GET.get('id')
         detail_type = request.GET.get('detail_type')
-        photo = monitor_models.Monitor.objects.get(id=self.hash_to_pk(id)).get_head_url()
+        if detail_type == '5':
+            photo = monitor_models.Monitor.objects.get(id=self.hash_to_pk(id)).get_head_url()
+        else:
+            photo = device_models.DevicePhoto.objects.get(id=self.hash_to_pk(id)).get_head_url()
+        print(detail_type, photo)
         return render(request, 'admin/popup/device/photo_search.html', locals())
 
 
@@ -54,7 +58,9 @@ class PhotoDetailView(ParseJsonView, View):
         face_data = instance.face_data
         take_photo_time = instance.take_photo_time
         if detail_type == '0':
-            pass
+            if request.GET.get('monitor_id'):
+                sample_url = device_models.DevicePhoto.objects.get(id=self.hash_to_pk(request.GET.get('monitor_id'))).get_head_url()
+                similarity = similarity
 
         elif detail_type == '4':
             monitor_ins = monitor_models.MonitorDiscover.objects.get(id=self.hash_to_pk(_id))
