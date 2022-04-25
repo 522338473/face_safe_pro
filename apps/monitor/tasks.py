@@ -40,7 +40,7 @@ def photo_cluster():
                         device_ip=item.device.ip,
                         device_channel=item.device.channel,
                         device_take_photo_time=item.take_photo_time,
-                        device_photo_path=item.head_path,
+                        device_head_path=item.head_path,
                         device_back_path=item.back_path,
                         device_body_path=item.body_path,
                         device_face_data=item.face_data,

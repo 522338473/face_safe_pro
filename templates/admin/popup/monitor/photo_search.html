@@ -29,9 +29,14 @@
                 </template>
             </el-table-column>
             <el-table-column
+                    prop="similarity"
+                    label="相似度"
+                    width="100">
+            </el-table-column>
+            <el-table-column
                     label="原图像">
                 <template>
-                    <el-image src="{{ personnel_path }}" style="width: 30px; height: 30px">
+                    <el-image src="{{ photo }}" style="width: 30px; height: 30px">
                     </el-image>
                 </template>
             </el-table-column>

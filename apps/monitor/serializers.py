@@ -43,3 +43,36 @@ class MonitorDiscoverSerializer(serializers.ModelSerializer):
         model = models.MonitorDiscover
         depth = 2
         fields = ['id', 'target', 'record', 'checked', 'similarity']
+
+
+class ArchivesLibrarySerializer(serializers.ModelSerializer):
+    """人像库serializer管理器"""
+
+    id = serializers.ReadOnlyField(source='hash')
+
+    class Meta:
+        model = models.ArchivesLibrary
+        fields = ['id', 'name']
+
+
+class ArchivesPeopleSerializer(serializers.ModelSerializer):
+    """关注人员serializer管理器"""
+
+    id = serializers.ReadOnlyField(source='hash')
+    library = ArchivesLibrarySerializer()
+
+    class Meta:
+        model = models.ArchivesPersonnel
+        depth = 2
+        fields = ['id', 'library', 'name', 'phone', 'id_card']
+
+
+class PhotoClusterSerializer(serializers.ModelSerializer):
+    """轨迹档案serializer管理器"""
+
+    id = serializers.ReadOnlyField(source='hash')
+    archives_personnel = ArchivesPeopleSerializer()
+
+    class Meta:
+        model = models.PhotoCluster
+        fields = ['id', 'archives_personnel']

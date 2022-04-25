@@ -48,3 +48,9 @@ class MonitorDiscoverViewSet(HashRetrieveViewSetMixin, ModelViewSet):
     """预警信息ViewSet"""
     queryset = models.MonitorDiscover.objects.select_related('target', 'record').order_by('-create_at')
     serializer_class = serializers.MonitorDiscoverSerializer
+
+
+class PhotoClusterViewSet(HashRetrieveViewSetMixin, ModelViewSet):
+    """轨迹档案ViewSet"""
+    queryset = models.PhotoCluster.objects.select_related('archives_personnel')
+    serializer_class = 1
