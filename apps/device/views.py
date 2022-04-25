@@ -1,16 +1,20 @@
 import datetime
+import base64
+import requests
 
 from django.db.models import Count
-from django.db.models.functions import TruncDay, TruncHour
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
+from rest_framework.exceptions import ParseError
 
 from apps.device import models as device_model
 from apps.archives import models as archives_model
 from apps.monitor import models as monitor_model
 from apps.device import serializers as device_serializer
 from apps.public.views import HashRetrieveViewSetMixin
+from apps.utils.face_discern import face_discern
+from apps.utils.job_queue import redis_cache
 
 
 # Create your views here.
@@ -158,3 +162,40 @@ class DevicePhotoViewSet(HashRetrieveViewSetMixin, ModelViewSet):
                 'count': car['count']
             })
         return Response(count_list)
+
+    @action(methods=['GET'], detail=False, url_path='search_image')
+    def search_image(self, request, *args, **kwargs):
+        """以图搜图接口"""
+        photo = request.query_params.get('photo')
+        time_range = int(request.query_params.get('time_range', '1'))
+        sort = request.query_params.get('sort', 'timer')
+        margin = int(request.query_params.get('margin', '60'))
+        image = base64.b64encode(requests.get(url=photo).content).decode()
+        days = datetime.timedelta(days=time_range)
+        now_time = datetime.datetime.now()
+        start_date = (now_time - days).strftime('%Y%m%d')
+        end_date = now_time.strftime('%Y%m%d')
+        results = results = redis_cache.redis_get_cache(photo)
+        if not results:
+            results = face_discern.search_record(image=image, start_date=start_date, end_date=end_date, margin=margin, s_margin=margin, identification=photo, search_type='searching')
+            if results.get('code') == -1:
+                raise ParseError('搜索服务器异常')
+            results = results.get('results', [])
+        results = [result for result in results if result[1] >= margin]
+        check_id_list = [result[0] for result in results]
+        check_similarity_list = [result[1] for result in results]  # 相似度
+        query_list = list(self.filter_queryset(self.get_queryset()).in_bulk(check_id_list).values())
+        query_list.sort(key=lambda x: x.id)
+        if check_similarity_list is not None:
+            for query in query_list:
+                query.similarity = check_similarity_list[check_id_list.index(query.id)]
+            query_list.sort(key=lambda x: x.take_photo_time, reverse=True)
+            if sort == 'similarity':
+                query_list.sort(key=lambda x: x.similarity, reverse=True)
+        page = self.paginate_queryset(query_list)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(query_list, many=True)
+        return Response(serializer.data)

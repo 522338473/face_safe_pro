@@ -88,9 +88,9 @@
 
                     <div style="display: inline-block">
                         <el-radio-group v-model="similarity_radio">
-                            <el-radio :label="6" style="margin-right: 5px">低(60%)</el-radio>
-                            <el-radio :label="7" style="margin-right: 5px">中(70%)</el-radio>
-                            <el-radio :label="8">高(80%)</el-radio>
+                            <el-radio :label="60" style="margin-right: 5px">低(60%)</el-radio>
+                            <el-radio :label="70" style="margin-right: 5px">中(70%)</el-radio>
+                            <el-radio :label="80">高(80%)</el-radio>
                         </el-radio-group>
                     </div>
                     <div style="margin-top: 10px">
@@ -179,10 +179,9 @@
                         </el-table-column>
                         <el-table-column
                                 prop="similarity"
-                                label=""
+                                label="相似度"
                                 min-width="5%"
                         >
-                            <span style="background-color: red; color: white">20.00%</span>
                         </el-table-column>
                         <el-table-column
                                 prop="head_path"
@@ -276,7 +275,7 @@
                 detail_dialog_visible: false,
                 video_dialog_visible: false,
                 detail_id: '',
-                similarity_radio: 6,
+                similarity_radio: 60,
                 current_page: 1,
                 now_days_snap_total: 0,
                 all_days_snap_total: 0,
@@ -294,11 +293,11 @@
                     {value: 'timer', label: '抓拍时间由近及远'},
                     {value: 'similarity', label: '相似度由高到低'}
                 ],
-                time_value: 'one',
+                time_value: '1',
                 time_range: [
-                    {value: 'one', label: '最近一天'},
-                    {value: 'three', label: '最近三天'},
-                    {value: 'seven', label: '最近七天'},
+                    {value: '1', label: '最近一天'},
+                    {value: '3', label: '最近三天'},
+                    {value: '7', label: '最近七天'},
                 ],
                 photo_list: [],
                 markers: [],
@@ -364,14 +363,22 @@
                         params = {
                             'limit': self.paginator.page_size,
                             'offset': (self.current_page - 1) * self.paginator.page_size,
+                            'photo': self.imageUrl,
+                            'time_range': self.time_value,
+                            'sort': self.sort_value,
+                            'margin': self.similarity_radio
                         }
                     } else {
                         params = {
                             'limit': self.paginator.page_size,
                             'offset': (self.current_page - 1) * self.paginator.page_size,
+                            'photo': self.imageUrl,
+                            'time_range': self.time_value,
+                            'sort': self.sort_value,
+                            'margin': self.similarity_radio
                         }
                     }
-                    axios.get('/v1/device/photo/', {
+                    axios.get('/v1/device/photo/search_image/', {
                         params: params
                     }, {
                         'Content-Type': 'application/json;charset=UTF-8'
