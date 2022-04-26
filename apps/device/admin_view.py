@@ -6,12 +6,14 @@
 @file: admin_view.py
 @time: 2022/4/7 10:58
 """
+import datetime
 
 import requests
 import hashlib
 
 from django.conf import settings
 from django.views import View
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.core.paginator import Paginator
 from rest_framework.response import Response
@@ -132,12 +134,29 @@ class VideoPlaybackView(ParseJsonView, View):
 
     def get(self, request):
         _id = request.GET.get('id')
-        url = 'http://vfx.mtime.cn/Video/2019/03/21/mp4/190321153853126488.mp4'
         return render(request, 'admin/popup/device/video_playback.html', locals())
 
     def post(self, request):
         """返回视频url"""
-        pass
+        _id = request.POST.get('id')
+        photo_obj = device_models.DevicePhoto.objects.get(id=self.hash_to_pk(_id))
+        start_time = (photo_obj.take_photo_time - datetime.timedelta(seconds=5)).strftime('%Y%m%dT%H%M%S')
+        channel = photo_obj.device.channel
+        params = {
+            'channel': int(channel),
+            'Starttime': str(start_time)
+        }
+        try:
+            result = requests.post(url=''.join([settings.SEARCH_VIDEO_HOST, '/api/v1/stream/']), json=params)
+            result_json = result.json()
+        except Exception as e:
+            return JsonResponse({'message': '录像机数据获取失败'})
+        if result.status_code == 200 and result_json.get('code') == 0 and result_json.get('msg') == 'success':
+            photo_id = result_json.get('data')['id']
+            url = ''.join([settings.VIDEO_HOST, '/mp4/{id}/stream.mp4'.format(id=photo_id)])
+            return JsonResponse({'url': url})
+        else:
+            return JsonResponse({'message': result_json.get('msg')})
 
 
 class RealTimeView(ParseJsonView, View):

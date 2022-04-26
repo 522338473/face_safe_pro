@@ -548,6 +548,10 @@ CORS_ORIGIN_ALLOW_ALL = True
 # 搜索服务器地址
 SEARCH_SERVER_HOST = os.getenv('SEARCH_SERVER_HOST', 'http://192.168.2.95:5000')
 
+# 回放视频搜索
+SEARCH_VIDEO_HOST = os.getenv('SEARCH_VIDEO_HOST', 'http://192.168.2.111:3000')
+VIDEO_HOST = os.getenv('VIDEO_HOST', 'http://192.168.2.111:10080')
+
 # 视频实况转换服务器
 SEARCH_REAL_TIME_HOST = os.getenv('SEARCH_REAL_TIME_HOST', 'http://192.168.2.89:8083')
 

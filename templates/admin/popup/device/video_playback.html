@@ -13,7 +13,7 @@
 
 {% block main %}
     <div id="app">
-        <video id="video_mp4" src="{{ url }}" controls autoplay width="100%"></video>
+        <video id="video_mp4" :src="url" controls autoplay width="100%"></video>
     </div>
 
 {% endblock %}
@@ -22,6 +22,39 @@
     <script type="text/javascript">
         new Vue({
             el: '#app',
+            data: {
+                loading: false,
+                url: '',
+                id: '{{ request.GET.id }}'
+            },
+            created() {
+                this.get_video_url();
+            },
+            methods: {
+                get_video_url: function () {
+                    let self = this;
+                    let data = new FormData();
+                    data.append('id', self.id)
+                    self.loading = true;
+                    axios.post('{% url "device:video_playback" %}', data, {
+                        headers: {
+                            "Content-Type": "multipart/form-data"
+                        }
+                    }).then(res => {
+                        if (res.data.url) {
+                            self.url = res.data.url;
+                        } else {
+                            this.$message({
+                            message: res.data.message,
+                            type: 'warning'
+                        })
+                        }
+
+                    }).finally(() => {
+                        self.loading = false;
+                    })
+                }
+            }
         })
     </script>
 {% endblock %}
