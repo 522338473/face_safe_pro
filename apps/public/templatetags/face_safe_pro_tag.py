@@ -7,8 +7,10 @@
 @time: 2022/3/14 17:49
 """
 import datetime
+from functools import wraps
 
 from django.core.paginator import Paginator
+from django.utils.safestring import mark_safe, SafeData
 from django.db.models import Count
 from django.db.models.functions import TruncDay, TruncHour
 
@@ -274,3 +276,33 @@ def archives_personnel(*args, **kwargs):
         personnel_page = Paginator(archives_model.Personnel.objects.order_by('-id'), page_size)
     if personnel_page.page_range.start <= current_page < personnel_page.page_range.stop:
         return {'personnel_page': personnel_page, 'personnel_list': personnel_page.page(current_page).object_list}
+
+
+def stringfilter(func):
+    """
+    Decorator for filters which should only receive strings. The object
+    passed as the first positional argument will be converted to a string.
+    """
+
+    def _dec(*args, **kwargs):
+        args = list(args)
+        args[0] = str(args[0])
+        if (isinstance(args[0], SafeData) and
+                getattr(_dec._decorated_function, 'is_safe', False)):
+            return mark_safe(func(*args, **kwargs))
+        return func(*args, **kwargs)
+
+    # Include a reference to the real function (used to check original
+    # arguments by the template parser, and to bear the 'is_safe' attribute
+    # when multiple decorators are applied).
+    _dec._decorated_function = getattr(func, '_decorated_function', func)
+
+    return wraps(func)(_dec)
+
+
+@register.filter(is_safe=True)
+@stringfilter
+def safe_q(value):
+    """Mark the value as a string that should not be auto-escaped."""
+    value = value.replace('&gt;', '>').replace('&lt;', '<').replace('&amp;', '&')
+    return mark_safe(value)

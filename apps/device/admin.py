@@ -19,6 +19,7 @@ class DeviceInfoAdmin(PublicModelAdmin, admin.ModelAdmin):
     exclude = ['last_login', 'last_logout', 'snap_count', 'monitor_count']
     list_per_page = 10
     change_list_template = 'admin/device/deviceinfo/change_list.html'
+    change_form_template = 'admin/device/deviceinfo/change_form.html'
     fields_options = {
         'id': {
             'fixed': 'left',
