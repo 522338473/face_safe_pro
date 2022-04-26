@@ -7,6 +7,10 @@
 @time: 2022/4/7 10:58
 """
 
+import requests
+import hashlib
+
+from django.conf import settings
 from django.views import View
 from django.shortcuts import render
 from django.core.paginator import Paginator
@@ -152,8 +156,36 @@ class WebRtcView(ParseJsonView, View):
 
     def get(self, request):
         _id = request.GET.get('id')
-        if self.hash_to_pk(_id) == 1:
-            device_video_url = 'http://192.168.2.84:8083/stream/6f9155485a1f85b8d2d801badf7ae09b/channel/0/webrtc?uuid=6f9155485a1f85b8d2d801badf7ae09b&channel=0&device_id=%s' % _id
-        else:
-            device_video_url = 'http://192.168.2.84:8083/stream/580cfe817d3cf0ea2edc98e36e356642/channel/0/webrtc?uuid=580cfe817d3cf0ea2edc98e36e356642&channel=0&device_id=%s' % _id
+        device_obj = device_models.DeviceInfo.objects.get(id=self.hash_to_pk(_id))
+        if device_obj.status == 0:
+            return Response({'message': '设备离线'})
+        if not device_obj.rtsp_address:
+            return Response({'message': '缺少rtsp地址'})
+        stream_uuid = hashlib.md5("_".join([device_obj.ip, device_obj.rtsp_address]).encode('utf-8')).hexdigest()
+
+        data = {
+            "uuid": stream_uuid,
+            "name": device_obj.name,
+            "channels": {
+                "0": {
+                    "url": device_obj.rtsp_address,
+                    "on_demand": True,
+                    "debug": False
+                }
+            }
+        }
+
+        try:
+            res = requests.post(
+                url=''.join([settings.SEARCH_REAL_TIME_HOST, '/stream/{stream}/add'.format(stream=stream_uuid)]), json=data,
+                auth=('demo', 'demo')
+            )
+            if res.json():
+                device_video_url = ''.join(
+                    [
+                        settings.SEARCH_REAL_TIME_HOST, '/stream/{stream}/channel/{channel}/webrtc?uuid={stream}&channel={channel}'.format(stream=stream_uuid, channel=0)
+                    ]
+                )
+        except Exception as e:
+            raise
         return render(request, 'admin/device/other/webrtc.html', locals())

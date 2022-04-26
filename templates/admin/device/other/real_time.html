@@ -5,8 +5,7 @@
         * {
             margin: 0;
             padding: 0;
-            {#color: #606266;#}
-            text-align: left;
+        {#color: #606266;#} text-align: left;
         }
 
         p {
@@ -369,7 +368,16 @@
                     }, {
                         'Content-Type': 'application/json;charset=UTF-8'
                     }).then(res => {
-                        self.device_video_url = res.data.url;
+                        console.log(res);
+                        if (res.status === 200) {
+                            self.device_video_url = res.data.url;
+                        } else {
+                            this.$message({
+                                message: '该设备已离线! 请稍后重试',
+                                type: 'warning'
+                            })
+                        }
+
                     }).finally(() => {
                         self.loading = false
                     })

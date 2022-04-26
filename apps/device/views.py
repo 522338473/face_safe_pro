@@ -1,8 +1,10 @@
 import datetime
 import base64
 import requests
+import hashlib
 
 from django.db.models import Count
+from django.conf import settings
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
@@ -49,10 +51,43 @@ class DeviceInfoViewSet(HashRetrieveViewSetMixin, ModelViewSet):
     def device_video(self, request, *args, **kwargs):
         """实时监控"""
         device = self.request.query_params.get('device', None)
-        if self.hash_to_pk(device) == 1:
-            return Response({'url': 'http://192.168.2.84:8083/stream/6f9155485a1f85b8d2d801badf7ae09b/channel/0/webrtc?uuid=6f9155485a1f85b8d2d801badf7ae09b&channel=0&device_id=%s' % device})
-        else:
-            return Response({'url': 'http://192.168.2.84:8083/stream/580cfe817d3cf0ea2edc98e36e356642/channel/0/webrtc?uuid=580cfe817d3cf0ea2edc98e36e356642&channel=0&device_id=%s' % device})
+        device_obj = self.get_queryset().get(id=self.hash_to_pk(device))
+        if device_obj.status == 0:
+            return Response({'message': '设备离线'})
+        if not device_obj.rtsp_address:
+            return Response({'message': '缺少rtsp地址'})
+        stream_uuid = hashlib.md5("_".join([device_obj.ip, device_obj.rtsp_address]).encode('utf-8')).hexdigest()
+
+        data = {
+            "uuid": stream_uuid,
+            "name": device_obj.name,
+            "channels": {
+                "0": {
+                    "url": device_obj.rtsp_address,
+                    "on_demand": True,
+                    "debug": False
+                }
+            }
+        }
+
+        try:
+            res = requests.post(
+                url=''.join([settings.SEARCH_REAL_TIME_HOST, '/stream/{stream}/add'.format(stream=stream_uuid)]), json=data,
+                auth=('demo', 'demo')
+            )
+            if res.json():
+                return Response(
+                    {'url': ''.join(
+                        [
+                            settings.SEARCH_REAL_TIME_HOST, '/stream/{stream}/channel/{channel}/webrtc?uuid={stream}&channel={channel}'.format(stream=stream_uuid, channel=0)
+                        ]
+                    )
+                    }
+                )
+        except requests.exceptions.ConnectionError:
+            raise ParseError('无法与RTSP服务建立正常链接.')
+        except Exception as e:
+            raise ParseError('服务器异常')
 
     @action(methods=['GET'], detail=False, url_path='device_status')
     def device_status(self, request, *args, **kwargs):
