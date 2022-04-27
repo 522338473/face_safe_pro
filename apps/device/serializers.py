@@ -19,7 +19,7 @@ class DeviceInfoSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = models.DeviceInfo
-        fields = ['id', 'name', 'ip', 'status', 'channel', 'address', 'geo', 'rtsp_address']
+        fields = ['id', 'name', 'ip', 'status', 'channel', 'address', 'geo', 'rtsp_address', 'device_type']
 
 
 class DevicePhotoSerializers(serializers.ModelSerializer):
