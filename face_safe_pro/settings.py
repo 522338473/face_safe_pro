@@ -472,39 +472,39 @@ SIMPLEUI_CONFIG = {
                     'icon': 'fas fa-users',
                     'url': '/admin/auth/group/'
                 },
+                {
+                    'name': '异步任务',
+                    'icon': 'fas fa-user-shield',
+                    'models': [
+                        {
+                            'name': '时钟',
+                            'icon': 'fa fa-clock',
+                            'url': '/admin/django_celery_beat/clockedschedule/'
+                        },
+                        {
+                            'name': 'crontab',
+                            'icon': 'fa fa-user-clock',
+                            'url': '/admin/django_celery_beat/crontabschedule/'
+                        },
+                        {
+                            'name': '间隔',
+                            'icon': 'fa fa-stop',
+                            'url': '/admin/django_celery_beat/intervalschedule/'
+                        },
+                        {
+                            'name': '周期任务',
+                            'icon': 'fa fa-business-time',
+                            'url': '/admin/django_celery_beat/periodictask/'
+                        },
+                        {
+                            'name': '事件',
+                            'icon': 'fa fa-solar-panel',
+                            'url': '/admin/django_celery_beat/solarschedule/'
+                        },
+                    ]
+                }
             ]
         },
-        {
-            'name': '异步任务',
-            'icon': 'fas fa-user-shield',
-            'models': [
-                {
-                    'name': '时钟',
-                    'icon': 'fa fa-clock',
-                    'url': '/admin/django_celery_beat/clockedschedule/'
-                },
-                {
-                    'name': 'crontab',
-                    'icon': 'fa fa-user-clock',
-                    'url': '/admin/django_celery_beat/crontabschedule/'
-                },
-                {
-                    'name': '间隔',
-                    'icon': 'fa fa-stop',
-                    'url': '/admin/django_celery_beat/intervalschedule/'
-                },
-                {
-                    'name': '周期任务',
-                    'icon': 'fa fa-business-time',
-                    'url': '/admin/django_celery_beat/periodictask/'
-                },
-                {
-                    'name': '事件',
-                    'icon': 'fa fa-solar-panel',
-                    'url': '/admin/django_celery_beat/solarschedule/'
-                },
-            ]
-        }
 
     ]
 }
