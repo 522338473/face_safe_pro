@@ -49,20 +49,20 @@
 
 {% block main %}
     <div id="app">
-        <el-row>
-            <div class="top-title-desc">
-                <div class="item-box">
-                    <div class="item-list">
-                        <span>今日抓拍：</span>
-                        <span>${ now_days_snap_total }</span>
-                    </div>
-                    <div class="item-list">
-                        <span>总抓拍：</span>
-                        <span>${ all_days_snap_total }</span>
-                    </div>
-                </div>
-            </div>
-        </el-row>
+{#        <el-row>#}
+{#            <div class="top-title-desc">#}
+{#                <div class="item-box">#}
+{#                    <div class="item-list">#}
+{#                        <span>今日抓拍：</span>#}
+{#                        <span>${ now_days_snap_total }</span>#}
+{#                    </div>#}
+{#                    <div class="item-list">#}
+{#                        <span>总抓拍：</span>#}
+{#                        <span>${ all_days_snap_total }</span>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </el-row>#}
         <el-divider></el-divider>
         <el-row>
             <el-col :span="3">
@@ -304,7 +304,7 @@
                 markers: [],
             },
             created() {
-                this.device_snap_count();
+                {#this.device_snap_count();#}
             },
             methods: {
                 device_snap_count: function () {
