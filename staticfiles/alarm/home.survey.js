@@ -3,18 +3,43 @@ Vue.component('home-survey', {
         return {
             loading: false,
             survey: {},
+            isActive: true,
         }
+    },
+    created() {
+        this.get_survey();
     },
     mounted() {
         let self = this;
-        self.loading = true;
-        axios.get('/v1/device/photo/survey/?format=json', {params: {}}, {
-            'Content-Type': 'application/json;charset=UTF-8'
-        }).then(res => {
-            self.survey = res.data;
-        }).finally(() => {
-            self.loading = false;
-        })
+        // 浏览器失去焦点停止查询、节省开销
+        window.addEventListener('focus', e => {
+            self.isActive = true;
+        });
+        window.addEventListener('blur', e => {
+            self.isActive = false;
+        });
+        setInterval(() => {
+            if (!self.isActive) {
+                return;
+            }
+            if (!app || app.tabModel !== '0') {
+                return;
+            }
+            self.get_survey();
+        }, 60000)
+    },
+    methods: {
+        get_survey: function () {
+            let self = this;
+            self.loading = true;
+            axios.get('/v1/device/photo/survey/?format=json', {params: {}}, {
+                'Content-Type': 'application/json;charset=UTF-8'
+            }).then(res => {
+                self.survey = res.data;
+            }).finally(() => {
+                self.loading = false;
+            })
+        }
     },
     template:
         `

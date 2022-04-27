@@ -86,25 +86,48 @@ Vue.component('home-bar', {
                 monitor_discovery_total: '重点人员',
                 vehicle_discovery_total: '重点车辆',
                 area_discovery_total: '重点区域'
-            }
+            },
+            isActive: true,
         }
     },
+    created() {
+        this.get_count();
+    },
     mounted() {
-
-        //请求数据 伪代码
         let self = this;
-        axios.get("/v1/monitor/monitor/count/?format=json", {params: {}}, {
-            'Content-Type': 'application/json;charset=UTF-8'
-        }).then(res => {
-            let bar_title = [];
-            let bar_list = [];
-            for (let key in res.data) {
-                bar_title.push(self.total_dict[key]);
-                bar_list.push(res.data[key]);
-            }
-            self.option.xAxis[0].data = bar_title;
-            self.option.series[0].data = bar_list;
+        // 浏览器失去焦点停止查询、节省开销
+        window.addEventListener('focus', e => {
+            self.isActive = true;
         });
+        window.addEventListener('blur', e => {
+            self.isActive = false;
+        });
+        setInterval(() => {
+            if (!self.isActive) {
+                return;
+            }
+            if (!app || app.tabModel !== '0') {
+                return;
+            }
+            self.get_count();
+        }, 60000)
+    },
+    methods: {
+        get_count: function () {
+            let self = this;
+            axios.get("/v1/monitor/monitor/count/?format=json", {params: {}}, {
+                'Content-Type': 'application/json;charset=UTF-8'
+            }).then(res => {
+                let bar_title = [];
+                let bar_list = [];
+                for (let key in res.data) {
+                    bar_title.push(self.total_dict[key]);
+                    bar_list.push(res.data[key]);
+                }
+                self.option.xAxis[0].data = bar_title;
+                self.option.series[0].data = bar_list;
+            });
+        }
     },
     template:
         `<div style="display: flex">

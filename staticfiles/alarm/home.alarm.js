@@ -2,6 +2,7 @@ Vue.component('home-alarm', {
     data() {
         return {
             loading: false,
+            isActive: true,
             monitor_list: [],
             dialogVisible: false,
             detail_id: '',
@@ -20,23 +21,45 @@ Vue.component('home-alarm', {
             }
         }
     },
+    created() {
+        this.get_monitor_discover();
+    },
     mounted() {
         let self = this;
-        self.loading = true;
-        axios.get('/v1/monitor/monitor_discover/?format=json', {
-            params: {
-                limit: 10,
-                offset: 0
+        // 浏览器失去焦点停止查询、节省开销
+        window.addEventListener('focus', e => {
+            self.isActive = true;
+        });
+        window.addEventListener('blur', e => {
+            self.isActive = false;
+        });
+        setInterval(() => {
+            if (!self.isActive) {
+                return;
             }
-        }, {
-            'Content-Type': 'application/json;charset=UTF-8'
-        }).then(res => {
-            self.monitor_list = res.data.results;
-        }).finally(() => {
-            self.loading = false;
-        })
+            if (!app || app.tabModel !== '0') {
+                return;
+            }
+            self.get_monitor_discover();
+        }, 60000)
     },
     methods: {
+        get_monitor_discover: function () {
+            let self = this;
+            self.loading = true;
+            axios.get('/v1/monitor/monitor_discover/?format=json', {
+                params: {
+                    limit: 10,
+                    offset: 0
+                }
+            }, {
+                'Content-Type': 'application/json;charset=UTF-8'
+            }).then(res => {
+                self.monitor_list = res.data.results;
+            }).finally(() => {
+                self.loading = false;
+            })
+        },
         handleClose(done) {
             this.$confirm('确认关闭？')
                 .then(_ => {

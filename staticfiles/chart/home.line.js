@@ -142,11 +142,31 @@ Vue.component('home-line', {
                     label: '最近一个月'
                 }
             ],
-            value: 0
+            value: 0,
+            isActive: true,
         }
     },
-    mounted() {
+    created() {
         this.time_change();
+    },
+    mounted() {
+        let self = this;
+        // 浏览器失去焦点停止查询、节省开销
+        window.addEventListener('focus', e => {
+            self.isActive = true;
+        });
+        window.addEventListener('blur', e => {
+            self.isActive = false;
+        });
+        setInterval(() => {
+            if (!self.isActive) {
+                return;
+            }
+            if (!app || app.tabModel !== '0') {
+                return;
+            }
+            self.time_change();
+        }, 60000)
     },
     methods: {
         time_change: function () {

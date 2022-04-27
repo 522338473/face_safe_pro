@@ -5,16 +5,40 @@ Vue.component('home-check', {
             check: {},
         }
     },
+    created() {
+        this.get_un_check_count();
+    },
     mounted() {
         let self = this;
-        self.loading = true;
-        axios.get('/v1/monitor/monitor/un_check_count/?format=json', {params: {}}, {
-            'Content-Type': 'application/json;charset=UTF-8'
-        }).then(res => {
-            self.check = res.data;
-        }).finally(() => {
-            self.loading = false;
-        })
+        // 浏览器失去焦点停止查询、节省开销
+        window.addEventListener('focus', e => {
+            self.isActive = true;
+        });
+        window.addEventListener('blur', e => {
+            self.isActive = false;
+        });
+        setInterval(() => {
+            if (!self.isActive) {
+                return;
+            }
+            if (!app || app.tabModel !== '0') {
+                return;
+            }
+            self.get_un_check_count();
+        }, 60000)
+    },
+    methods: {
+        get_un_check_count: function () {
+            let self = this;
+            self.loading = true;
+            axios.get('/v1/monitor/monitor/un_check_count/?format=json', {params: {}}, {
+                'Content-Type': 'application/json;charset=UTF-8'
+            }).then(res => {
+                self.check = res.data;
+            }).finally(() => {
+                self.loading = false;
+            })
+        },
     },
     template:
         `

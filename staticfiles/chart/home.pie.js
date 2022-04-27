@@ -56,31 +56,53 @@ Vue.component('home-pie', {
                         ]
                     }
                 ]
-            }
+            },
+            isActive: true,
         }
     },
+    created() {
+        this.get_device_status();
+    },
     mounted() {
-
-        //请求数据 伪代码
         let self = this;
-        axios.get("/v1/device/info/device_status/?format=json").then(res => {
-            let device_status = [];
-            res.data.forEach(function (item) {
-                if (item.status === 1) {
-                    device_status.push({
-                        name: '在线',
-                        value: item.count
-                    })
-                } else {
-                    device_status.push({
-                        name: '离线',
-                        value: item.count
-                    })
-                }
-            })
-            self.option.series[0].data = device_status;
-
+        // 浏览器失去焦点停止查询、节省开销
+        window.addEventListener('focus', e => {
+            self.isActive = true;
         });
+        window.addEventListener('blur', e => {
+            self.isActive = false;
+        });
+        setInterval(() => {
+            if (!self.isActive) {
+                return;
+            }
+            if (!app || app.tabModel !== '0') {
+                return;
+            }
+            self.get_device_status();
+        }, 60000)
+    },
+    methods: {
+        get_device_status: function () {
+            let self = this;
+            axios.get("/v1/device/info/device_status/?format=json").then(res => {
+                let device_status = [];
+                res.data.forEach(function (item) {
+                    if (item.status === 1) {
+                        device_status.push({
+                            name: '在线',
+                            value: item.count
+                        })
+                    } else {
+                        device_status.push({
+                            name: '离线',
+                            value: item.count
+                        })
+                    }
+                })
+                self.option.series[0].data = device_status;
+            });
+        }
     },
     template:
         `<div style="display: flex">
