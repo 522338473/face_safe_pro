@@ -4,6 +4,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from apps.archives import models as archives_models
 from apps.monitor import models
 from apps.monitor import serializers
 from apps.public.views import HashRetrieveViewSetMixin
@@ -24,7 +25,7 @@ class MonitorViewSet(HashRetrieveViewSetMixin, ModelViewSet):
         end_time = datetime.datetime.strptime(self.request.query_params.get('end_time'), '%Y%m%d%H%M%S')
         monitor_discovery_total = models.MonitorDiscover.objects.filter(target__area=False, create_at__range=(start_time, end_time)).count()
         vehicle_discovery_total = models.VehicleMonitorDiscover.objects.filter(create_at__range=(start_time, end_time)).count()
-        area_discovery_total = models.MonitorDiscover.objects.filter(target__area=True, create_at__range=(start_time, end_time)).count()
+        area_discovery_total = archives_models.AccessDiscover.objects.filter(create_at__range=(start_time, end_time)).count()
 
         data = {
             'monitor_discovery_total': monitor_discovery_total,
@@ -38,7 +39,7 @@ class MonitorViewSet(HashRetrieveViewSetMixin, ModelViewSet):
         """首页预警统计"""
         monitor_discovery_total = models.MonitorDiscover.objects.filter(target__area=False, checked=False).count()
         vehicle_discovery_total = models.VehicleMonitorDiscover.objects.filter(checked=False).count()
-        area_discovery_total = models.MonitorDiscover.objects.filter(target__area=True, checked=False).count()
+        area_discovery_total = archives_models.AccessDiscover.objects.filter(checked=False).count()
 
         data = {
             'monitor_discovery_total': monitor_discovery_total,

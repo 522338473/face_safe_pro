@@ -1,9 +1,14 @@
+import base64
+
+import requests
 from django.urls import reverse
+from django.conf import settings
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 from import_export.admin import ImportExportModelAdmin
 from simplepro.dialog import ModalDialog, MultipleCellDialog
 
+from apps.device import models as device_models
 from apps.monitor import models as monitor_models
 from apps.public.admin import PublicModelAdmin
 from apps.public.resources import MonitorResources, ArchivesPersonnelResources
@@ -250,7 +255,7 @@ class VehicleMonitorDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
 
 @admin.register(monitor_models.RestrictedArea)
 class RestrictedAreaAdmin(PublicModelAdmin, admin.ModelAdmin):
-    list_display = ['id', 'name', 'detail']
+    list_display = ['id', 'name', 'device', 'detail']
     list_filter = ['name']
     exclude = ['personnel_list']
     fields_options = {
@@ -262,6 +267,19 @@ class RestrictedAreaAdmin(PublicModelAdmin, admin.ModelAdmin):
             'width': '160px'
         }
     }
+
+    def device(self, obj):
+        device_list = []
+        for item in obj.device_list.values():
+            device_list.append(item.get('name'))
+        return device_list
+
+    device.short_description = '设备列表'
+
+    def formfield_for_manytomany(self, db_field, request, **kwargs):
+        obj = super(RestrictedAreaAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)
+        obj.queryset = obj.queryset.filter(device_type__in=[2, 3])  # 门禁接口只要门禁设备跟无感通行设备
+        return obj
 
 
 @admin.register(monitor_models.AreaMonitorPersonnel)
@@ -280,6 +298,45 @@ class AreaMonitorPersonnelAdmin(PublicModelAdmin, admin.ModelAdmin):
             'width': '120px'
         }
     }
+
+    def save_model(self, request, obj, form, change):
+        """新增门禁人员"""
+        obj = super(AreaMonitorPersonnelAdmin, self).save_model(request, obj, form, change)
+        # if not change:
+        for device in list(obj.area.device_list.values()):
+            if device.get('device_type') in (2, 3):
+                if device['device_type'] == 2:
+                    ip = device['ip']
+                elif device['device_type'] == 3:
+                    ip = settings.REDIS_SERVER_HOST
+                else:
+                    continue
+                message = {
+                    'name': obj.personnel.hash,
+                    'image': base64.b64encode(requests.get(url=obj.personnel.get_head_url()).content).decode()
+                }
+                res = requests.post(url=f'http://{ip}:5005/archives_add', json=message)
+                print(res.status_code)
+                print(res.json())
+
+    def delete_queryset(self, request, queryset):
+        """删除门禁人员"""
+        for query in queryset:
+            for device in query.area.device_list.values():
+                if device.get('device_type') in (2, 3):
+                    if device['device_type'] == 2:
+                        ip = device['ip']
+                    elif device['device_type'] == 3:
+                        ip = settings.REDIS_SERVER_HOST
+                    else:
+                        continue
+                    message = {
+                        'name': query.personnel.hash
+                    }
+                    res = requests.post(url=f'http://{ip}:5005/archives_del', json=message)
+                    print(res.status_code)
+                    print(res.json())
+        return super(AreaMonitorPersonnelAdmin, self).delete_queryset(request, queryset)
 
 
 @admin.register(monitor_models.AreaSnapRecord)
