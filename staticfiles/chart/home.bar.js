@@ -87,6 +87,29 @@ Vue.component('home-bar', {
                 vehicle_discovery_total: '重点车辆',
                 area_discovery_total: '重点区域'
             },
+            options: [
+                {
+                    value: 0,
+                    label: '最近一天'
+                },
+                {
+                    value: 2,
+                    label: '最近三天'
+                },
+                {
+                    value: 6,
+                    label: '最近七天'
+                },
+                {
+                    value: 14,
+                    label: '最近半个月'
+                },
+                {
+                    value: 29,
+                    label: '最近一个月'
+                }
+            ],
+            value: 0,
             isActive: true,
         }
     },
@@ -115,7 +138,13 @@ Vue.component('home-bar', {
     methods: {
         get_count: function () {
             let self = this;
-            axios.get("/v1/monitor/monitor/count/?format=json", {params: {}}, {
+            let start_time = new Date(new Date(new Date(new Date().setHours(0, 0, 0, 0)).setDate(new Date(new Date().setHours(0, 0, 0, 0)).getDate() - this.value))).format("YYYYMMDDhhmmss");
+            let end_time = new Date(new Date().setHours(23, 59, 59, 0)).format("YYYYMMDDhhmmss");
+            let params = {
+                start_time: start_time,
+                end_time: end_time
+            }
+            axios.get("/v1/monitor/monitor/count/?format=json", {params: params}, {
                 'Content-Type': 'application/json;charset=UTF-8'
             }).then(res => {
                 let bar_title = [];
@@ -130,7 +159,17 @@ Vue.component('home-bar', {
         }
     },
     template:
-        `<div style="display: flex">
+        `
+<div style="display: flex; position: relative">
     <echarts :option="option" style="width: 100%;height: 280px"></echarts>
-</div>`
+    <el-select v-model="value" @change="get_count" size="mini" style="position: absolute; top: -20px; right: 20px; width: 120px;">
+        <el-option
+          v-for="item in options"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value">
+        </el-option>
+    </el-select>
+</div>
+`
 })

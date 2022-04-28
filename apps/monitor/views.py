@@ -1,3 +1,5 @@
+import datetime
+
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -18,9 +20,11 @@ class MonitorViewSet(HashRetrieveViewSetMixin, ModelViewSet):
     @action(methods=['GET'], detail=False, url_path='count')
     def count(self, request, *args, **kwargs):
         """首页预警统计"""
-        monitor_discovery_total = models.MonitorDiscover.objects.filter(target__area=False).count()
-        vehicle_discovery_total = models.VehicleMonitorDiscover.objects.count()
-        area_discovery_total = models.MonitorDiscover.objects.filter(target__area=True).count()
+        start_time = datetime.datetime.strptime(self.request.query_params.get('start_time'), '%Y%m%d%H%M%S')
+        end_time = datetime.datetime.strptime(self.request.query_params.get('end_time'), '%Y%m%d%H%M%S')
+        monitor_discovery_total = models.MonitorDiscover.objects.filter(target__area=False, create_at__range=(start_time, end_time)).count()
+        vehicle_discovery_total = models.VehicleMonitorDiscover.objects.filter(create_at__range=(start_time, end_time)).count()
+        area_discovery_total = models.MonitorDiscover.objects.filter(target__area=True, create_at__range=(start_time, end_time)).count()
 
         data = {
             'monitor_discovery_total': monitor_discovery_total,
