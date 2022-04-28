@@ -93,7 +93,14 @@ class PersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin, AjaxAdmin):
     bottom_html = ' <el-alert title="这是底部的" type="warning"></el-alert>'
 
     def image(self, obj):
-        return mark_safe('<img src={url} width=30px;>'.format(url=obj.photo))
+        return mark_safe(
+            """
+            <el-popover placement="left" title="" trigger="hover">
+             <el-image style="width: 150px; height: 150px" src={url} fit="fit"></el-image> 
+             <el-image slot="reference" style="width: 30px; height: 30px" src={url} fit="fit"></el-image> 
+            </el-popover> 
+            """.format(url=obj.photo)
+        )
 
     image.short_description = '照片'
 
@@ -176,7 +183,14 @@ class AccessDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
     }
 
     def image(self, obj):
-        return mark_safe('<img src={url} width=30px;>'.format(url=obj.record.head_path))
+        return mark_safe(
+            """
+            <el-popover placement="left" title="" trigger="hover">
+             <el-image style="width: 150px; height: 150px" src={url} fit="fit"></el-image> 
+             <el-image slot="reference" style="width: 30px; height: 30px" src={url} fit="fit"></el-image> 
+            </el-popover> 
+            """.format(url=obj.record.head_path)
+        )
 
     image.short_description = '通行抓拍'
 

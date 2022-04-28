@@ -129,7 +129,14 @@ class DevicePhotoAdmin(PublicModelAdmin, admin.ModelAdmin):
     }
 
     def image(self, obj):
-        return mark_safe('<img src={url} width=30px;>'.format(url=obj.head_path))
+        return mark_safe(
+            """
+            <el-popover placement="left" title="" trigger="hover">
+             <el-image style="width: 150px; height: 150px" src={url} fit="fit"></el-image> 
+             <el-image slot="reference" style="width: 30px; height: 30px" src={url} fit="fit"></el-image> 
+            </el-popover> 
+            """.format(url=obj.head_path)
+        )
 
     image.short_description = '抓拍人脸'
 
@@ -193,7 +200,14 @@ class MotorAdmin(PublicModelAdmin, admin.ModelAdmin):
     }
 
     def image(self, obj):
-        return mark_safe('<img src={url} width=30px;>'.format(url=obj.motor_path))
+        return mark_safe(
+            """
+            <el-popover placement="left" title="" trigger="hover">
+             <el-image style="width: 150px; height: 150px" src={url} fit="fit"></el-image> 
+             <el-image slot="reference" style="width: 30px; height: 30px" src={url} fit="fit"></el-image> 
+            </el-popover> 
+            """.format(url=obj.motor_path)
+        )
 
     image.short_description = '照片'
 
@@ -223,7 +237,14 @@ class VehicleAdmin(PublicModelAdmin, admin.ModelAdmin):
     }
 
     def image(self, obj):
-        return mark_safe('<img src={url} width=30px;>'.format(url=obj.plate_path))
+        return mark_safe(
+            """
+            <el-popover placement="left" title="" trigger="hover">
+             <el-image style="width: 150px; height: 150px" src={url} fit="fit"></el-image> 
+             <el-image slot="reference" style="width: 30px; height: 30px" src={url} fit="fit"></el-image> 
+            </el-popover> 
+            """.format(url=obj.plate_path)
+        )
 
     image.short_description = '照片'
 
