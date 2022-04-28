@@ -30,7 +30,7 @@ class MonitorAdmin(PublicModelAdmin, ImportExportModelAdmin):
     fields_options = {
         'id': {
             'fixed': 'left',
-            'width': '80px'
+            'width': '120px'
         },
         'gender': {
             'width': '80px'
@@ -115,7 +115,7 @@ class MonitorDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
     fields_options = {
         'id': {
             'fixed': 'left',
-            'width': '80px'
+            'width': '120px'
         },
         'image': {
             'width': '120px'
@@ -156,7 +156,7 @@ class VehicleMonitorAdmin(PublicModelAdmin, admin.ModelAdmin):
     fields_options = {
         'id': {
             'fixed': 'left',
-            'width': '80px'
+            'width': '120px'
         },
         'plate': {
             'width': '120px'
@@ -193,7 +193,7 @@ class VehicleMonitorDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
     fields_options = {
         'id': {
             'fixed': 'left',
-            'width': '80px'
+            'width': '120px'
         },
         'image': {
             'width': '120px'
@@ -235,7 +235,7 @@ class RestrictedAreaAdmin(PublicModelAdmin, admin.ModelAdmin):
     fields_options = {
         'id': {
             'fixed': 'left',
-            'width': '80px'
+            'width': '120px'
         },
         'name': {
             'width': '160px'
@@ -250,7 +250,7 @@ class AreaMonitorPersonnelAdmin(PublicModelAdmin, admin.ModelAdmin):
     fields_options = {
         'id': {
             'fixed': 'left',
-            'width': '80px'
+            'width': '120px'
         },
         'area': {
             'width': '160px'
@@ -273,7 +273,7 @@ class ArchivesLibraryAdmin(PublicModelAdmin, admin.ModelAdmin):
     fields_options = {
         'id': {
             'fixed': 'left',
-            'width': '80px'
+            'width': '120px'
         },
         'name': {
             'width': '160px'
@@ -290,7 +290,7 @@ class ArchivesPersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin):
     fields_options = {
         'id': {
             'fixed': 'left',
-            'width': '80px'
+            'width': '120px'
         },
         'image': {
             'label': '抓拍人脸',
@@ -370,7 +370,7 @@ class PhotoClusterAdmin(PublicModelAdmin, admin.ModelAdmin):
     fields_options = {
         'id': {
             'fixed': 'left',
-            'width': '80px'
+            'width': '120px'
         },
         'image': {
             'label': '抓拍人脸',

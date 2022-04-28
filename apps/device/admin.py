@@ -23,7 +23,7 @@ class DeviceInfoAdmin(PublicModelAdmin, admin.ModelAdmin):
     fields_options = {
         'id': {
             'fixed': 'left',
-            'width': '80px'
+            'width': '120px'
         },
         'name': {
             'label': '设备名称',
@@ -114,7 +114,7 @@ class DevicePhotoAdmin(PublicModelAdmin, admin.ModelAdmin):
     fields_options = {
         'id': {
             'fixed': 'left',
-            'width': '60px'
+            'width': '120px'
         },
         'image': {
             'label': '抓拍人脸',
@@ -170,7 +170,7 @@ class DeviceOffLineAdmin(PublicModelAdmin, admin.ModelAdmin):
     fields_options = {
         'id': {
             'fixed': 'left',
-            'width': '80px'
+            'width': '120px'
         },
         'checked': {
             'width': '120px'
@@ -185,7 +185,7 @@ class MotorAdmin(PublicModelAdmin, admin.ModelAdmin):
     fields_options = {
         'id': {
             'fixed': 'left',
-            'width': '80px'
+            'width': '120px'
         },
         'image': {
             'width': '120px'
@@ -206,7 +206,7 @@ class VehicleAdmin(PublicModelAdmin, admin.ModelAdmin):
     fields_options = {
         'id': {
             'fixed': 'left',
-            'width': '80px'
+            'width': '120px'
         },
         'device': {
             'width': '160px'

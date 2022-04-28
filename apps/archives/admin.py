@@ -67,7 +67,7 @@ class PersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin, AjaxAdmin):
     fields_options = {
         'id': {
             'fixed': 'left',
-            'width': '80px'
+            'width': '120px'
         },
         'archives_group': {
             'label': '库名称',
@@ -164,7 +164,7 @@ class AccessDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
     fields_options = {
         'id': {
             'fixed': 'left',
-            'width': '80px'
+            'width': '120px'
         },
         'target': {
             'label': '门禁人员'

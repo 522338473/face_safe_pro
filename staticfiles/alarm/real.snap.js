@@ -33,7 +33,6 @@ Vue.component('real-snap', {
             if (!self.isActive) {
                 return;
             }
-            console.log('....');
             self.get_real_snap();
         }, 3000)
     },

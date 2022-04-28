@@ -49,20 +49,20 @@
 
 {% block main %}
     <div id="app">
-{#        <el-row>#}
-{#            <div class="top-title-desc">#}
-{#                <div class="item-box">#}
-{#                    <div class="item-list">#}
-{#                        <span>今日抓拍：</span>#}
-{#                        <span>${ now_days_snap_total }</span>#}
-{#                    </div>#}
-{#                    <div class="item-list">#}
-{#                        <span>总抓拍：</span>#}
-{#                        <span>${ all_days_snap_total }</span>#}
-{#                    </div>#}
-{#                </div>#}
-{#            </div>#}
-{#        </el-row>#}
+        {#        <el-row>#}
+        {#            <div class="top-title-desc">#}
+        {#                <div class="item-box">#}
+        {#                    <div class="item-list">#}
+        {#                        <span>今日抓拍：</span>#}
+        {#                        <span>${ now_days_snap_total }</span>#}
+        {#                    </div>#}
+        {#                    <div class="item-list">#}
+        {#                        <span>总抓拍：</span>#}
+        {#                        <span>${ all_days_snap_total }</span>#}
+        {#                    </div>#}
+        {#                </div>#}
+        {#            </div>#}
+        {#        </el-row>#}
         <el-divider></el-divider>
         <el-row>
             <el-col :span="3">
@@ -280,7 +280,7 @@
                 current_page: 1,
                 now_days_snap_total: 0,
                 all_days_snap_total: 0,
-                video_url: 'http://vfx.mtime.cn/Video/2019/03/21/mp4/190321153853126488.mp4',
+                video_url: '',
                 // imageUrl: 'https://wimg.588ku.com/gif620/21/01/17/c6b7bf2325af6e5d1aa43cee95014721.gif',
                 imageUrl: '{{ url }}',
                 paginator: {
@@ -422,8 +422,28 @@
                     this.detail_dialog_visible = true;
                 },
                 video_dialog: function (params) {
-                    this.detail_id = params.id;
-                    this.video_dialog_visible = true;
+                    let self = this;
+                    self.detail_id = params.id;
+                    let data = new FormData();
+                    data.append('id', self.detail_id);
+                    self.loading = true;
+                    axios.post('{% url "device:video_playback" %}', data, {
+                        headers: {
+                            "Content-Type": "multipart/form-data"
+                        }
+                    }).then(res => {
+                        if (res.data.url) {
+                            self.video_url = res.data.url;
+                        } else {
+                            self.$message({
+                                message: res.data.message,
+                                type: 'warning'
+                            })
+                        }
+                    }).finally(() => {
+                        self.loading = false;
+                        self.video_dialog_visible = true;
+                    })
                 },
                 video_dialog_close: function () {
                     Object.assign(this.$data, this.$options.data());

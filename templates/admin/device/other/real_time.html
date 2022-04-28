@@ -123,7 +123,7 @@
                         <h3 style="text-align: left; padding: 10px; margin: 0">人脸抓拍</h3>
                         <a class="more" href="javascript:alert('莫要点它')">更多...</a>
                     </div>
-                    <real-snap></real-snap>
+                    <real-snap :id="detail_id"></real-snap>
 
                 </div>
 
@@ -205,6 +205,7 @@
                     })
                 },
                 device_detail: function (params) {
+                    this.detail_id = params.id;
                     this.device_title = params.name;
                     this.device_ip = params.ip;
                     this.device_address = params.address;

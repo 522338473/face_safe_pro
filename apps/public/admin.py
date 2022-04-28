@@ -19,7 +19,7 @@ class PublicModelAdmin:
     fields_options = {
         'id': {
             'fixed': 'left',
-            'width': '80px',
+            'width': '120px',
             'align': 'center'
         }
     }
