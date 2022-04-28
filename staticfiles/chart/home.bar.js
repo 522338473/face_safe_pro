@@ -85,7 +85,7 @@ Vue.component('home-bar', {
             total_dict: {
                 monitor_discovery_total: '重点人员',
                 vehicle_discovery_total: '重点车辆',
-                area_discovery_total: '重点区域'
+                area_discovery_total: '门禁通行'
             },
             options: [
                 {
