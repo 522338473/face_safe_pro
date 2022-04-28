@@ -31,8 +31,10 @@
             <el-table-column
                     label="抓拍图像">
                 <template slot-scope="scope">
-                    <el-image :src="scope.row.record__plate_path" style="width: 30px; height: 30px">
-                    </el-image>
+                    <el-popover placement="left" title="" trigger="hover">
+                        <el-image style="width: 150px; height: 150px" :src="scope.row.record__plate_path" fit="fit"></el-image>
+                        <el-image slot="reference" style="width: 30px; height: 30px" :src="scope.row.record__plate_path" fit="fit"></el-image>
+                    </el-popover>
                 </template>
             </el-table-column>
             <el-table-column

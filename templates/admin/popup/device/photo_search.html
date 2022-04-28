@@ -24,8 +24,10 @@
                     prop="head_path"
                     label="头像显示">
                 <template slot-scope="scope">
-                    <el-image :src="scope.row.head_path" style="width: 30px; height: 30px">
-                    </el-image>
+                    <el-popover placement="left" title="" trigger="hover">
+                        <el-image style="width: 150px; height: 150px" :src="scope.row.head_path" fit="fit"></el-image>
+                        <el-image slot="reference" style="width: 30px; height: 30px" :src="scope.row.head_path" fit="fit"></el-image>
+                    </el-popover>
                 </template>
             </el-table-column>
             <el-table-column
