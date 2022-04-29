@@ -99,7 +99,7 @@ Vue.component('home-alarm', {
                 <el-col :span="7" style="width: 100px">
                     <img :src="item.record.head_path" alt="" width="100px" height="100px">
                 </el-col>
-                <div style="background-color: red; color: white; position: absolute; left: 80px; bottom: 6px; text-align: center; border-radius: 4px 4px 0 0;">
+                <div style="background-color: #c03535; color: white; position: absolute; left: 80px; bottom: 20px; text-align: center; border-radius: 4px 4px 0 0; font-size: 14px">
                 <span>{{ item.similarity }}%</span>
 </div>
                 <el-col :span="8" style="margin-left: 10px; min-width: 120px; overflow: auto">
