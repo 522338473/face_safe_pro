@@ -19,8 +19,7 @@ from apps.utils.face_discern import face_discern
 class ArchivesGroupAdmin(PublicModelAdmin, admin.ModelAdmin):
     list_display = ['id', 'name', 'detail']
     search_fields = ['name']
-    top_html = ' <el-alert title="这是顶部的" type="success"></el-alert>'
-    actions = ['action_for_archives_group_test', 'action_for_archives_group_another_test']
+    top_html = ' <el-alert title="档案库分类" type="success"></el-alert>'
 
     def dialog_url(self, model):
         modal = ModalDialog()
@@ -63,7 +62,7 @@ class PersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin, AjaxAdmin):
     exclude = ['is_access', 'device_list']  # TODO: 该字段为扩展字段，后期决定存留
     search_fields = ['name', 'phone', 'id_card']
     resource_class = PersonnelResources
-    actions = ['action_for_archives_personnel_export', 'action_for_archives_personnel_import', 'action_for_archives_personnel_layer_input']
+    # actions = ['action_for_archives_personnel_export', 'action_for_archives_personnel_import', 'action_for_archives_personnel_layer_input']
     fields_options = {
         'id': {
             'fixed': 'left',

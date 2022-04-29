@@ -258,6 +258,7 @@ class RestrictedAreaAdmin(PublicModelAdmin, admin.ModelAdmin):
     list_display = ['id', 'name', 'device', 'detail']
     list_filter = ['name']
     exclude = ['personnel_list']
+    top_html = ' <el-alert title="门禁区域只可绑定门禁设备&无感通行!" type="warning"></el-alert>'
     fields_options = {
         'id': {
             'fixed': 'left',
@@ -377,6 +378,7 @@ class ArchivesPersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin):
     list_filter = ['library']
     search_fields = ['name']
     resource_class = ArchivesPersonnelResources
+    top_html = ' <el-alert title="关注人员隔天对前天的数据进行归档(非实时归档)!" type="warning"></el-alert>'
     fields_options = {
         'id': {
             'fixed': 'left',
