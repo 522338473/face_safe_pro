@@ -165,7 +165,7 @@ class PersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin, AjaxAdmin):
 
 @admin.register(archives_models.AccessDiscover)
 class AccessDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
-    list_display = ['id', 'target', 'checked', 'similarity', 'image', 'operation']
+    list_display = ['id', 'target', 'pass_time', 'pass_address', 'similarity', 'image', 'operation']
     list_filter = ['target']
     fields_options = {
         'id': {
@@ -180,6 +180,14 @@ class AccessDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
             'width': '120px'
         }
     }
+
+    def pass_time(self, obj):
+        return obj.record.take_photo_time
+    pass_time.short_description = '通行时间'
+
+    def pass_address(self, obj):
+        return obj.record.address
+    pass_address.short_description = '通行地点'
 
     def image(self, obj):
         return mark_safe(

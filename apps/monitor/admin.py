@@ -121,7 +121,7 @@ class MonitorAdmin(PublicModelAdmin, ImportExportModelAdmin):
 
 @admin.register(monitor_models.MonitorDiscover)
 class MonitorDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
-    list_display = ['id', 'target', 'image', 'checked', 'similarity', 'operation']
+    list_display = ['id', 'target', 'image', 'snap_time', 'snap_address', 'similarity', 'operation']
     list_filter = ['record__take_photo_time', 'target']
     search_fields = ['target__name']
     fields_options = {
@@ -133,6 +133,14 @@ class MonitorDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
             'width': '120px'
         }
     }
+
+    def snap_time(self, obj):
+        return obj.record.take_photo_time
+    snap_time.short_description = '通行时间'
+
+    def snap_address(self, obj):
+        return obj.record.address
+    snap_address.short_description = '通行地点'
 
     def image(self, obj):
         return mark_safe(
