@@ -284,7 +284,7 @@ class RestrictedAreaAdmin(PublicModelAdmin, admin.ModelAdmin):
 
 @admin.register(monitor_models.AreaMonitorPersonnel)
 class AreaMonitorPersonnelAdmin(PublicModelAdmin, admin.ModelAdmin):
-    list_display = ['id', 'area', 'personnel', 'detail']
+    list_display = ['id', 'area', 'personnel', 'image', 'detail']
     list_filter = ['area', 'create_at']
     fields_options = {
         'id': {
@@ -298,6 +298,18 @@ class AreaMonitorPersonnelAdmin(PublicModelAdmin, admin.ModelAdmin):
             'width': '120px'
         }
     }
+
+    def image(self, obj):
+        return mark_safe(
+            """
+            <el-popover placement="left" title="" trigger="hover">
+             <el-image style="width: 150px; height: 150px" src={url} fit="fit"></el-image> 
+             <el-image slot="reference" style="width: 30px; height: 30px" src={url} fit="fit"></el-image> 
+            </el-popover> 
+            """.format(url=obj.personnel.photo)
+        )
+
+    image.short_description = '照片'
 
     def save_model(self, request, obj, form, change):
         """新增门禁人员"""
