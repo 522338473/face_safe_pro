@@ -21,30 +21,29 @@ from apps.utils.face_discern import face_discern
 
 @admin.register(monitor_models.PersonnelType)
 class PersonnelTypeAdmin(PublicModelAdmin, admin.ModelAdmin):
-    list_display = ['id', 'name', 'detail']
-    search_fields = ['name']
+    list_display = ["id", "name", "detail"]
+    search_fields = ["name"]
 
 
 @admin.register(monitor_models.Monitor)
 class MonitorAdmin(PublicModelAdmin, ImportExportModelAdmin):
-    list_display = ['id', 'name', 'personnel_types', 'gender', 'phone', 'image', 'operation']
-    list_filter = ['personnel_types', 'create_at']
-    exclude = ['num_values', 'area_personnel']
-    search_fields = ['name']
+    list_display = [
+        "id",
+        "name",
+        "personnel_types",
+        "gender",
+        "phone",
+        "image",
+        "operation",
+    ]
+    list_filter = ["personnel_types", "create_at"]
+    exclude = ["num_values", "area_personnel"]
+    search_fields = ["name"]
     resource_class = MonitorResources
     fields_options = {
-        'id': {
-            'fixed': 'left',
-            'width': '120px'
-        },
-        'gender': {
-            'width': '80px'
-        },
-        'image': {
-            'label': '照片',
-            'width': '120px'
-        },
-
+        "id": {"fixed": "left", "width": "120px"},
+        "gender": {"width": "80px"},
+        "image": {"label": "照片", "width": "120px"},
     }
 
     def image(self, obj):
@@ -54,23 +53,28 @@ class MonitorAdmin(PublicModelAdmin, ImportExportModelAdmin):
              <el-image style="width: 150px; height: 150px" src={url} fit="fit"></el-image> 
              <el-image slot="reference" style="width: 30px; height: 30px" src={url} fit="fit"></el-image> 
             </el-popover> 
-            """.format(url=obj.photo)
+            """.format(
+                url=obj.photo
+            )
         )
 
-    image.short_description = '照片'
+    image.short_description = "照片"
 
     def operation(self, model):
         record = ModalDialog(
             cell='<el-button type="text">抓拍记录</el-button>',
-            title='抓拍记录',
-            url=reverse('device:photo_search') + "?id={id}&detail_type={detail_type}".format(id=model.hash, detail_type=DETAIL_TYPE['MONITOR_DETAIL']),
-            height='450px',
-            width='1200px',
-            show_cancel=True
+            title="抓拍记录",
+            url=reverse("device:photo_search")
+            + "?id={id}&detail_type={detail_type}".format(
+                id=model.hash, detail_type=DETAIL_TYPE["MONITOR_DETAIL"]
+            ),
+            height="450px",
+            width="1200px",
+            show_cancel=True,
         )
         return MultipleCellDialog([record])
 
-    operation.short_description = '操作'
+    operation.short_description = "操作"
 
     def save_model(self, request, obj, form, change):
         """重点人员新增"""
@@ -82,18 +86,18 @@ class MonitorAdmin(PublicModelAdmin, ImportExportModelAdmin):
                 result = face_discern.face_warning_add(
                     image=image, user_id=instance.hash
                 )
-                if result.get('error') == -1:
+                if result.get("error") == -1:
                     instance.set_delete()
-                    self.message_user(request, '人脸注册失败')
+                    self.message_user(request, "人脸注册失败")
             except Exception as e:
                 instance.set_delete()
-                self.message_user(request, '人脸注册失败')
+                self.message_user(request, "人脸注册失败")
 
     def delete_model(self, request, obj):
         """重点人员删除"""
         try:
             result = face_discern.face_warning_detect(user_id=obj.hash)
-            if result.get('error') == -1:
+            if result.get("error") == -1:
                 pass
         except Exception as e:
             pass
@@ -108,7 +112,7 @@ class MonitorAdmin(PublicModelAdmin, ImportExportModelAdmin):
         for query in queryset:
             try:
                 result = face_discern.face_warning_detect(user_id=query.hash)
-                if result.get('error') == -1:
+                if result.get("error") == -1:
                     pass
             except Exception as e:
                 pass
@@ -121,26 +125,31 @@ class MonitorAdmin(PublicModelAdmin, ImportExportModelAdmin):
 
 @admin.register(monitor_models.MonitorDiscover)
 class MonitorDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
-    list_display = ['id', 'target', 'image', 'snap_time', 'snap_address', 'similarity', 'operation']
-    list_filter = ['record__take_photo_time', 'target']
-    search_fields = ['target__name']
+    list_display = [
+        "id",
+        "target",
+        "image",
+        "snap_time",
+        "snap_address",
+        "similarity",
+        "operation",
+    ]
+    list_filter = ["record__take_photo_time", "target"]
+    search_fields = ["target__name"]
     fields_options = {
-        'id': {
-            'fixed': 'left',
-            'width': '120px'
-        },
-        'image': {
-            'width': '120px'
-        }
+        "id": {"fixed": "left", "width": "120px"},
+        "image": {"width": "120px"},
     }
 
     def snap_time(self, obj):
         return obj.record.take_photo_time
-    snap_time.short_description = '通行时间'
+
+    snap_time.short_description = "通行时间"
 
     def snap_address(self, obj):
         return obj.record.address
-    snap_address.short_description = '通行地点'
+
+    snap_address.short_description = "通行地点"
 
     def image(self, obj):
         return mark_safe(
@@ -149,82 +158,75 @@ class MonitorDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
              <el-image style="width: 150px; height: 150px" src={url} fit="fit"></el-image> 
              <el-image slot="reference" style="width: 30px; height: 30px" src={url} fit="fit"></el-image> 
             </el-popover> 
-            """.format(url=obj.record.head_path)
+            """.format(
+                url=obj.record.head_path
+            )
         )
 
-    image.short_description = '抓拍人脸'
+    image.short_description = "抓拍人脸"
 
     def operation(self, model):
         detail = ModalDialog(
             cell='<el-button type="text">详情</el-button>',
-            title='当前数据详情',
-            url=reverse('device:photo_detail') + "?id={id}&detail_type={detail_type}".format(id=model.hash, detail_type=DETAIL_TYPE['MONITOR_DISCOVER_DETAIL']),
-            height='450px',
-            width='1200px',
-            show_cancel=True
+            title="当前数据详情",
+            url=reverse("device:photo_detail")
+            + "?id={id}&detail_type={detail_type}".format(
+                id=model.hash, detail_type=DETAIL_TYPE["MONITOR_DISCOVER_DETAIL"]
+            ),
+            height="450px",
+            width="1200px",
+            show_cancel=True,
         )
         back = ModalDialog(
             cell='<el-button type="text">回放视频</el-button>',
-            title='回放视频',
-            url=reverse('device:video_playback') + '?id={id}&video_play_type={video_play_type}'.format(id=model.hash, video_play_type=VIDEO_PLAY_TYPE['MONITOR_DISCOVER_VIDEO_PLAY']),
-            height='435px',
-            width='800px',
-            show_cancel=True
+            title="回放视频",
+            url=reverse("device:video_playback")
+            + "?id={id}&video_play_type={video_play_type}".format(
+                id=model.hash,
+                video_play_type=VIDEO_PLAY_TYPE["MONITOR_DISCOVER_VIDEO_PLAY"],
+            ),
+            height="435px",
+            width="800px",
+            show_cancel=True,
         )
         return MultipleCellDialog([detail, back])
 
-    operation.short_description = '操作'
+    operation.short_description = "操作"
 
 
 @admin.register(monitor_models.VehicleMonitor)
 class VehicleMonitorAdmin(PublicModelAdmin, admin.ModelAdmin):
-    list_display = ['id', 'plate', 'name', 'gender', 'phone', 'detail', 'operation']
-    search_fields = ['plate', 'name', 'phone']
+    list_display = ["id", "plate", "name", "gender", "phone", "detail", "operation"]
+    search_fields = ["plate", "name", "phone"]
     fields_options = {
-        'id': {
-            'fixed': 'left',
-            'width': '120px'
-        },
-        'plate': {
-            'width': '120px'
-        },
-        'name': {
-            'width': '120px'
-        },
-        'gender': {
-            'width': '80px'
-        },
-        'phone': {
-            'width': '120px'
-        },
+        "id": {"fixed": "left", "width": "120px"},
+        "plate": {"width": "120px"},
+        "name": {"width": "120px"},
+        "gender": {"width": "80px"},
+        "phone": {"width": "120px"},
     }
 
     def operation(self, model):
         record = ModalDialog(
             cell='<el-button type="text">抓拍记录</el-button>',
-            title='重点车辆抓拍记录',
-            url=reverse('monitor:vehicle_search') + "?id={id}".format(id=model.hash),
-            height='450px',
-            width='1200px',
-            show_cancel=True
+            title="重点车辆抓拍记录",
+            url=reverse("monitor:vehicle_search") + "?id={id}".format(id=model.hash),
+            height="450px",
+            width="1200px",
+            show_cancel=True,
         )
         return MultipleCellDialog([record])
 
-    operation.short_description = '操作'
+    operation.short_description = "操作"
 
 
 @admin.register(monitor_models.VehicleMonitorDiscover)
 class VehicleMonitorDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
-    list_display = ['id', 'target', 'image', 'checked', 'detail', 'operation']
-    list_filter = ['target', 'create_at']
+    list_display = ["id", "target", "image", "checked", "detail", "operation"]
+    list_filter = ["target", "create_at"]
     fields_options = {
-        'id': {
-            'fixed': 'left',
-            'width': '120px'
-        },
-        'image': {
-            'width': '120px'
-        }
+        "id": {"fixed": "left", "width": "120px"},
+        "image": {"width": "120px"},
     }
 
     def image(self, obj):
@@ -234,78 +236,77 @@ class VehicleMonitorDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
              <el-image style="width: 150px; height: 150px" src={url} fit="fit"></el-image> 
              <el-image slot="reference" style="width: 30px; height: 30px" src={url} fit="fit"></el-image> 
             </el-popover> 
-            """.format(url=obj.record.plate_path)
+            """.format(
+                url=obj.record.plate_path
+            )
         )
 
-    image.short_description = '抓拍照片'
+    image.short_description = "抓拍照片"
 
     def operation(self, model):
         detail = ModalDialog(
             cell='<el-button type="text">查看详情</el-button>',
-            title='当前数据详情',
-            url=reverse('monitor:vehicle_detail') + "?id={id}&detail_type={detail_type}".format(id=model.hash, detail_type=DETAIL_TYPE['MONITOR_VEHICLE_DETAIL']),
-            height='450px',
-            width='1200px',
-            show_cancel=True
+            title="当前数据详情",
+            url=reverse("monitor:vehicle_detail")
+            + "?id={id}&detail_type={detail_type}".format(
+                id=model.hash, detail_type=DETAIL_TYPE["MONITOR_VEHICLE_DETAIL"]
+            ),
+            height="450px",
+            width="1200px",
+            show_cancel=True,
         )
         back = ModalDialog(
             cell='<el-button type="text">回放视频</el-button>',
-            title='回放视频',
-            url=reverse('device:video_playback') + '?id={id}&video_play_type={video_play_type}'.format(id=model.hash, video_play_type=VIDEO_PLAY_TYPE['MONITOR_VEHICLE_VIDEO_PLAY']),
-            height='435px',
-            width='800px',
-            show_cancel=True
+            title="回放视频",
+            url=reverse("device:video_playback")
+            + "?id={id}&video_play_type={video_play_type}".format(
+                id=model.hash,
+                video_play_type=VIDEO_PLAY_TYPE["MONITOR_VEHICLE_VIDEO_PLAY"],
+            ),
+            height="435px",
+            width="800px",
+            show_cancel=True,
         )
         return MultipleCellDialog([detail, back])
 
-    operation.short_description = '操作'
+    operation.short_description = "操作"
 
 
 @admin.register(monitor_models.RestrictedArea)
 class RestrictedAreaAdmin(PublicModelAdmin, admin.ModelAdmin):
-    list_display = ['id', 'name', 'device', 'detail']
-    list_filter = ['name']
-    exclude = ['personnel_list']
+    list_display = ["id", "name", "device", "detail"]
+    list_filter = ["name"]
+    exclude = ["personnel_list"]
     top_html = ' <el-alert title="门禁区域只可绑定门禁设备&无感通行!" type="warning"></el-alert>'
     fields_options = {
-        'id': {
-            'fixed': 'left',
-            'width': '120px'
-        },
-        'name': {
-            'width': '160px'
-        }
+        "id": {"fixed": "left", "width": "120px"},
+        "name": {"width": "160px"},
     }
 
     def device(self, obj):
         device_list = []
         for item in obj.device_list.values():
-            device_list.append(item.get('name'))
+            device_list.append(item.get("name"))
         return device_list
 
-    device.short_description = '设备列表'
+    device.short_description = "设备列表"
 
     def formfield_for_manytomany(self, db_field, request, **kwargs):
-        obj = super(RestrictedAreaAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)
+        obj = super(RestrictedAreaAdmin, self).formfield_for_manytomany(
+            db_field, request, **kwargs
+        )
         obj.queryset = obj.queryset.filter(device_type__in=[2, 3])  # 门禁接口只要门禁设备跟无感通行设备
         return obj
 
 
 @admin.register(monitor_models.AreaMonitorPersonnel)
 class AreaMonitorPersonnelAdmin(PublicModelAdmin, admin.ModelAdmin):
-    list_display = ['id', 'area', 'personnel', 'image', 'detail']
-    list_filter = ['area', 'create_at']
+    list_display = ["id", "area", "personnel", "image", "detail"]
+    list_filter = ["area", "create_at"]
     fields_options = {
-        'id': {
-            'fixed': 'left',
-            'width': '120px'
-        },
-        'area': {
-            'width': '160px'
-        },
-        'personnel': {
-            'width': '120px'
-        }
+        "id": {"fixed": "left", "width": "120px"},
+        "area": {"width": "160px"},
+        "personnel": {"width": "120px"},
     }
 
     def image(self, obj):
@@ -315,29 +316,34 @@ class AreaMonitorPersonnelAdmin(PublicModelAdmin, admin.ModelAdmin):
              <el-image style="width: 150px; height: 150px" src={url} fit="fit"></el-image> 
              <el-image slot="reference" style="width: 30px; height: 30px" src={url} fit="fit"></el-image> 
             </el-popover> 
-            """.format(url=obj.personnel.photo)
+            """.format(
+                url=obj.personnel.photo
+            )
         )
 
-    image.short_description = '照片'
+    image.short_description = "照片"
 
     def save_model(self, request, obj, form, change):
         """新增门禁人员"""
-        obj = super(AreaMonitorPersonnelAdmin, self).save_model(request, obj, form, change)
+        obj = super(AreaMonitorPersonnelAdmin, self).save_model(
+            request, obj, form, change
+        )
         if not change:
-            b64_image = base64.b64encode(requests.get(url=obj.personnel.get_head_url()).content).decode()
+            b64_image = base64.b64encode(
+                requests.get(url=obj.personnel.get_head_url()).content
+            ).decode()
             for device in list(obj.area.device_list.values()):
-                if device.get('device_type') in (2, 3):
-                    if device['device_type'] == 2:
-                        ip = device['ip']
-                    elif device['device_type'] == 3:
+                if device.get("device_type") in (2, 3):
+                    if device["device_type"] == 2:
+                        ip = device["ip"]
+                    elif device["device_type"] == 3:
                         ip = settings.REDIS_SERVER_HOST
                     else:
                         continue
-                    message = {
-                        'name': obj.personnel.hash,
-                        'image': b64_image
-                    }
-                    res = requests.post(url=f'http://{ip}:5005/archives_add', json=message)
+                    message = {"name": obj.personnel.hash, "image": b64_image}
+                    res = requests.post(
+                        url=f"http://{ip}:5005/archives_add", json=message
+                    )
                     print(res.status_code)
                     print(res.json())
 
@@ -345,17 +351,17 @@ class AreaMonitorPersonnelAdmin(PublicModelAdmin, admin.ModelAdmin):
         """删除门禁人员"""
         for query in queryset:
             for device in query.area.device_list.values():
-                if device.get('device_type') in (2, 3):
-                    if device['device_type'] == 2:
-                        ip = device['ip']
-                    elif device['device_type'] == 3:
+                if device.get("device_type") in (2, 3):
+                    if device["device_type"] == 2:
+                        ip = device["ip"]
+                    elif device["device_type"] == 3:
                         ip = settings.REDIS_SERVER_HOST
                     else:
                         continue
-                    message = {
-                        'name': query.personnel.hash
-                    }
-                    res = requests.post(url=f'http://{ip}:5005/archives_del', json=message)
+                    message = {"name": query.personnel.hash}
+                    res = requests.post(
+                        url=f"http://{ip}:5005/archives_del", json=message
+                    )
                     print(res.status_code)
                     print(res.json())
         return super(AreaMonitorPersonnelAdmin, self).delete_queryset(request, queryset)
@@ -363,40 +369,29 @@ class AreaMonitorPersonnelAdmin(PublicModelAdmin, admin.ModelAdmin):
 
 @admin.register(monitor_models.AreaSnapRecord)
 class AreaSnapRecordAdmin(PublicModelAdmin, admin.ModelAdmin):
-    list_display = ['id', 'personnel', 'record', 'similarity']
+    list_display = ["id", "personnel", "record", "similarity"]
 
 
 @admin.register(monitor_models.ArchivesLibrary)
 class ArchivesLibraryAdmin(PublicModelAdmin, admin.ModelAdmin):
-    list_display = ['id', 'name', 'detail']
-    search_fields = ['name']
+    list_display = ["id", "name", "detail"]
+    search_fields = ["name"]
     fields_options = {
-        'id': {
-            'fixed': 'left',
-            'width': '120px'
-        },
-        'name': {
-            'width': '160px'
-        }
+        "id": {"fixed": "left", "width": "120px"},
+        "name": {"width": "160px"},
     }
 
 
 @admin.register(monitor_models.ArchivesPersonnel)
 class ArchivesPersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin):
-    list_display = ['id', 'library', 'name', 'phone', 'id_card', 'image', 'operation']
-    list_filter = ['library']
-    search_fields = ['name']
+    list_display = ["id", "library", "name", "phone", "id_card", "image", "operation"]
+    list_filter = ["library"]
+    search_fields = ["name"]
     resource_class = ArchivesPersonnelResources
     top_html = ' <el-alert title="关注人员隔天对前天的数据进行归档(非实时归档)!" type="warning"></el-alert>'
     fields_options = {
-        'id': {
-            'fixed': 'left',
-            'width': '120px'
-        },
-        'image': {
-            'label': '抓拍人脸',
-            'width': '120px'
-        },
+        "id": {"fixed": "left", "width": "120px"},
+        "image": {"label": "抓拍人脸", "width": "120px"},
     }
 
     def image(self, obj):
@@ -406,47 +401,49 @@ class ArchivesPersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin):
              <el-image style="width: 150px; height: 150px" src={url} fit="fit"></el-image> 
              <el-image slot="reference" style="width: 30px; height: 30px" src={url} fit="fit"></el-image> 
             </el-popover> 
-            """.format(url=obj.photo)
+            """.format(
+                url=obj.photo
+            )
         )
 
-    image.short_description = '抓拍人脸'
+    image.short_description = "抓拍人脸"
 
     def operation(self, model):
         trail = ModalDialog(
             cell='<el-button type="text">轨迹档案</el-button>',
-            title='轨迹档案',
-            url=reverse('monitor:photo_search') + '?id={id}'.format(id=model.hash),
-            height='450px',
-            width='1200px',
-            show_cancel=True
+            title="轨迹档案",
+            url=reverse("monitor:photo_search") + "?id={id}".format(id=model.hash),
+            height="450px",
+            width="1200px",
+            show_cancel=True,
         )
 
         return MultipleCellDialog([trail])
 
-    operation.short_description = '操作'
+    operation.short_description = "操作"
 
     def save_model(self, request, obj, form, change):
         """关注人员新增"""
         obj.create_by = request.user.username
-        instance = super(ArchivesPersonnelAdmin, self).save_model(request, obj, form, change)
+        instance = super(ArchivesPersonnelAdmin, self).save_model(
+            request, obj, form, change
+        )
         if not change:
             try:
                 image = self.get_b64_image(request)
-                result = face_discern.face_focus_add(
-                    image=image, user_id=instance.hash
-                )
-                if result.get('error') == -1:
+                result = face_discern.face_focus_add(image=image, user_id=instance.hash)
+                if result.get("error") == -1:
                     instance.set_delete()
-                    self.message_user(request, '人脸注册失败')
+                    self.message_user(request, "人脸注册失败")
             except Exception as e:
                 instance.set_delete()
-                self.message_user(request, '人脸注册失败')
+                self.message_user(request, "人脸注册失败")
 
     def delete_model(self, request, obj):
         """关注人员删除"""
         try:
             result = face_discern.face_focus_del(user_id=obj.hash)
-            if result.get('error') == -1:
+            if result.get("error") == -1:
                 pass
         except Exception as e:
             pass
@@ -460,7 +457,7 @@ class ArchivesPersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin):
         for query in queryset:
             try:
                 result = face_discern.face_focus_del(user_id=query.hash)
-                if result.get('error') == -1:
+                if result.get("error") == -1:
                     pass
             except Exception as e:
                 pass
@@ -473,17 +470,20 @@ class ArchivesPersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin):
 
 @admin.register(monitor_models.PhotoCluster)
 class PhotoClusterAdmin(PublicModelAdmin, admin.ModelAdmin):
-    list_display = ['id', 'archives_personnel', 'device_name', 'device_address', 'device_ip', 'device_take_photo_time', 'similarity', 'image']
-    list_filter = ['archives_personnel', 'device_take_photo_time']
+    list_display = [
+        "id",
+        "archives_personnel",
+        "device_name",
+        "device_address",
+        "device_ip",
+        "device_take_photo_time",
+        "similarity",
+        "image",
+    ]
+    list_filter = ["archives_personnel", "device_take_photo_time"]
     fields_options = {
-        'id': {
-            'fixed': 'left',
-            'width': '120px'
-        },
-        'image': {
-            'label': '抓拍人脸',
-            'width': '120px'
-        }
+        "id": {"fixed": "left", "width": "120px"},
+        "image": {"label": "抓拍人脸", "width": "120px"},
     }
 
     def image(self, obj):
@@ -493,7 +493,9 @@ class PhotoClusterAdmin(PublicModelAdmin, admin.ModelAdmin):
              <el-image style="width: 150px; height: 150px" src={url} fit="fit"></el-image> 
              <el-image slot="reference" style="width: 30px; height: 30px" src={url} fit="fit"></el-image> 
             </el-popover> 
-            """.format(url=obj.device_head_path)
+            """.format(
+                url=obj.device_head_path
+            )
         )
 
-    image.short_description = '抓拍人脸'
+    image.short_description = "抓拍人脸"

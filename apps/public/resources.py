@@ -24,7 +24,9 @@ class PersonnelResources(resources.ModelResource):
 
     def save_instance(self, instance, using_transactions=True, dry_run=False):
         """保存触发"""
-        return super(PersonnelResources, self).save_instance(instance, using_transactions, dry_run)
+        return super(PersonnelResources, self).save_instance(
+            instance, using_transactions, dry_run
+        )
 
     def import_obj(self, obj, data, dry_run, **kwargs):
         """导入触发"""

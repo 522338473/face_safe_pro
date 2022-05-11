@@ -19,7 +19,7 @@ class SearchPersonnelView(ParseJsonView, View):
 
     def get(self, request):
         """以人搜图模板"""
-        return render(request, 'admin/archives/other/search_person.html', locals())
+        return render(request, "admin/archives/other/search_person.html", locals())
 
 
 class AccessPassDetailView(ParseJsonView, View):
@@ -27,7 +27,7 @@ class AccessPassDetailView(ParseJsonView, View):
 
     def get(self, request):
         """门禁通行详情模板"""
-        _id = request.GET.get('id')
-        detail_type = request.GET.get('detail_type')
+        _id = request.GET.get("id")
+        detail_type = request.GET.get("detail_type")
         instance = models.AccessDiscover.objects.get(id=self.hash_to_pk(_id))
-        return render(request, 'admin/popup/archives/access_pass_detail.html', locals())
+        return render(request, "admin/popup/archives/access_pass_detail.html", locals())

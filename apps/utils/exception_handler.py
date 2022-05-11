@@ -11,11 +11,11 @@ def custom_exception_handler(exc, context):
     response = exception_handler(exc, context)
 
     if response is not None:
-        data = {'status_code': response.status_code}
-        if 'detail' not in response.data:
-            data['message'] = response.data
+        data = {"status_code": response.status_code}
+        if "detail" not in response.data:
+            data["message"] = response.data
         else:
-            data['message'] = response.data['detail']
+            data["message"] = response.data["detail"]
 
         response.data = data
 

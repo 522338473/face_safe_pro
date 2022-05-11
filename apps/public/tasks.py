@@ -26,9 +26,9 @@ class ClearDisk4psUtil:
     def get_disk_info(self):
         """获取磁盘信息"""
         total, used, free, percent = psutil.disk_usage(self.path)
-        total = round(total / (1024 ** 3), 2)
-        used = round(used / (1024 ** 3), 2)
-        free = round(free / (1024 ** 3))
+        total = round(total / (1024**3), 2)
+        used = round(used / (1024**3), 2)
+        free = round(free / (1024**3))
 
         print("磁盘总容量(G): ", total)
         print("磁盘已使用(G):", used)

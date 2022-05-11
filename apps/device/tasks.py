@@ -54,8 +54,12 @@ def device_count():
         try:
             device.snap_count = device.devicephoto_set.count()
             device.monitor_count = MonitorDiscover.objects.filter(
-                delete_at__isnull=True, record__device__delete_at__isnull=True, record__device=device,
-                record__device__name__isnull=False, target__area=False).count()
+                delete_at__isnull=True,
+                record__device__delete_at__isnull=True,
+                record__device=device,
+                record__device__name__isnull=False,
+                target__area=False,
+            ).count()
             device.save()
         except Exception as e:
             pass
@@ -63,13 +67,19 @@ def device_count():
 
 @shared_task
 def device_alarm():
-    while redis_queue.redis_client.exists('redis_device_alarm'):
-        alarm = json.loads(redis_queue.bl_pop_queue('redis_device_alarm', timeout=20))
-        if DeviceInfo.objects.filter(delete_at__isnull=True, ip=alarm.get('deviceIP')).exists():
-            device = DeviceInfo.objects.filter(delete_at__isnull=True, ip=alarm.get('deviceIP')).first()
-            photo_path = upload_image(base64.b64decode(alarm.get('PanoramaB64')))
-            alarm_type = alarm.get('alarminfo')
-            create_at = datetime.datetime.fromtimestamp(alarm.get('PicTime') / 1000)
-            alarm_obj = DeviceOffLine.objects.create(device=device, alarm_type=alarm_type, photo_path=photo_path)
+    while redis_queue.redis_client.exists("redis_device_alarm"):
+        alarm = json.loads(redis_queue.bl_pop_queue("redis_device_alarm", timeout=20))
+        if DeviceInfo.objects.filter(
+            delete_at__isnull=True, ip=alarm.get("deviceIP")
+        ).exists():
+            device = DeviceInfo.objects.filter(
+                delete_at__isnull=True, ip=alarm.get("deviceIP")
+            ).first()
+            photo_path = upload_image(base64.b64decode(alarm.get("PanoramaB64")))
+            alarm_type = alarm.get("alarminfo")
+            create_at = datetime.datetime.fromtimestamp(alarm.get("PicTime") / 1000)
+            alarm_obj = DeviceOffLine.objects.create(
+                device=device, alarm_type=alarm_type, photo_path=photo_path
+            )
             alarm_obj.create_at = create_at
             alarm_obj.save()

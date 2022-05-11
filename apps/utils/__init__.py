@@ -22,7 +22,7 @@ class Switch:
         """
         # 数字 ==> ip # 数字范围[0, 255^4]
         # lambda x: '.'.join([str(x/(256**i) % 256) for i in range(3, -1, -1)])
-        return socket.inet_ntoa(struct.pack('I', socket.htonl(num)))
+        return socket.inet_ntoa(struct.pack("I", socket.htonl(num)))
 
     @staticmethod
     def ip2num(ip):
@@ -36,8 +36,8 @@ class Switch:
 
 switch = Switch()
 
-if __name__ == '__main__':
-    ip = '192.168.2.175'
+if __name__ == "__main__":
+    ip = "192.168.2.175"
     num = 3232236207
     switch = Switch()
     print(switch.num2ip(num))

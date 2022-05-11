@@ -22,7 +22,7 @@ class HashRetrieveViewSetMixin(GenericViewSet):
     def get_object(self):
         queryset = self.filter_queryset(self.get_queryset())
 
-        obj = self.get_obj_from_hash(self.kwargs['pk'], queryset)
+        obj = self.get_obj_from_hash(self.kwargs["pk"], queryset)
         self.check_object_permissions(self.request, obj)
 
         return obj
@@ -39,7 +39,7 @@ class HashRetrieveViewSetMixin(GenericViewSet):
         try:
             pk = Hasher.to_object_pk(hash_id)
         except ValueError:
-            raise ParseError('parse error')
+            raise ParseError("parse error")
         return pk
 
     @staticmethod
@@ -48,25 +48,24 @@ class HashRetrieveViewSetMixin(GenericViewSet):
         try:
             hs = Hasher.make_hash(pk)
         except ValueError:
-            raise ParseError('parse error')
+            raise ParseError("parse error")
         return hs
 
 
 class ParseJsonView:
-
     def get_current_page(self, request, default=1):
         """获取当前页码"""
-        return self.parse_body(request).get('current_page', default)
+        return self.parse_body(request).get("current_page", default)
 
     def get_page_size(self, request, default=None):
-        return self.parse_body(request).get('page_size', default)
+        return self.parse_body(request).get("page_size", default)
 
     @staticmethod
     def parse_body(request):
         return json.loads(request.body)
 
     @staticmethod
-    def paginate_response(paginate_queryset, current_page=1, paginate='on'):
+    def paginate_response(paginate_queryset, current_page=1, paginate="on"):
         """
         返回数据封装
         :param paginate_queryset: queryset分页对象
@@ -74,12 +73,12 @@ class ParseJsonView:
         :param paginate: 是否分页
         :return:
         """
-        if paginate == 'off':
+        if paginate == "off":
             return JsonResponse(list(paginate_queryset.object_list), safe=False)
         else:
             data = {
-                'count': paginate_queryset.count,
-                'results': list(paginate_queryset.page(current_page).object_list)
+                "count": paginate_queryset.count,
+                "results": list(paginate_queryset.page(current_page).object_list),
             }
             return JsonResponse(data, safe=False)
 
@@ -91,77 +90,69 @@ class ParseJsonView:
         except ValueError:
             pk = hash_id
         except Exception:
-            raise ParseError('parse error')
+            raise ParseError("parse error")
         return pk
 
     @staticmethod
     def get_head_url(request):
         """返回人脸url"""
-        return request.POST.get('photo')
+        return request.POST.get("photo")
 
     def get_b64_image(self, request):
         """获取人脸b64"""
-        return base64.b64encode(requests.get(url=self.get_head_url(request)).content).decode()
+        return base64.b64encode(
+            requests.get(url=self.get_head_url(request)).content
+        ).decode()
 
 
 def page_not_found(request, *args, **kwargs):
-    return render(request, '404/404.html')
+    return render(request, "404/404.html")
 
 
 @csrf_exempt
 def upload_image(request, file_types=None):
     """自定义文件上传"""
-    res_upload = {
-        'success': 1,
-        'message': '上传成功哈哈哈',
-        'url': None
-    }
-    if file_types == 'snap':  # 默认抓拍抓拍路径
-        path = ''.join([FILE_PATH_PREFIX, '/snap/', time.strftime('%Y/%m/%d', time.localtime())])
-    elif file_types == 'archives':  # 人员档案路径
-        path = ''.join([FILE_PATH_PREFIX, '/archives/'])
-    elif file_types == 'monitor':  # 重点人员路径
-        path = ''.join([FILE_PATH_PREFIX, '/monitor/'])
-    elif file_types == 'personnel':  # 关注人员路径
-        path = ''.join([FILE_PATH_PREFIX, '/personnel/'])
+    res_upload = {"success": 1, "message": "上传成功哈哈哈", "url": None}
+    if file_types == "snap":  # 默认抓拍抓拍路径
+        path = "".join(
+            [FILE_PATH_PREFIX, "/snap/", time.strftime("%Y/%m/%d", time.localtime())]
+        )
+    elif file_types == "archives":  # 人员档案路径
+        path = "".join([FILE_PATH_PREFIX, "/archives/"])
+    elif file_types == "monitor":  # 重点人员路径
+        path = "".join([FILE_PATH_PREFIX, "/monitor/"])
+    elif file_types == "personnel":  # 关注人员路径
+        path = "".join([FILE_PATH_PREFIX, "/personnel/"])
     else:
-        path = ''.join([FILE_PATH_PREFIX, '/other/'])
-    file = request.FILES.get('file')
+        path = "".join([FILE_PATH_PREFIX, "/other/"])
+    file = request.FILES.get("file")
     if isinstance(file, InMemoryUploadedFile):
         file = base64.b64encode(file.read()).decode()
 
     photo = base64.b64decode(file)
-    files = {'file': photo}
-    options = {
-        'output': 'json',
-        'path': path,
-        'scene': ''
-    }
-    res = requests.post(url=''.join([settings.FAST_DFS_HOST, '/upload']), data=options, files=files).json()
-    res_upload['url'] = res['path']
+    files = {"file": photo}
+    options = {"output": "json", "path": path, "scene": ""}
+    res = requests.post(
+        url="".join([settings.FAST_DFS_HOST, "/upload"]), data=options, files=files
+    ).json()
+    res_upload["url"] = res["path"]
     return JsonResponse(res_upload)
 
 
 @csrf_exempt
 def web_upload_image(request, *args, **kwargs):
     """浏览器上传"""
-    res_upload = {
-        'success': 1,
-        'message': '上传成功哈哈哈',
-        'url': None
-    }
-    file = request.FILES.get('file')
-    path = ''.join([FILE_PATH_PREFIX, '/other/'])
+    res_upload = {"success": 1, "message": "上传成功哈哈哈", "url": None}
+    file = request.FILES.get("file")
+    path = "".join([FILE_PATH_PREFIX, "/other/"])
     if isinstance(file, InMemoryUploadedFile):
         file = base64.b64encode(file.read()).decode()
 
     photo = base64.b64decode(file)
-    files = {'file': photo}
-    options = {
-        'output': 'json',
-        'path': path,
-        'scene': ''
-    }
-    res = requests.post(url=''.join([settings.FAST_DFS_HOST, '/upload']), data=options, files=files).json()
-    res_upload['url'] = res['url']
+    files = {"file": photo}
+    options = {"output": "json", "path": path, "scene": ""}
+    res = requests.post(
+        url="".join([settings.FAST_DFS_HOST, "/upload"]), data=options, files=files
+    ).json()
+    res_upload["url"] = res["url"]
     return JsonResponse(res_upload)

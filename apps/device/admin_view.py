@@ -33,13 +33,17 @@ class PhotoSearchView(ParseJsonView, View):
 
     def get(self, request):
         """以图搜图页面返回"""
-        id = request.GET.get('id')
-        detail_type = request.GET.get('detail_type')
-        if detail_type == '5':
-            photo = monitor_models.Monitor.objects.get(id=self.hash_to_pk(id)).get_head_url()
+        id = request.GET.get("id")
+        detail_type = request.GET.get("detail_type")
+        if detail_type == "5":
+            photo = monitor_models.Monitor.objects.get(
+                id=self.hash_to_pk(id)
+            ).get_head_url()
         else:
-            photo = device_models.DevicePhoto.objects.get(id=self.hash_to_pk(id)).get_head_url()
-        return render(request, 'admin/popup/device/photo_search.html', locals())
+            photo = device_models.DevicePhoto.objects.get(
+                id=self.hash_to_pk(id)
+            ).get_head_url()
+        return render(request, "admin/popup/device/photo_search.html", locals())
 
 
 class PhotoDetailView(ParseJsonView, View):
@@ -47,13 +51,15 @@ class PhotoDetailView(ParseJsonView, View):
 
     def get(self, request):
         """以图搜图页面详情"""
-        _id = request.GET.get('id')
-        similarity = request.GET.get('similarity')
-        detail_type = request.GET.get('detail_type')
-        if detail_type in ['0', '5']:
+        _id = request.GET.get("id")
+        similarity = request.GET.get("similarity")
+        detail_type = request.GET.get("detail_type")
+        if detail_type in ["0", "5"]:
             instance = device_models.DevicePhoto.objects.get(id=self.hash_to_pk(_id))
         else:
-            instance = monitor_models.MonitorDiscover.objects.get(id=self.hash_to_pk(_id)).record
+            instance = monitor_models.MonitorDiscover.objects.get(
+                id=self.hash_to_pk(_id)
+            ).record
         head_path = instance.head_path
         body_path = instance.body_path
         back_path = instance.back_path
@@ -62,26 +68,32 @@ class PhotoDetailView(ParseJsonView, View):
         human_data = instance.human_data
         face_data = instance.face_data
         take_photo_time = instance.take_photo_time
-        if detail_type == '0':
+        if detail_type == "0":
             similarity = similarity
-            if request.GET.get('monitor_id'):
-                sample_url = device_models.DevicePhoto.objects.get(id=self.hash_to_pk(request.GET.get('monitor_id'))).get_head_url()
-            if request.GET.get('photo'):
-                sample_url = request.GET.get('photo')
-        elif detail_type == '4':
-            monitor_ins = monitor_models.MonitorDiscover.objects.get(id=self.hash_to_pk(_id))
+            if request.GET.get("monitor_id"):
+                sample_url = device_models.DevicePhoto.objects.get(
+                    id=self.hash_to_pk(request.GET.get("monitor_id"))
+                ).get_head_url()
+            if request.GET.get("photo"):
+                sample_url = request.GET.get("photo")
+        elif detail_type == "4":
+            monitor_ins = monitor_models.MonitorDiscover.objects.get(
+                id=self.hash_to_pk(_id)
+            )
             similarity = monitor_ins.similarity
             sample_url = monitor_ins.target.photo
             monitor_name = monitor_ins.target.name
 
-        elif detail_type == '5':
-            monitor_id = request.GET.get('monitor_id')
-            monitor_ins = monitor_models.Monitor.objects.get(id=self.hash_to_pk(monitor_id))
+        elif detail_type == "5":
+            monitor_id = request.GET.get("monitor_id")
+            monitor_ins = monitor_models.Monitor.objects.get(
+                id=self.hash_to_pk(monitor_id)
+            )
             similarity = similarity
             monitor_name = monitor_ins.name
             sample_url = monitor_ins.photo
 
-        return render(request, 'admin/popup/device/photo_detail.html', locals())
+        return render(request, "admin/popup/device/photo_detail.html", locals())
 
 
 class SearchImageView(ParseJsonView, View):
@@ -89,31 +101,37 @@ class SearchImageView(ParseJsonView, View):
 
     def get(self, request):
         """以图搜图模板返回"""
-        _id = request.GET.get('id')
+        _id = request.GET.get("id")
 
         if _id:
-            url = archives_models.Personnel.objects.get(id=self.hash_to_pk(_id)).get_head_url()
+            url = archives_models.Personnel.objects.get(
+                id=self.hash_to_pk(_id)
+            ).get_head_url()
         else:
-            url = 'https://wimg.588ku.com/gif620/20/12/15/b0f831231ece9b4e422adf9bcb271c51.gif'
+            url = "https://wimg.588ku.com/gif620/20/12/15/b0f831231ece9b4e422adf9bcb271c51.gif"
 
-        return render(request, 'admin/device/other/search_image.html', locals())
+        return render(request, "admin/device/other/search_image.html", locals())
 
 
 class VehicleSearchView(ParseJsonView, View):
     """机动车查询View"""
 
     def get(self, request):
-        _id = request.GET.get('id')
-        return render(request, 'admin/popup/device/vehicle_search.html', locals())
+        _id = request.GET.get("id")
+        return render(request, "admin/popup/device/vehicle_search.html", locals())
 
     def post(self, request):
         request_data = self.parse_body(request)
-        current_page = request_data.get('current_page', 1)
-        page_size = request_data.get('page_size', 10)
-        paginate = request_data.get('paginate')
-        _id = request_data.get('id')
+        current_page = request_data.get("current_page", 1)
+        page_size = request_data.get("page_size", 10)
+        paginate = request_data.get("paginate")
+        _id = request_data.get("id")
         _plate = device_models.Vehicle.objects.get(id=self.hash_to_pk(_id)).plate
-        _photo_list = device_models.Vehicle.objects.filter(plate=_plate).order_by('-id').values('id', 'device__name', 'address', 'take_photo_time', 'plate_path')
+        _photo_list = (
+            device_models.Vehicle.objects.filter(plate=_plate)
+            .order_by("-id")
+            .values("id", "device__name", "address", "take_photo_time", "plate_path")
+        )
         # _photo_list = device_models.Vehicle.objects.order_by('-id').values('id', 'device__name', 'address', 'take_photo_time', 'plate_path')
         photo_page = Paginator(_photo_list, page_size)
         if photo_page.page_range.start <= current_page <= photo_page.page_range.stop:
@@ -124,46 +142,54 @@ class VehicleDetailView(ParseJsonView, View):
     """机动车详情View"""
 
     def get(self, request):
-        _id = request.GET.get('id')
+        _id = request.GET.get("id")
         instance = device_models.Vehicle.objects.get(id=self.hash_to_pk(_id))
-        return render(request, 'admin/popup/device/vehicle_detail.html', locals())
+        return render(request, "admin/popup/device/vehicle_detail.html", locals())
 
 
 class VideoPlaybackView(ParseJsonView, View):
     """回放视频View"""
 
     def get(self, request):
-        _id = request.GET.get('id')
-        return render(request, 'admin/popup/device/video_playback.html', locals())
+        _id = request.GET.get("id")
+        return render(request, "admin/popup/device/video_playback.html", locals())
 
     def post(self, request):
         """返回视频url"""
-        _id = request.POST.get('id')
+        _id = request.POST.get("id")
         photo_obj = device_models.DevicePhoto.objects.get(id=self.hash_to_pk(_id))
-        start_time = (photo_obj.take_photo_time - datetime.timedelta(seconds=5)).strftime('%Y%m%dT%H%M%S')
+        start_time = (
+            photo_obj.take_photo_time - datetime.timedelta(seconds=5)
+        ).strftime("%Y%m%dT%H%M%S")
         channel = photo_obj.device.channel
-        params = {
-            'channel': int(channel),
-            'Starttime': str(start_time)
-        }
+        params = {"channel": int(channel), "Starttime": str(start_time)}
         try:
-            result = requests.post(url=''.join([settings.SEARCH_VIDEO_HOST, '/api/v1/stream/']), json=params)
+            result = requests.post(
+                url="".join([settings.SEARCH_VIDEO_HOST, "/api/v1/stream/"]),
+                json=params,
+            )
             result_json = result.json()
         except Exception as e:
-            return JsonResponse({'message': '录像机数据获取失败'})
-        if result.status_code == 200 and result_json.get('code') == 0 and result_json.get('msg') == 'success':
-            photo_id = result_json.get('data')['id']
-            url = ''.join([settings.VIDEO_HOST, '/mp4/{id}/stream.mp4'.format(id=photo_id)])
-            return JsonResponse({'url': url})
+            return JsonResponse({"message": "录像机数据获取失败"})
+        if (
+            result.status_code == 200
+            and result_json.get("code") == 0
+            and result_json.get("msg") == "success"
+        ):
+            photo_id = result_json.get("data")["id"]
+            url = "".join(
+                [settings.VIDEO_HOST, "/mp4/{id}/stream.mp4".format(id=photo_id)]
+            )
+            return JsonResponse({"url": url})
         else:
-            return JsonResponse({'message': result_json.get('msg')})
+            return JsonResponse({"message": result_json.get("msg")})
 
 
 class RealTimeView(ParseJsonView, View):
     """实时监控View"""
 
     def get(self, request):
-        return render(request, 'admin/device/other/real_time.html', locals())
+        return render(request, "admin/device/other/real_time.html", locals())
 
     def post(self, request):
         """监控页面获取数据接口"""
@@ -174,37 +200,44 @@ class WebRtcView(ParseJsonView, View):
     """单摄像头webrtc视频流"""
 
     def get(self, request):
-        _id = request.GET.get('id')
+        _id = request.GET.get("id")
         device_obj = device_models.DeviceInfo.objects.get(id=self.hash_to_pk(_id))
         if device_obj.status == 0:
-            return Response({'message': '设备离线'})
+            return Response({"message": "设备离线"})
         if not device_obj.rtsp_address:
-            return Response({'message': '缺少rtsp地址'})
-        stream_uuid = hashlib.md5("_".join([device_obj.ip, device_obj.rtsp_address]).encode('utf-8')).hexdigest()
+            return Response({"message": "缺少rtsp地址"})
+        stream_uuid = hashlib.md5(
+            "_".join([device_obj.ip, device_obj.rtsp_address]).encode("utf-8")
+        ).hexdigest()
 
         data = {
             "uuid": stream_uuid,
             "name": device_obj.name,
             "channels": {
-                "0": {
-                    "url": device_obj.rtsp_address,
-                    "on_demand": True,
-                    "debug": False
-                }
-            }
+                "0": {"url": device_obj.rtsp_address, "on_demand": True, "debug": False}
+            },
         }
 
         try:
             res = requests.post(
-                url=''.join([settings.SEARCH_REAL_TIME_HOST, '/stream/{stream}/add'.format(stream=stream_uuid)]), json=data,
-                auth=('demo', 'demo')
+                url="".join(
+                    [
+                        settings.SEARCH_REAL_TIME_HOST,
+                        "/stream/{stream}/add".format(stream=stream_uuid),
+                    ]
+                ),
+                json=data,
+                auth=("demo", "demo"),
             )
             if res.json():
-                device_video_url = ''.join(
+                device_video_url = "".join(
                     [
-                        settings.SEARCH_REAL_TIME_HOST, '/stream/{stream}/channel/{channel}/webrtc?uuid={stream}&channel={channel}'.format(stream=stream_uuid, channel=0)
+                        settings.SEARCH_REAL_TIME_HOST,
+                        "/stream/{stream}/channel/{channel}/webrtc?uuid={stream}&channel={channel}".format(
+                            stream=stream_uuid, channel=0
+                        ),
                     ]
                 )
         except Exception as e:
             raise
-        return render(request, 'admin/device/other/webrtc.html', locals())
+        return render(request, "admin/device/other/webrtc.html", locals())

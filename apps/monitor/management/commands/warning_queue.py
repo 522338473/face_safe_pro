@@ -20,11 +20,11 @@ from apps.monitor import tasks
 
 from django.core.management.base import BaseCommand
 
-logger = logging.getLogger('server.default')
+logger = logging.getLogger("server.default")
 
 
 class Command(BaseCommand):
-    help = 'Get the warning result from the redis queue'
+    help = "Get the warning result from the redis queue"
 
     def handle(self, *args, **options):
         print("warning queue result start!")
@@ -55,19 +55,23 @@ class Command(BaseCommand):
 
     def warning_queue(self):
         """报警队列"""
-        redis_list = redis_queue.warning_bpop_queue('_warning_result_', timeout=30)
+        redis_list = redis_queue.warning_bpop_queue("_warning_result_", timeout=30)
         if redis_list is not None:
-            logger.info('Warning result: {}'.format(redis_list))
+            logger.info("Warning result: {}".format(redis_list))
             filter_list = []
             for result in json.loads(redis_list):
                 # 添加一个逻辑判断，如果该重点人员已经被删除，那么就不应该创建重点人员的抓拍记录
-                monitor_instance = monitor_models.Monitor.objects.get(id=Hasher.to_object_pk(result[0]))
+                monitor_instance = monitor_models.Monitor.objects.get(
+                    id=Hasher.to_object_pk(result[0])
+                )
                 if monitor_instance.delete_at:
                     logger.info("{} is delete".format(result))
                     # 再次删除人像
                     face_discern.face_warning_detect(
                         user_id=monitor_instance.hash,
-                        image=base64.b64encode(requests.get(url=monitor_instance.get_head_url()).content).decode()
+                        image=base64.b64encode(
+                            requests.get(url=monitor_instance.get_head_url()).content
+                        ).decode(),
                     )
                 else:
                     logger.info("{} data is append filter list.".format(result))
@@ -80,34 +84,50 @@ class Command(BaseCommand):
                     initial_monitor = 0
                     initial_area = 0
                     for i in res:
-                        query = monitor_models.Monitor.objects.get(id=Hasher.to_object_pk(i[0]))
+                        query = monitor_models.Monitor.objects.get(
+                            id=Hasher.to_object_pk(i[0])
+                        )
                         if query.area:
                             if initial_area == 0:
                                 try:
-                                    instance = monitor_models.MonitorDiscover.objects.create(target_id=Hasher.to_object_pk(i[0]),
-                                                                                             record_id=Hasher.to_object_pk(i[1]),
-                                                                                             similarity=i[-1])
-                                    logger.info("Area Warning add success: {}".format(i))
+                                    instance = (
+                                        monitor_models.MonitorDiscover.objects.create(
+                                            target_id=Hasher.to_object_pk(i[0]),
+                                            record_id=Hasher.to_object_pk(i[1]),
+                                            similarity=i[-1],
+                                        )
+                                    )
+                                    logger.info(
+                                        "Area Warning add success: {}".format(i)
+                                    )
                                     initial_area += 1
                                 except ValueError as e:
-                                    logger.error('result parser error:{}'.format(e))
+                                    logger.error("result parser error:{}".format(e))
                         else:
                             if initial_monitor == 0:
                                 try:
-                                    instance = monitor_models.MonitorDiscover.objects.create(target_id=Hasher.to_object_pk(i[0]),
-                                                                                             record_id=Hasher.to_object_pk(i[1]),
-                                                                                             similarity=i[-1])
-                                    logger.info("Monitor Warning add success: {}".format(i))
+                                    instance = (
+                                        monitor_models.MonitorDiscover.objects.create(
+                                            target_id=Hasher.to_object_pk(i[0]),
+                                            record_id=Hasher.to_object_pk(i[1]),
+                                            similarity=i[-1],
+                                        )
+                                    )
+                                    logger.info(
+                                        "Monitor Warning add success: {}".format(i)
+                                    )
                                     initial_monitor += 1
                                 except ValueError as e:
-                                    logger.error('result parser error:{}'.format(e))
+                                    logger.error("result parser error:{}".format(e))
                 else:
                     try:
-                        instance = monitor_models.MonitorDiscover.objects.create(target_id=Hasher.to_object_pk(res[0][0]),
-                                                                                 record_id=Hasher.to_object_pk(res[0][1]),
-                                                                                 similarity=res[0][-1])
+                        instance = monitor_models.MonitorDiscover.objects.create(
+                            target_id=Hasher.to_object_pk(res[0][0]),
+                            record_id=Hasher.to_object_pk(res[0][1]),
+                            similarity=res[0][-1],
+                        )
                         logger.info("Warning add success: {}".format(res[0]))
                     except ValueError as e:
-                        logger.error('result parser error:{}'.format(e))
+                        logger.error("result parser error:{}".format(e))
         else:
             logger.info("Get Info from redis empty")

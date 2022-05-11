@@ -19,9 +19,17 @@ admin.site.unregister(User)
 
 @admin.register(User)
 class UserExtraAdmin(UserAdmin):
-    list_display = ['id', 'username', 'email', 'is_active', 'is_staff', 'last_login', 'mobile']
-    list_filter = ['username', 'is_active']
-    readonly_fields = ['is_superuser']
+    list_display = [
+        "id",
+        "username",
+        "email",
+        "is_active",
+        "is_staff",
+        "last_login",
+        "mobile",
+    ]
+    list_filter = ["username", "is_active"]
+    readonly_fields = ["is_superuser"]
     inlines = [UserExtraInline]
     list_per_page = 10
     top_html = ' <el-alert title="请谨慎操作用户相关信息!" type="warning"></el-alert>'
@@ -47,15 +55,15 @@ class UserExtraAdmin(UserAdmin):
         except Exception as e:
             return e
 
-    mobile.short_description = '手机号'
+    mobile.short_description = "手机号"
 
 
 @admin.register(LogEntry)
 class LogEntryAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user', 'content_type', 'message', 'action_time']
-    list_filter = ['user__username', 'action_time']
-    readonly_fields = ['action_time', 'user', 'content_type']
-    exclude = ['change_message', 'action_flag', 'object_repr', 'object_id']
+    list_display = ["id", "user", "content_type", "message", "action_time"]
+    list_filter = ["user__username", "action_time"]
+    readonly_fields = ["action_time", "user", "content_type"]
+    exclude = ["change_message", "action_flag", "object_repr", "object_id"]
     list_per_page = 10
 
     def get_changelist_instance(self, request):
@@ -65,9 +73,9 @@ class LogEntryAdmin(admin.ModelAdmin):
     def message(obj):
         return obj.get_change_message()
 
-    message.short_description = '操作信息'
+    message.short_description = "操作信息"
 
 
 @admin.register(Permission)
 class PermissionAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'content_type', 'codename']
+    list_display = ["id", "name", "content_type", "codename"]

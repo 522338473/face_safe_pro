@@ -23,28 +23,28 @@ def upload_image(image, file_types=None):
     :return:
     """
     if not file_types:  # 默认抓拍抓拍路径
-        path = ''.join([FILE_PATH_PREFIX, '/snap/', time.strftime('%Y/%m/%d', time.localtime())])
-    elif file_types == 'archives':  # 人员档案路径
-        path = ''.join([FILE_PATH_PREFIX, '/archives/'])
-    elif file_types == 'monitor':  # 重点人员路径
-        path = ''.join([FILE_PATH_PREFIX, '/monitor/'])
-    elif file_types == 'personnel':  # 关注人员路径
-        path = ''.join([FILE_PATH_PREFIX, '/personnel/'])
+        path = "".join(
+            [FILE_PATH_PREFIX, "/snap/", time.strftime("%Y/%m/%d", time.localtime())]
+        )
+    elif file_types == "archives":  # 人员档案路径
+        path = "".join([FILE_PATH_PREFIX, "/archives/"])
+    elif file_types == "monitor":  # 重点人员路径
+        path = "".join([FILE_PATH_PREFIX, "/monitor/"])
+    elif file_types == "personnel":  # 关注人员路径
+        path = "".join([FILE_PATH_PREFIX, "/personnel/"])
     else:
-        path = ''.join([FILE_PATH_PREFIX, '/other/'])
+        path = "".join([FILE_PATH_PREFIX, "/other/"])
 
-    files = {'file': image}
+    files = {"file": image}
 
-    options = {
-        'output': 'json',
-        'path': path,
-        'scene': ''
-    }
+    options = {"output": "json", "path": path, "scene": ""}
 
     try:
-        res = requests.post(url=''.join([settings.FAST_DFS_HOST, '/upload']), data=options, files=files).json()
-        if int(res.get('size')) < 1000:
+        res = requests.post(
+            url="".join([settings.FAST_DFS_HOST, "/upload"]), data=options, files=files
+        ).json()
+        if int(res.get("size")) < 1000:
             raise
-        return res['path']
+        return res["path"]
     except Exception as e:
         raise

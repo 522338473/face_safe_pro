@@ -9,7 +9,7 @@ from django.conf import settings
 
 class RedisQueue:
     def __init__(self):
-        self.queue_name = 'default'
+        self.queue_name = "default"
         self.client = self.connect()
         self.redis_client = self.connect_redis()
 
@@ -18,21 +18,23 @@ class RedisQueue:
 
     @staticmethod
     def connect_redis(db=0):
-        return redis.StrictRedis(settings.REDIS_SERVER_HOST, settings.REDIS_SERVER_PORT, db)
+        return redis.StrictRedis(
+            settings.REDIS_SERVER_HOST, settings.REDIS_SERVER_PORT, db
+        )
 
     def image_enqueue(self, image_list):
         client = self.redis_client
-        key = '_device_image'
+        key = "_device_image"
         client.rpush(key, json.dumps(image_list))
 
     def device_enqueue(self, device_info):
         client = self.redis_client
-        key = '_video_db_'
+        key = "_video_db_"
         client.rpush(key, json.dumps(device_info))
 
     def photo_enqueue(self, photo_list):
         client = self.redis_client
-        key = '_photo_image'
+        key = "_photo_image"
         client.rpush(key, json.dumps(photo_list))
 
     def enqueue(self, key, message):
@@ -83,22 +85,30 @@ class RabbitQueue:
         self.channel = None
 
     def connect(self):
-        credit = pika.PlainCredentials(username=settings.RABBITMQ_USERNAME, password=settings.RABBITMQ_PASSWORD)
-        self.channel = pika.BlockingConnection(pika.ConnectionParameters(host=settings.RABBITMQ_HOST, port=settings.RABBITMQ_PORT, credentials=credit)).channel()
+        credit = pika.PlainCredentials(
+            username=settings.RABBITMQ_USERNAME, password=settings.RABBITMQ_PASSWORD
+        )
+        self.channel = pika.BlockingConnection(
+            pika.ConnectionParameters(
+                host=settings.RABBITMQ_HOST,
+                port=settings.RABBITMQ_PORT,
+                credentials=credit,
+            )
+        ).channel()
 
     def image_enqueue(self, image_list):
         """推送抓拍数据"""
         self.connect()
         channel = self.channel
-        key = '_device_image'
+        key = "_device_image"
         channel.queue_declare(queue=key, durable=True)  # 队列持久化
         channel.basic_publish(
-            exchange='',
+            exchange="",
             routing_key=key,
             body=json.dumps(image_list, ensure_ascii=False),
             properties=pika.BasicProperties(
                 delivery_mode=2,  # 消息持久化
-            )
+            ),
         )
 
         channel.close()
@@ -107,15 +117,15 @@ class RabbitQueue:
         """推送注册信息"""
         self.connect()
         channel = self.channel
-        key = '_photo_image'
+        key = "_photo_image"
         channel.queue_declare(queue=key, durable=True)
         channel.basic_publish(
-            exchange='',
+            exchange="",
             routing_key=key,
             body=json.dumps(photo_list),
             properties=pika.BasicProperties(
                 delivery_mode=2,  # 消息持久化
-            )
+            ),
         )
 
         channel.close()
@@ -125,7 +135,9 @@ class RabbitQueue:
         self.connect()
         channel = self.channel
         channel.queue_declare(queue=queue_name, durable=True)
-        channel.basic_consume(on_message_callback=self.callback, queue=queue_name, auto_ack=False)
+        channel.basic_consume(
+            on_message_callback=self.callback, queue=queue_name, auto_ack=False
+        )
         channel.start_consuming()
 
     def callback(self, message):

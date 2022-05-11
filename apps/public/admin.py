@@ -12,17 +12,11 @@ class PublicModelAdmin:
     该类为第一继承类。否则根据新式类继承规则不会生效
     """
 
-    readonly_fields = ['create_by', 'delete_at']
+    readonly_fields = ["create_by", "delete_at"]
     list_per_page = 10
     list_default_per_page = 10
-    change_list_template = 'admin/change_list.html'
-    fields_options = {
-        'id': {
-            'fixed': 'left',
-            'width': '120px',
-            'align': 'center'
-        }
-    }
+    change_list_template = "admin/change_list.html"
+    fields_options = {"id": {"fixed": "left", "width": "120px", "align": "center"}}
 
     def delete_model(self, request, obj):
         """删除数据的时候软删除"""
@@ -76,18 +70,20 @@ class PublicModelAdmin:
     @staticmethod
     def get_head_url(request):
         """返回人脸完整路径"""
-        return ''.join([settings.FAST_DFS_HOST, request.POST.get('photo')])
+        return "".join([settings.FAST_DFS_HOST, request.POST.get("photo")])
 
     def get_b64_image(self, request):
         """获取人脸b64"""
-        return base64.b64encode(requests.get(url=self.get_head_url(request)).content).decode()
+        return base64.b64encode(
+            requests.get(url=self.get_head_url(request)).content
+        ).decode()
 
     def get_current_page(self, request):
         """获取当前页码"""
-        return self.get_query_params(request, 'current_page', 1)
+        return self.get_query_params(request, "current_page", 1)
 
     def get_page_size(self, request):
-        return self.get_query_params(request, 'page_size', None)
+        return self.get_query_params(request, "page_size", None)
 
     """Action_for_account_start"""
     pass
@@ -97,168 +93,136 @@ class PublicModelAdmin:
 
     def action_for_archives_group_test(self, request, queryset):
         """档案库Action"""
-        self.message_user(request, '收到了请求、但是木有处理', messages.WARNING)
+        self.message_user(request, "收到了请求、但是木有处理", messages.WARNING)
 
-    action_for_archives_group_test.short_description = 'Action按钮测试'
+    action_for_archives_group_test.short_description = "Action按钮测试"
     action_for_archives_group_test.enable = True
-    action_for_archives_group_test.icon = 'fas fa-audio-description'
-    action_for_archives_group_test.type = 'danger'
-    action_for_archives_group_test.style = 'color:black;'
-    action_for_archives_group_test.confirm = '你想干嘛?'
+    action_for_archives_group_test.icon = "fas fa-audio-description"
+    action_for_archives_group_test.type = "danger"
+    action_for_archives_group_test.style = "color:black;"
+    action_for_archives_group_test.confirm = "你想干嘛?"
 
     def action_for_archives_group_another_test(self, request, queryset):
         """档案库Action"""
-        messages.add_message(request, messages.SUCCESS, '哈哈哈')
+        messages.add_message(request, messages.SUCCESS, "哈哈哈")
 
-    action_for_archives_group_another_test.short_description = '又一个Action测试按钮'
-    action_for_archives_group_another_test.type = 'success'
+    action_for_archives_group_another_test.short_description = "又一个Action测试按钮"
+    action_for_archives_group_another_test.type = "success"
 
     def action_for_archives_personnel_export(self, request, queryset):
         """档案人员Action"""
-        self.message_user(request, '收到了请求、但是木有处理', messages.WARNING)
+        self.message_user(request, "收到了请求、但是木有处理", messages.WARNING)
 
-    action_for_archives_personnel_export.short_description = '自定义导出'
+    action_for_archives_personnel_export.short_description = "自定义导出"
     action_for_archives_personnel_export.enable = True
-    action_for_archives_personnel_export.icon = 'fas fa-download'
-    action_for_archives_personnel_export.type = 'success'
-    action_for_archives_personnel_export.confirm = '你想导出嘛?'
+    action_for_archives_personnel_export.icon = "fas fa-download"
+    action_for_archives_personnel_export.type = "success"
+    action_for_archives_personnel_export.confirm = "你想导出嘛?"
 
     def action_for_archives_personnel_import(self, request, queryset):
         """档案人员Action"""
-        self.message_user(request, '收到了请求、但是木有处理', messages.WARNING)
+        self.message_user(request, "收到了请求、但是木有处理", messages.WARNING)
 
-    action_for_archives_personnel_import.short_description = '自定义导入'
+    action_for_archives_personnel_import.short_description = "自定义导入"
     action_for_archives_personnel_import.enable = True
-    action_for_archives_personnel_import.icon = 'fas fa-upload'
-    action_for_archives_personnel_import.type = 'danger'
-    action_for_archives_personnel_import.confirm = '你想导入嘛?'
+    action_for_archives_personnel_import.icon = "fas fa-upload"
+    action_for_archives_personnel_import.type = "danger"
+    action_for_archives_personnel_import.confirm = "你想导入嘛?"
 
     def action_for_archives_personnel_layer_input(self, request, queryset):
         post = request.POST
-        if not post.get('_selected'):
-            return JsonResponse(data={
-                'status': 'error',
-                'msg': '请先选中数据！'
-            })
+        if not post.get("_selected"):
+            return JsonResponse(data={"status": "error", "msg": "请先选中数据！"})
         else:
-            return JsonResponse(data={
-                'status': 'success',
-                'msg': '处理成功！'
-            })
+            return JsonResponse(data={"status": "success", "msg": "处理成功！"})
 
-    action_for_archives_personnel_layer_input.short_description = '弹出对话框输入'
-    action_for_archives_personnel_layer_input.type = 'success'
-    action_for_archives_personnel_layer_input.icon = 'el-icon-s-promotion'
+    action_for_archives_personnel_layer_input.short_description = "弹出对话框输入"
+    action_for_archives_personnel_layer_input.type = "success"
+    action_for_archives_personnel_layer_input.icon = "el-icon-s-promotion"
     action_for_archives_personnel_layer_input.enable = True
 
     # 指定为弹出层，这个参数最关键
     action_for_archives_personnel_layer_input.layer = {
         # 弹出层中的输入框配置
-
         # 这里指定对话框的标题
-        'title': '弹出层输入框',
+        "title": "弹出层输入框",
         # 提示信息
-        'tips': '这个弹出对话框是需要在admin中进行定义，数据新增编辑等功能，需要自己来实现。',
+        "tips": "这个弹出对话框是需要在admin中进行定义，数据新增编辑等功能，需要自己来实现。",
         # 确认按钮显示文本
-        'confirm_button': '确认提交',
+        "confirm_button": "确认提交",
         # 取消按钮显示文本
-        'cancel_button': '取消',
-
+        "cancel_button": "取消",
         # 弹出层对话框的宽度，默认50%
-        'width': '40%',
-
+        "width": "40%",
         # 表单中 label的宽度，对应element-ui的 label-width，默认80px
-        'labelWidth': "80px",
-        'params': [{
-            # 这里的type 对应el-input的原生input属性，默认为input
-            'type': 'input',
-            # key 对应post参数中的key
-            'key': 'name',
-            # 显示的文本
-            'label': '名称',
-            # 为空校验，默认为False
-            'require': True
-        }, {
-            'type': 'select',
-            'key': 'type',
-            'label': '类型',
-            'width': '200px',
-            # size对应elementui的size，取值为：medium / small / mini
-            'size': 'small',
-            # value字段可以指定默认值
-            'value': '0',
-            'options': [{
-                'key': '0',
-                'label': '收入'
-            }, {
-                'key': '1',
-                'label': '支出'
-            }]
-        }, {
-            'type': 'number',
-            'key': 'money',
-            'label': '金额',
-            # 设置默认值
-            'value': 1000
-        }, {
-            'type': 'date',
-            'key': 'date',
-            'label': '日期',
-        }, {
-            'type': 'datetime',
-            'key': 'datetime',
-            'label': '时间',
-        }, {
-            'type': 'rate',
-            'key': 'star',
-            'label': '评价等级'
-        }, {
-            'type': 'color',
-            'key': 'color',
-            'label': '颜色'
-        }, {
-            'type': 'slider',
-            'key': 'slider',
-            'label': '滑块'
-        }, {
-            'type': 'switch',
-            'key': 'switch',
-            'label': 'switch开关'
-        }, {
-            'type': 'input_number',
-            'key': 'input_number',
-            'label': 'input number'
-        }, {
-            'type': 'checkbox',
-            'key': 'checkbox',
-            # 必须指定默认值
-            'value': [],
-            'label': '复选框',
-            'options': [{
-                'key': '0',
-                'label': '收入'
-            }, {
-                'key': '1',
-                'label': '支出'
-            }, {
-                'key': '2',
-                'label': '收益'
-            }]
-        }, {
-            'type': 'radio',
-            'key': 'radio',
-            'label': '单选框',
-            'options': [{
-                'key': '0',
-                'label': '收入'
-            }, {
-                'key': '1',
-                'label': '支出'
-            }, {
-                'key': '2',
-                'label': '收益'
-            }]
-        }]
+        "labelWidth": "80px",
+        "params": [
+            {
+                # 这里的type 对应el-input的原生input属性，默认为input
+                "type": "input",
+                # key 对应post参数中的key
+                "key": "name",
+                # 显示的文本
+                "label": "名称",
+                # 为空校验，默认为False
+                "require": True,
+            },
+            {
+                "type": "select",
+                "key": "type",
+                "label": "类型",
+                "width": "200px",
+                # size对应elementui的size，取值为：medium / small / mini
+                "size": "small",
+                # value字段可以指定默认值
+                "value": "0",
+                "options": [{"key": "0", "label": "收入"}, {"key": "1", "label": "支出"}],
+            },
+            {
+                "type": "number",
+                "key": "money",
+                "label": "金额",
+                # 设置默认值
+                "value": 1000,
+            },
+            {
+                "type": "date",
+                "key": "date",
+                "label": "日期",
+            },
+            {
+                "type": "datetime",
+                "key": "datetime",
+                "label": "时间",
+            },
+            {"type": "rate", "key": "star", "label": "评价等级"},
+            {"type": "color", "key": "color", "label": "颜色"},
+            {"type": "slider", "key": "slider", "label": "滑块"},
+            {"type": "switch", "key": "switch", "label": "switch开关"},
+            {"type": "input_number", "key": "input_number", "label": "input number"},
+            {
+                "type": "checkbox",
+                "key": "checkbox",
+                # 必须指定默认值
+                "value": [],
+                "label": "复选框",
+                "options": [
+                    {"key": "0", "label": "收入"},
+                    {"key": "1", "label": "支出"},
+                    {"key": "2", "label": "收益"},
+                ],
+            },
+            {
+                "type": "radio",
+                "key": "radio",
+                "label": "单选框",
+                "options": [
+                    {"key": "0", "label": "收入"},
+                    {"key": "1", "label": "支出"},
+                    {"key": "2", "label": "收益"},
+                ],
+            },
+        ],
     }
 
     """Action_for_archives_end"""

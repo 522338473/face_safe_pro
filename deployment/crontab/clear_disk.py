@@ -28,24 +28,26 @@ class ClearDisk4os:
     def get_disk_size(self):
         """获取磁盘总容量"""
         disk = self.get_disk_info(self.path)
-        disk_size = disk.f_bsize * disk.f_blocks / (1024 ** 3)  # 1G = 1024M  1M = 1024KB 1KB = 1024bytes
-        print("磁盘总容量: %s" % format(disk_size, '.2f'))
+        disk_size = (
+            disk.f_bsize * disk.f_blocks / (1024**3)
+        )  # 1G = 1024M  1M = 1024KB 1KB = 1024bytes
+        print("磁盘总容量: %s" % format(disk_size, ".2f"))
         return disk_size
 
     def get_disk_used(self):
         """获取磁盘已使用容量|磁盘空闲容量"""
         disk = self.get_disk_info(self.path)
         disk_size = self.get_disk_size()
-        disk_used = disk.f_bsize * (disk.f_blocks - disk.f_bfree) / (1024 ** 3)
-        print("磁盘已使用: %s" % format(disk_used, '.2f'))
-        print("磁盘空闲: %s" % format((disk_size - disk_used), '.2f'))
+        disk_used = disk.f_bsize * (disk.f_blocks - disk.f_bfree) / (1024**3)
+        print("磁盘已使用: %s" % format(disk_used, ".2f"))
+        print("磁盘空闲: %s" % format((disk_size - disk_used), ".2f"))
         return disk_size, disk_used, disk_size - disk_used
 
     def get_disk_rate(self):
         """返回磁盘使用率|剩余率"""
         disk_size, disk_used, _ = self.get_disk_used()
-        print("磁盘使用率: %s" % format((disk_used / disk_size), '.2f'))
-        print("磁盘空闲率: %s" % format((1 - (disk_used / disk_size)), '.2f'))
+        print("磁盘使用率: %s" % format((disk_used / disk_size), ".2f"))
+        print("磁盘空闲率: %s" % format((1 - (disk_used / disk_size)), ".2f"))
         return disk_used / disk_size, 1 - (disk_used / disk_size)
 
     def check(self):
@@ -65,7 +67,7 @@ class ClearDisk4os:
                 else:  # 天数-1：继续循环
                     self.day -= 1
         else:
-            print('磁盘健康!')
+            print("磁盘健康!")
 
 
 class ClearDisk4psUtil:
@@ -79,9 +81,9 @@ class ClearDisk4psUtil:
     def get_disk_info(self):
         """获取磁盘信息"""
         total, used, free, percent = psutil.disk_usage(self.path)
-        total = round(total / (1024 ** 3), 2)
-        used = round(used / (1024 ** 3), 2)
-        free = round(free / (1024 ** 3))
+        total = round(total / (1024**3), 2)
+        used = round(used / (1024**3), 2)
+        free = round(free / (1024**3))
 
         print("磁盘总容量: ", total)
         print("磁盘已使用:", used)
@@ -107,9 +109,9 @@ class ClearDisk4psUtil:
             print("Disk health!")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # device_os = ClearDisk4os(path='/Users/zhangjianping', day=7)
     # device_os.check()
     print("*" * 20)
-    device_ps_util = ClearDisk4psUtil(path='/Users/zhangjianping')
+    device_ps_util = ClearDisk4psUtil(path="/Users/zhangjianping")
     device_ps_util.clear_disk()

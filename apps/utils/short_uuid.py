@@ -7,8 +7,9 @@ class ShortUUID:
     """
     生成压缩的UUID，基于https://github.com/skorokithakis/shortuuid修改
     """
+
     _ALPHABET = list("23456A789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz")
-    _LENGTH = int(math.ceil(math.log(2 ** 128, len(_ALPHABET))))
+    _LENGTH = int(math.ceil(math.log(2**128, len(_ALPHABET))))
 
     @staticmethod
     def int_to_string(number, padding=None):
@@ -28,7 +29,7 @@ class ShortUUID:
     @staticmethod
     def uuid1(pad_length=None):
         """
-         生成压缩的UUID1.
+        生成压缩的UUID1.
         """
         if pad_length is None:
             pad_length = ShortUUID._LENGTH
@@ -39,7 +40,7 @@ class ShortUUID:
     @staticmethod
     def uuid4(pad_length=None):
         """
-         生成压缩的UUID4.
+        生成压缩的UUID4.
         """
         if pad_length is None:
             pad_length = ShortUUID._LENGTH
@@ -48,6 +49,6 @@ class ShortUUID:
         return ShortUUID.int_to_string(uuid.int, padding=pad_length)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print(ShortUUID.uuid1())
     print(ShortUUID.uuid4())

@@ -20,6 +20,7 @@ django-celery-beat = "*"
 djangorestframework-jwt = "*"
 channels = "*"
 psycopg2-binary = "*"
+paho-mqtt = "*"
 
 [requires]
 python_version = "3.8"
