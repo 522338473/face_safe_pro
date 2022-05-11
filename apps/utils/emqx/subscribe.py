@@ -40,15 +40,18 @@ class Subscribe:
         """当收到关于客户订阅的主题的消息时调用"""
         print("on_message: ", client)
         _message = json.loads(message.payload.decode())
+        callback = _message.get("callback")
         print(_message)
-        client_id = _message.get("client_id")
         data = _message.get("data")
         # 这里执行单独业务逻辑，如果是HTTP请求，建议设置超时时间
-        client.publish(
-            client_id,
-            payload=json.dumps({"client_id": client_id, "message": "自定义消息体返回."}),
-            qos=1,
-        )
+        if callback:
+            # 是否需要返回值
+            client_id = _message.get("client_id")
+            client.publish(
+                client_id,
+                payload=json.dumps({"client_id": client_id, "message": "自定义消息体返回."}),
+                qos=1,
+            )
 
     @staticmethod
     def on_publish(client, userdata, mid):
@@ -101,7 +104,7 @@ class Subscribe:
 
 if __name__ == "__main__":
     _client_id = "mqtt-tcp-sub-{id}".format(id=time.time() * 100000)
-    pub = Subscribe(
-        client_id=_client_id, host="124.222.222.101", port=1883, keepalive=60
-    )
-    pub.receive(topic="TEST")
+    # pub = Subscribe(
+    #     client_id=_client_id, host="124.222.222.101", port=1883, keepalive=60
+    # )
+    # pub.receive(topic="TEST")

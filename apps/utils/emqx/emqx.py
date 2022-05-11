@@ -18,18 +18,20 @@ class Emqx:
         pass
 
     @staticmethod
-    def publish():
+    def publish(callback=True):
         """
         发布消息
         data参数为自定义消息体
+        :param callback: 发布者是否需要回调、默认需要
+        :return:
         """
         _client_id = "mqtt-tcp-pub-{id}".format(id=time.time() * 100000)
-        data = {"client_id": _client_id, "data": {"k": "v"}}
+        data = {"client_id": _client_id, "data": {"k": "v"}, "callback": callback}
 
         pub = Publish(
             client_id=_client_id, host="124.222.222.101", port=1883, keepalive=60
         )
-        pub.send(topic="TEST", message=data)
+        pub.send(topic="TEST", message=data, callback=callback)
         print(pub.message)
 
     @staticmethod
@@ -44,5 +46,5 @@ class Emqx:
 
 if __name__ == "__main__":
     emq = Emqx()
-    emq.publish()
+    # emq.publish(callback=True)
     # emq.subscribe()

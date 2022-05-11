@@ -90,18 +90,27 @@ class Publish:
             client.loop_stop()
             print(f"failed to send message to {topic}")
 
-    def send(self, topic, message):
-        """主程序运行"""
+    def send(self, topic, message, callback=True):
+        """
+        主程序运行
+        :param topic: 订阅主题
+        :param message: 消息
+        :param callback: 是否需要返回值，默认需要
+        :return:
+        """
         client = self.connect_mqtt()
         self.publish(client=client, topic=topic, message=message)
-        client.subscribe(self.client_id)
-        client.loop_forever()
+        if callback:
+            client.subscribe(self.client_id)
+            client.loop_forever()
+        else:
+            client.loop_start()
 
 
 if __name__ == "__main__":
     _client_id = "mqtt-tcp-pub-{id}".format(id=time.time() * 100000)
-    data = {"client_id": _client_id, "data": {"k": "v"}}
+    data = {"client_id": _client_id, "data": {"k": "v"}, "callback": True}
 
-    pub = Publish(client_id=_client_id, host="124.222.222.101", port=1883, keepalive=60)
-    pub.send(topic="TEST", message=data)
-    print(pub.message)
+    # pub = Publish(client_id=_client_id, host="124.222.222.101", port=1883, keepalive=60)
+    # pub.send(topic="TEST", message=data, callback=True)
+    # print(pub.message)
