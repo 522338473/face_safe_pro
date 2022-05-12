@@ -20,6 +20,8 @@ from django.urls import include
 from django.conf import settings
 from django.views.generic import RedirectView
 
+from rest_framework.documentation import include_docs_urls
+
 from apps.public import views as public_view
 
 urls_v1 = [
@@ -37,6 +39,12 @@ urlpatterns = [
     path("favicon.ico", RedirectView.as_view(url=r"static/favicon.ico")),  # favicon
     path("admin/", admin.site.urls, name="admin"),  # admin管理后台
     path("sp/", include("simplepro.urls")),  # simplepro
+    path(
+        "api-docs/",
+        include_docs_urls(
+            title="CSIA智能视图平台API文档", authentication_classes=[], permission_classes=[]
+        ),
+    ),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 admin.site.site_header = "CSIA智能视图平台"
