@@ -32,8 +32,11 @@ class DeviceInfoViewSet(HashRetrieveViewSetMixin, ModelViewSet):
 
     def filter_queryset(self, queryset):
         name = self.request.query_params.get("name", None)
+        device_type = self.request.query_params.get("device_type", None)
         if name:
             queryset = queryset.filter(name__contains=name)
+        if device_type:
+            queryset = queryset.filter(device_type=device_type)
         return super(DeviceInfoViewSet, self).filter_queryset(queryset)
 
     def list(self, request, *args, **kwargs):
