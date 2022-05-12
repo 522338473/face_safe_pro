@@ -91,20 +91,20 @@ class DeviceInfoAdmin(PublicModelAdmin, admin.ModelAdmin):
                     rtsp_address=query.rtsp_address,
                     device_type=query.device_type,
                 )
-                if request.user.is_superuser:
-                    query.delete()
-                else:
-                    query.set_delete()
+            if request.user.is_superuser:
+                query.delete()
+            else:
+                query.set_delete()
 
     def delete_model(self, request, obj):
         if obj.device_type == 0 or obj.device_type == 3:  # 普通设备触发
             self.push_device_info(
                 ip=obj.ip, rtsp_address=obj.rtsp_address, device_type=obj.device_type
             )
-            if request.user.is_superuser:
-                obj.delete()
-            else:
-                obj.set_delete()
+        if request.user.is_superuser:
+            obj.delete()
+        else:
+            obj.set_delete()
 
     @staticmethod
     def push_device_info(ip=None, rtsp_address=None, device_type=None, command=None):

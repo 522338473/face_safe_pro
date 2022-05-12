@@ -51,6 +51,10 @@ class HashRetrieveViewSetMixin(GenericViewSet):
             raise ParseError("parse error")
         return hs
 
+    def perform_destroy(self, instance):
+        """软删除"""
+        instance.set_delete()
+
 
 class ParseJsonView:
     def get_current_page(self, request, default=1):
