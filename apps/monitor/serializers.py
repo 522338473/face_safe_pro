@@ -86,3 +86,25 @@ class PhotoClusterSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.PhotoCluster
         fields = ["id", "archives_personnel"]
+
+
+class VehicleMonitorSerializer(serializers.ModelSerializer):
+    """重点车辆serializer管理器"""
+
+    id = serializers.ReadOnlyField(source="hash")
+
+    class Meta:
+        model = models.VehicleMonitor
+        fields = ["id", "plate", "types", "name", "gender", "phone"]
+
+
+class VehicleMonitorDiscoverSerializer(serializers.ModelSerializer):
+    """重点车辆报警serializer管理器"""
+
+    id = serializers.ReadOnlyField(source="hash")
+    target = VehicleMonitorSerializer()
+    record = device_serializers.VehicleSerializers()
+
+    class Meta:
+        model = models.VehicleMonitorDiscover
+        fields = ["id", "target", "record"]

@@ -333,8 +333,11 @@ class VehicleViewSet(
         device = self.request.query_params.get("device", None)
         start_time = self.request.query_params.get("start_time", None)
         end_time = self.request.query_params.get("end_time", None)
+        plate = self.request.query_params.get("plate", None)
         if device:
             queryset = queryset.filter(device_id=self.hash_to_pk(device))
+        if plate:
+            queryset = queryset.filter(plate=plate)
         if start_time and end_time:
             start_time = datetime.datetime.strptime(start_time, "%Y%m%d%H%M%S")
             end_time = datetime.datetime.strptime(end_time, "%Y%m%d%H%M%S")

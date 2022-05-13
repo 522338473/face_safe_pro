@@ -25,6 +25,12 @@ router.register(
 router.register(r"library", views.ArchivesLibraryViewSet, basename="library")
 router.register(r"people", views.ArchivesPeopleViewSet, basename="people")
 router.register(r"cluster", views.PhotoClusterViewSet, basename="cluster")
+router.register(r"vehicle", views.VehicleMonitorViewSet, basename="vehicle")
+router.register(
+    r"vehicle_discover",
+    views.VehicleMonitorDiscoverViewSet,
+    basename="vehicle_discover",
+)
 
 urlpatterns = [
     path(
