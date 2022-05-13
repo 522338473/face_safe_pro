@@ -1,5 +1,6 @@
 import requests
 import base64
+import datetime
 
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
@@ -101,3 +102,24 @@ class PersonnelViewSet(HashRetrieveViewSetMixin, ModelViewSet):
 
         serializer = self.get_serializer(query_list, many=True)
         return Response(serializer.data)
+
+
+class AccessDiscoverViewSet(HashRetrieveViewSetMixin, ModelViewSet):
+    """门禁通行ViewSet"""
+
+    queryset = models.AccessDiscover.objects.select_related(
+        "target", "record"
+    ).order_by("-create_at")
+    serializer_class = serializers.AccessDiscoverSerializer
+
+    def filter_queryset(self, queryset):
+        target = self.request.query_params.get("target", None)
+        start_time = self.request.query_params.get("start_time", None)
+        end_time = self.request.query_params.get("end_time", None)
+        if target:
+            queryset = queryset.filter(target_id=self.hash_to_pk(target))
+        if start_time and end_time:
+            start_time = datetime.datetime.strptime(start_time, "%Y%m%d%H%M%S")
+            end_time = datetime.datetime.strptime(end_time, "%Y%m%d%H%M%S")
+            queryset = queryset.filter(create_at__range=(start_time, end_time))
+        return super(AccessDiscoverViewSet, self).filter_queryset(queryset)

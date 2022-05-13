@@ -11,6 +11,7 @@ from rest_framework import serializers
 
 from apps.monitor import models
 from apps.device import serializers as device_serializers
+from apps.archives import serializers as archives_serializers
 
 
 class PersonnelTypeSerializer(serializers.ModelSerializer):
@@ -108,3 +109,26 @@ class VehicleMonitorDiscoverSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.VehicleMonitorDiscover
         fields = ["id", "target", "record"]
+
+
+class RestrictedAreaSerializer(serializers.ModelSerializer):
+    """门禁列表serializer管理器"""
+
+    id = serializers.ReadOnlyField(source="hash")
+
+    class Meta:
+        model = models.RestrictedArea
+        fields = ["id", "name", "device_list"]
+        depth = 1
+
+
+class AreaMonitorPersonnelSerializer(serializers.ModelSerializer):
+    """门禁人员名单serializer管理器"""
+
+    id = serializers.ReadOnlyField(source="hash")
+    personnel = archives_serializers.PersonnelSerializer()
+    area = RestrictedAreaSerializer()
+
+    class Meta:
+        model = models.AreaMonitorPersonnel
+        fields = ["id", "personnel", "area"]

@@ -10,6 +10,7 @@
 from rest_framework import serializers
 
 from apps.archives import models
+from apps.device import serializers as device_serializer
 
 
 class ArchivesGroupSerializer(serializers.ModelSerializer):
@@ -53,3 +54,15 @@ class PersonnelSerializer(serializers.ModelSerializer):
             "nationality",
             "similarity",
         ]
+
+
+class AccessDiscoverSerializer(serializers.ModelSerializer):
+    """门禁通行serializer管理器"""
+
+    id = serializers.ReadOnlyField(source="hash")
+    target = PersonnelSerializer(read_only=True)
+    record = device_serializer.DevicePhotoSerializers(read_only=True)
+
+    class Meta:
+        model = models.AccessDiscover
+        fields = ["id", "target", "record"]

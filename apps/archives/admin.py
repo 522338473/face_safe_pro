@@ -169,7 +169,7 @@ class AccessDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
         "image",
         "operation",
     ]
-    list_filter = ["target"]
+    list_filter = ["target", "create_at"]
     fields_options = {
         "id": {"fixed": "left", "width": "120px"},
         "target": {"label": "门禁人员"},

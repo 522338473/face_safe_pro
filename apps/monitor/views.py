@@ -182,3 +182,37 @@ class VehicleMonitorDiscoverViewSet(HashRetrieveViewSetMixin, ModelViewSet):
             end_time = datetime.datetime.strptime(end_time, "%Y%m%d%H%M%S")
             queryset = queryset.filter(create_at__range=(start_time, end_time))
         return super(VehicleMonitorDiscoverViewSet, self).filter_queryset(queryset)
+
+
+class RestrictedAreaViewSet(HashRetrieveViewSetMixin, ModelViewSet):
+    """门禁列表ViewSet"""
+
+    queryset = models.RestrictedArea.objects.order_by("-create_at")
+    serializer_class = serializers.RestrictedAreaSerializer
+
+    def filter_queryset(self, queryset):
+        name = self.request.query_params.get("name", None)
+        if name:
+            queryset = queryset.filter(name__contains=name)
+        return super(RestrictedAreaViewSet, self).filter_queryset(queryset)
+
+
+class AreaMonitorPersonnelViewSet(HashRetrieveViewSetMixin, ModelViewSet):
+    """门禁人员名单ViewSet"""
+
+    queryset = models.AreaMonitorPersonnel.objects.select_related(
+        "personnel", "area"
+    ).order_by("-create_at")
+    serializer_class = serializers.AreaMonitorPersonnelSerializer
+
+    def filter_queryset(self, queryset):
+        area = self.request.query_params.get("area", None)
+        if area:
+            queryset = queryset.filter(area_id=self.hash_to_pk(area))
+        start_time = self.request.query_params.get("start_time", None)
+        end_time = self.request.query_params.get("end_time", None)
+        if start_time and end_time:
+            start_time = datetime.datetime.strptime(start_time, "%Y%m%d%H%M%S")
+            end_time = datetime.datetime.strptime(end_time, "%Y%m%d%H%M%S")
+            queryset = queryset.filter(create_at__range=(start_time, end_time))
+        return super(AreaMonitorPersonnelViewSet, self).filter_queryset(queryset)
