@@ -38,7 +38,7 @@ class DevicePhotoSerializers(serializers.ModelSerializer):
     id = serializers.ReadOnlyField(source="hash")
     take_photo_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
     create_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
-    device = DeviceInfoSerializers()
+    device = DeviceInfoSerializers(read_only=True)
     similarity = serializers.SerializerMethodField()
 
     @staticmethod
@@ -72,7 +72,7 @@ class VehicleSerializers(serializers.ModelSerializer):
 
     id = serializers.ReadOnlyField(source="hash")
     take_photo_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
-    device = DeviceInfoSerializers()
+    device = DeviceInfoSerializers(read_only=True)
 
     class Meta:
         model = models.Vehicle
@@ -96,7 +96,7 @@ class MotorSerializers(serializers.ModelSerializer):
 
     id = serializers.ReadOnlyField(source="hash")
     take_photo_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
-    device = DeviceInfoSerializers()
+    device = DeviceInfoSerializers(read_only=True)
 
     class Meta:
         model = models.Motor
@@ -116,7 +116,7 @@ class DeviceOffLineSerializers(serializers.ModelSerializer):
     """设备离线记录serializer管理器"""
 
     id = serializers.ReadOnlyField(source="hash")
-    device = DeviceInfoSerializers()
+    device = DeviceInfoSerializers(read_only=True)
 
     class Meta:
         model = models.DeviceOffLine

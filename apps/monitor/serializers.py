@@ -28,7 +28,7 @@ class MonitorSerializer(serializers.ModelSerializer):
     """重点人员serializer管理器"""
 
     id = serializers.ReadOnlyField(source="hash")
-    personnel_types = PersonnelTypeSerializer()
+    personnel_types = PersonnelTypeSerializer(read_only=True)
 
     class Meta:
         model = models.Monitor
@@ -47,8 +47,8 @@ class MonitorDiscoverSerializer(serializers.ModelSerializer):
     """预警信息serializer管理器"""
 
     id = serializers.ReadOnlyField(source="hash")
-    record = device_serializers.DevicePhotoSerializers()
-    target = MonitorSerializer()
+    record = device_serializers.DevicePhotoSerializers(read_only=True)
+    target = MonitorSerializer(read_only=True)
 
     class Meta:
         model = models.MonitorDiscover
@@ -70,7 +70,7 @@ class ArchivesPeopleSerializer(serializers.ModelSerializer):
     """关注人员serializer管理器"""
 
     id = serializers.ReadOnlyField(source="hash")
-    library = ArchivesLibrarySerializer()
+    library = ArchivesLibrarySerializer(read_only=True)
 
     class Meta:
         model = models.ArchivesPersonnel
@@ -82,7 +82,7 @@ class PhotoClusterSerializer(serializers.ModelSerializer):
     """轨迹档案serializer管理器"""
 
     id = serializers.ReadOnlyField(source="hash")
-    archives_personnel = ArchivesPeopleSerializer()
+    archives_personnel = ArchivesPeopleSerializer(read_only=True)
 
     class Meta:
         model = models.PhotoCluster
@@ -103,8 +103,8 @@ class VehicleMonitorDiscoverSerializer(serializers.ModelSerializer):
     """重点车辆报警serializer管理器"""
 
     id = serializers.ReadOnlyField(source="hash")
-    target = VehicleMonitorSerializer()
-    record = device_serializers.VehicleSerializers()
+    target = VehicleMonitorSerializer(read_only=True)
+    record = device_serializers.VehicleSerializers(read_only=True)
 
     class Meta:
         model = models.VehicleMonitorDiscover
@@ -126,8 +126,8 @@ class AreaMonitorPersonnelSerializer(serializers.ModelSerializer):
     """门禁人员名单serializer管理器"""
 
     id = serializers.ReadOnlyField(source="hash")
-    personnel = archives_serializers.PersonnelSerializer()
-    area = RestrictedAreaSerializer()
+    personnel = archives_serializers.PersonnelSerializer(read_only=True)
+    area = RestrictedAreaSerializer(read_only=True)
 
     class Meta:
         model = models.AreaMonitorPersonnel

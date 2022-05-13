@@ -17,7 +17,9 @@ from apps.archives import admin_view
 router = DefaultRouter()
 router.register(r"group", views.ArchivesGroupViewSet, basename="group")
 router.register(r"personnel", views.PersonnelViewSet, basename="personnel")
-router.register(r"access_discover", views.AccessDiscoverViewSet, basename="access_discover")
+router.register(
+    r"access_discover", views.AccessDiscoverViewSet, basename="access_discover"
+)
 
 urlpatterns = [
     path(

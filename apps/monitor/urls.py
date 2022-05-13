@@ -32,7 +32,9 @@ router.register(
     basename="vehicle_discover",
 )
 router.register(r"area", views.RestrictedAreaViewSet, basename="area")
-router.register(r"area_personnel", views.AreaMonitorPersonnelViewSet, basename="area_personnel")
+router.register(
+    r"area_personnel", views.AreaMonitorPersonnelViewSet, basename="area_personnel"
+)
 
 urlpatterns = [
     path(
