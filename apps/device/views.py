@@ -5,6 +5,7 @@ import hashlib
 
 from django.db.models import Count
 from django.conf import settings
+from rest_framework import mixins
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
@@ -316,3 +317,70 @@ class DevicePhotoViewSet(HashRetrieveViewSetMixin, ModelViewSet):
 
         serializer = self.get_serializer(query_list, many=True)
         return Response(serializer.data)
+
+
+class VehicleViewSet(
+    HashRetrieveViewSetMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin
+):
+    """机动车ViewSet"""
+
+    queryset = device_model.Vehicle.objects.select_related("device").order_by(
+        "-take_photo_time"
+    )
+    serializer_class = device_serializer.VehicleSerializers
+
+    def filter_queryset(self, queryset):
+        device = self.request.query_params.get("device", None)
+        start_time = self.request.query_params.get("start_time", None)
+        end_time = self.request.query_params.get("end_time", None)
+        if device:
+            queryset = queryset.filter(device_id=self.hash_to_pk(device))
+        if start_time and end_time:
+            start_time = datetime.datetime.strptime(start_time, "%Y%m%d%H%M%S")
+            end_time = datetime.datetime.strptime(end_time, "%Y%m%d%H%M%S")
+            queryset = queryset.filter(take_photo_time__range=(start_time, end_time))
+        return super(VehicleViewSet, self).filter_queryset(queryset)
+
+
+class MotorViewSet(
+    HashRetrieveViewSetMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin
+):
+    """非机动车ViewSet"""
+
+    queryset = device_model.Motor.objects.select_related("device").order_by(
+        "-take_photo_time"
+    )
+    serializer_class = device_serializer.MotorSerializers
+
+    def filter_queryset(self, queryset):
+        device = self.request.query_params.get("device", None)
+        start_time = self.request.query_params.get("start_time", None)
+        end_time = self.request.query_params.get("end_time", None)
+        if device:
+            queryset = queryset.filter(device_id=self.hash_to_pk(device))
+        if start_time and end_time:
+            start_time = datetime.datetime.strptime(start_time, "%Y%m%d%H%M%S")
+            end_time = datetime.datetime.strptime(end_time, "%Y%m%d%H%M%S")
+            queryset = queryset.filter(take_photo_time__range=(start_time, end_time))
+        return super(MotorViewSet, self).filter_queryset(queryset)
+
+
+class DeviceOffLineViewSet(HashRetrieveViewSetMixin, mixins.ListModelMixin):
+    """设备离线ViewSet"""
+
+    queryset = device_model.DeviceOffLine.objects.select_related("device").order_by(
+        "-create_at"
+    )
+    serializer_class = device_serializer.DeviceOffLineSerializers
+
+    def filter_queryset(self, queryset):
+        device = self.request.query_params.get("device", None)
+        start_time = self.request.query_params.get("start_time", None)
+        end_time = self.request.query_params.get("end_time", None)
+        if device:
+            queryset = queryset.filter(device_id=self.hash_to_pk(device))
+        if start_time and end_time:
+            start_time = datetime.datetime.strptime(start_time, "%Y%m%d%H%M%S")
+            end_time = datetime.datetime.strptime(end_time, "%Y%m%d%H%M%S")
+            queryset = queryset.filter(create_at__range=(start_time, end_time))
+        return super(DeviceOffLineViewSet, self).filter_queryset(queryset)

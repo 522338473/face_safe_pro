@@ -65,3 +65,59 @@ class DevicePhotoSerializers(serializers.ModelSerializer):
             "create_at",
             "similarity",
         ]
+
+
+class VehicleSerializers(serializers.ModelSerializer):
+    """机动车serializer管理器"""
+
+    id = serializers.ReadOnlyField(source="hash")
+    take_photo_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
+    device = DeviceInfoSerializers()
+
+    class Meta:
+        model = models.Vehicle
+        fields = [
+            "id",
+            "device",
+            "take_photo_time",
+            "types",
+            "color",
+            "plate",
+            "plate_path",
+            "vehicle_path",
+            "panorama_path",
+            "address",
+            "geo",
+        ]
+
+
+class MotorSerializers(serializers.ModelSerializer):
+    """非机动车serializer管理器"""
+
+    id = serializers.ReadOnlyField(source="hash")
+    take_photo_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
+    device = DeviceInfoSerializers()
+
+    class Meta:
+        model = models.Motor
+        fields = [
+            "id",
+            "device",
+            "take_photo_time",
+            "types",
+            "motor_path",
+            "panorama_path",
+            "address",
+            "geo",
+        ]
+
+
+class DeviceOffLineSerializers(serializers.ModelSerializer):
+    """设备离线记录serializer管理器"""
+
+    id = serializers.ReadOnlyField(source="hash")
+    device = DeviceInfoSerializers()
+
+    class Meta:
+        model = models.DeviceOffLine
+        fields = ["id", "device", "checked", "alarm_type", "photo_path"]

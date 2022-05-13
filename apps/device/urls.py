@@ -17,6 +17,9 @@ from apps.device import admin_view
 router = DefaultRouter()
 router.register(r"info", views.DeviceInfoViewSet, basename="info")
 router.register(r"photo", views.DevicePhotoViewSet, basename="photo")
+router.register(r"vehicle", views.VehicleViewSet, basename="vehicle")
+router.register(r"motor", views.MotorViewSet, basename="motor")
+router.register(r"offline", views.DeviceOffLineViewSet, basename="offline")
 
 urlpatterns = [
     path(
