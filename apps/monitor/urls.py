@@ -22,6 +22,9 @@ router.register(r"monitor", views.MonitorViewSet, basename="monitor")
 router.register(
     r"monitor_discover", views.MonitorDiscoverViewSet, basename="monitor_discover"
 )
+router.register(r"library", views.ArchivesLibraryViewSet, basename="library")
+router.register(r"people", views.ArchivesPeopleViewSet, basename="people")
+router.register(r"cluster", views.PhotoClusterViewSet, basename="cluster")
 
 urlpatterns = [
     path(

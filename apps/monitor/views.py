@@ -15,6 +15,7 @@ from apps.public.views import HashRetrieveViewSetMixin
 
 class PersonnelTypeViewSet(HashRetrieveViewSetMixin, ModelViewSet):
     """重点人员分类ViewSet"""
+
     queryset = models.PersonnelType.objects.order_by("-create_at")
     serializer_class = serializers.PersonnelTypeSerializer
 
@@ -31,7 +32,9 @@ class MonitorViewSet(HashRetrieveViewSetMixin, ModelViewSet):
         start_time = self.request.query_params.get("start_time", None)
         end_time = self.request.query_params.get("end_time", None)
         if personnel_types:
-            queryset = queryset.filter(personnel_types_id=self.hash_to_pk(personnel_types))
+            queryset = queryset.filter(
+                personnel_types_id=self.hash_to_pk(personnel_types)
+            )
         if name:
             queryset = queryset.filter(name__contain=name)
         if start_time and end_time:
@@ -108,8 +111,42 @@ class MonitorDiscoverViewSet(HashRetrieveViewSetMixin, ModelViewSet):
         return super(MonitorDiscoverViewSet, self).filter_queryset(queryset)
 
 
+class ArchivesLibraryViewSet(HashRetrieveViewSetMixin, ModelViewSet):
+    """关注人员人像库ViewSet"""
+
+    queryset = models.ArchivesLibrary.objects.order_by("-create_at")
+    serializer_class = serializers.ArchivesLibrarySerializer
+
+
+class ArchivesPeopleViewSet(HashRetrieveViewSetMixin, ModelViewSet):
+    """关注人员ViewSet"""
+
+    queryset = models.ArchivesPersonnel.objects.select_related("library").order_by(
+        "-create_at"
+    )
+    serializer_class = serializers.ArchivesPeopleSerializer
+
+    def filter_queryset(self, queryset):
+        library = self.request.query_params.get("library", None)
+        if library:
+            queryset = queryset.filter(library_id=self.hash_to_pk(library))
+        return super(ArchivesPeopleViewSet, self).filter_queryset(queryset)
+
+
 class PhotoClusterViewSet(HashRetrieveViewSetMixin, ModelViewSet):
     """轨迹档案ViewSet"""
 
     queryset = models.PhotoCluster.objects.select_related("archives_personnel")
-    serializer_class = 1
+    serializer_class = serializers.PhotoClusterSerializer
+
+    def filter_queryset(self, queryset):
+        archives_personnel = self.request.query_params.get("archives_personnel", None)
+        if archives_personnel:
+            queryset = queryset.filter(archives_personnel_id=self.hash_to_pk(archives_personnel))
+        start_time = self.request.query_params.get("start_time", None)
+        end_time = self.request.query_params.get("end_time", None)
+        if start_time and end_time:
+            start_time = datetime.datetime.strptime(start_time, "%Y%m%d%H%M%S")
+            end_time = datetime.datetime.strptime(end_time, "%Y%m%d%H%M%S")
+            queryset = queryset.filter(device_take_photo_time__range=(start_time, end_time))
+        return super(PhotoClusterViewSet, self).filter_queryset(queryset)
