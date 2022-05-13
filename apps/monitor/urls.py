@@ -15,6 +15,9 @@ from apps.monitor import views
 from apps.monitor import admin_view
 
 router = DefaultRouter()
+router.register(
+    r"personnel_type", views.PersonnelTypeViewSet, basename="personnel_type"
+)
 router.register(r"monitor", views.MonitorViewSet, basename="monitor")
 router.register(
     r"monitor_discover", views.MonitorDiscoverViewSet, basename="monitor_discover"

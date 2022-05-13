@@ -13,11 +13,32 @@ from apps.public.views import HashRetrieveViewSetMixin
 # Create your views here.
 
 
+class PersonnelTypeViewSet(HashRetrieveViewSetMixin, ModelViewSet):
+    """重点人员分类ViewSet"""
+    queryset = models.PersonnelType.objects.order_by("-create_at")
+    serializer_class = serializers.PersonnelTypeSerializer
+
+
 class MonitorViewSet(HashRetrieveViewSetMixin, ModelViewSet):
     """重点人员ViewSet"""
 
-    queryset = models.Monitor.objects.all()
+    queryset = models.Monitor.objects.select_related("personnel_types")
     serializer_class = serializers.MonitorSerializer
+
+    def filter_queryset(self, queryset):
+        personnel_types = self.request.query_params.get("personnel_types", None)
+        name = self.request.query_params.get("name", None)
+        start_time = self.request.query_params.get("start_time", None)
+        end_time = self.request.query_params.get("end_time", None)
+        if personnel_types:
+            queryset = queryset.filter(personnel_types_id=self.hash_to_pk(personnel_types))
+        if name:
+            queryset = queryset.filter(name__contain=name)
+        if start_time and end_time:
+            start_time = datetime.datetime.strptime(start_time, "%Y%m%d%H%M%S")
+            end_time = datetime.datetime.strptime(end_time, "%Y%m%d%H%M%S")
+            queryset = queryset.filter(create_at__range=(start_time, end_time))
+        return super(MonitorViewSet, self).filter_queryset(queryset)
 
     @action(methods=["GET"], detail=False, url_path="count")
     def count(self, request, *args, **kwargs):
@@ -73,6 +94,18 @@ class MonitorDiscoverViewSet(HashRetrieveViewSetMixin, ModelViewSet):
         "target", "record"
     ).order_by("-create_at")
     serializer_class = serializers.MonitorDiscoverSerializer
+
+    def filter_queryset(self, queryset):
+        target = self.request.query_params.get("target", None)
+        start_time = self.request.query_params.get("start_time", None)
+        end_time = self.request.query_params.get("end_time", None)
+        if target:
+            queryset = queryset.filter(target_id=self.hash_to_pk(target))
+        if start_time and end_time:
+            start_time = datetime.datetime.strptime(start_time, "%Y%m%d%H%M%S")
+            end_time = datetime.datetime.strptime(end_time, "%Y%m%d%H%M%S")
+            queryset = queryset.filter(create_at__range=(start_time, end_time))
+        return super(MonitorDiscoverViewSet, self).filter_queryset(queryset)
 
 
 class PhotoClusterViewSet(HashRetrieveViewSetMixin, ModelViewSet):
