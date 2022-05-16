@@ -27,7 +27,7 @@ class PersonnelSerializer(serializers.ModelSerializer):
     """人员serializer管理器"""
 
     id = serializers.ReadOnlyField(source="hash")
-    archives_group = ArchivesGroupSerializer(read_only=True)
+    # archives_group = ArchivesGroupSerializer(read_only=True)
     similarity = serializers.SerializerMethodField()
 
     @staticmethod

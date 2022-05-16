@@ -11,6 +11,7 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.generics import get_object_or_404
 from rest_framework.exceptions import ParseError
+from jsonschema import validate, ValidationError
 
 from apps.utils.hasher import Hasher
 from apps.utils.constant import FILE_PATH_PREFIX
@@ -54,6 +55,21 @@ class HashRetrieveViewSetMixin(GenericViewSet):
     def perform_destroy(self, instance):
         """软删除"""
         instance.set_delete()
+
+    @staticmethod
+    def check_json_dict(json_dict, json_schema):
+        """
+        校验json数据
+        :param json_dict: 待校验字符串
+        :param json_schema: 校验格式
+        :return:
+        """
+        try:
+            validate(json_dict, json_schema)
+        except ValidationError as e:
+            raise e
+        except Exception as e:
+            raise e
 
 
 class ParseJsonView:
