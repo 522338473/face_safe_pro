@@ -1,13 +1,18 @@
 import datetime
+import base64
+import requests
 
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework import status
+from rest_framework import exceptions
 
 from apps.archives import models as archives_models
 from apps.monitor import models
 from apps.monitor import serializers
 from apps.public.views import HashRetrieveViewSetMixin
+from apps.utils.face_discern import face_discern
 
 
 # Create your views here.
@@ -42,6 +47,56 @@ class MonitorViewSet(HashRetrieveViewSetMixin, ModelViewSet):
             end_time = datetime.datetime.strptime(end_time, "%Y%m%d%H%M%S")
             queryset = queryset.filter(create_at__range=(start_time, end_time))
         return super(MonitorViewSet, self).filter_queryset(queryset)
+
+    def create(self, request, *args, **kwargs):
+        """新增重点人员"""
+        try:
+            request.data._mutable = True
+        except Exception as e:
+            raise exceptions.ParseError("重点人员新增失败.")
+        finally:
+            for item in list(request.data):  # 防止序列化校验异常
+                if not request.data[item] and request.data[item] != 0:
+                    request.data.pop(item)
+        request_data = request.data
+        request_data["personnel_types"] = self.hash_to_pk(
+            request_data["personnel_types"]
+        )
+        serializer = self.get_serializer(data=request_data)
+        serializer.is_valid(raise_exception=True)
+        instance = self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        # 人脸注册阶段
+        try:
+            result = face_discern.face_warning_add(
+                image=base64.b64encode(
+                    requests.get(url=instance.get_head_url()).content
+                ).decode(),
+                user_id=instance.hash,
+            )
+            if result.get("error") == -1:
+                instance.set_delete()
+                raise exceptions.ParseError("人脸注册失败.")
+        except Exception as e:
+            instance.set_delete()
+            raise exceptions.ParseError("人脸注册失败.")
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
+
+    def perform_create(self, serializer):
+        return serializer.save()
+
+    def perform_destroy(self, instance):
+        """人员软删除"""
+        try:
+            result = face_discern.face_warning_detect(user_id=instance.hash)
+            if result.get("error") == -1:
+                raise exceptions.ParseError("人脸删除失败.")
+        except Exception as e:
+            raise exceptions.ParseError("人脸删除失败.")
+        else:
+            instance.set_delete()
 
     @action(methods=["GET"], detail=False, url_path="count")
     def count(self, request, *args, **kwargs):

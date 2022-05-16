@@ -28,7 +28,7 @@ class MonitorSerializer(serializers.ModelSerializer):
     """重点人员serializer管理器"""
 
     id = serializers.ReadOnlyField(source="hash")
-    personnel_types = PersonnelTypeSerializer(read_only=True)
+    # personnel_types = PersonnelTypeSerializer(read_only=True)
 
     class Meta:
         model = models.Monitor
@@ -70,7 +70,7 @@ class ArchivesPeopleSerializer(serializers.ModelSerializer):
     """关注人员serializer管理器"""
 
     id = serializers.ReadOnlyField(source="hash")
-    library = ArchivesLibrarySerializer(read_only=True)
+    # library = ArchivesLibrarySerializer(read_only=True)
 
     class Meta:
         model = models.ArchivesPersonnel
