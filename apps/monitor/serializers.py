@@ -74,8 +74,8 @@ class ArchivesPeopleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.ArchivesPersonnel
-        depth = 2
-        fields = ["id", "library", "name", "phone", "id_card"]
+        # depth = 2  # 后续根据需要打开
+        fields = ["id", "library", "name", "phone", "id_card", "photo"]
 
 
 class PhotoClusterSerializer(serializers.ModelSerializer):
