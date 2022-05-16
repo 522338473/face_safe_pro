@@ -277,7 +277,7 @@ class RestrictedAreaAdmin(PublicModelAdmin, admin.ModelAdmin):
     list_display = ["id", "name", "device", "detail"]
     list_filter = ["name"]
     exclude = ["personnel_list"]
-    top_html = ' <el-alert title="门禁区域只可绑定门禁设备&无感通行!" type="warning"></el-alert>'
+    top_html = ' <el-alert title="门禁区域只可绑定门禁设备&无感通行! 删除门禁区域。请先删除该区域下所有人员" type="warning"></el-alert>'
     fields_options = {
         "id": {"fixed": "left", "width": "120px"},
         "name": {"width": "160px"},

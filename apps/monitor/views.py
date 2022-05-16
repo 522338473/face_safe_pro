@@ -198,9 +198,7 @@ class ArchivesPeopleViewSet(HashRetrieveViewSetMixin, ModelViewSet):
                 if not request.data[item] and request.data[item] != 0:
                     request.data.pop(item)
         request_data = request.data
-        request_data["library"] = self.hash_to_pk(
-            request_data["library"]
-        )
+        request_data["library"] = self.hash_to_pk(request_data["library"])
         serializer = self.get_serializer(data=request_data)
         serializer.is_valid(raise_exception=True)
         instance = self.perform_create(serializer)
