@@ -18,6 +18,7 @@ class MonitorResources(resources.ModelResource):
 
     class Meta:
         model = monitor_models.Monitor
+        fields = ["personnel_types", "name", "gender", "types", "photo", "id_name", "id_number", "phone", ""]
 
     def export(self, queryset=None, *args, **kwargs):
         """导出触发"""
@@ -39,6 +40,7 @@ class ArchivesPersonnelResources(resources.ModelResource):
 
     class Meta:
         model = monitor_models.ArchivesPersonnel
+        fields = ["library", "name", "gender", "phone", "id_card", "photo"]
 
     def export(self, queryset=None, *args, **kwargs):
         """导出触发"""
@@ -62,6 +64,7 @@ class AreaMonitorPersonnelResources(resources.ModelResource):
 
     class Meta:
         model = monitor_models.AreaMonitorPersonnel
+        fields = ["personnel", "area"]
 
     def export(self, queryset=None, *args, **kwargs):
         """导出触发"""
@@ -87,6 +90,7 @@ class VehicleMonitorResources(resources.ModelResource):
 
     class Meta:
         model = monitor_models.VehicleMonitor
+        fields = ["plate", "name", "gender", "id_name", "id_number", "phone"]
 
     def export(self, queryset=None, *args, **kwargs):
         """导出触发"""
