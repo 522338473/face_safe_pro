@@ -7,7 +7,7 @@ from simplepro.dialog import ModalDialog, MultipleCellDialog
 
 from apps.archives import models as archives_models
 from apps.public.admin import PublicModelAdmin
-from apps.public.resources import PersonnelResources
+from apps.archives import resources as archives_resources
 from apps.utils.constant import VIDEO_PLAY_TYPE, DETAIL_TYPE
 from apps.utils.face_discern import face_discern
 
@@ -16,7 +16,7 @@ from apps.utils.face_discern import face_discern
 
 
 @admin.register(archives_models.ArchivesGroup)
-class ArchivesGroupAdmin(PublicModelAdmin, admin.ModelAdmin):
+class ArchivesGroupAdmin(PublicModelAdmin, AjaxAdmin):
     list_display = ["id", "name", "detail"]
     search_fields = ["name"]
     top_html = ' <el-alert title="档案库分类" type="success"></el-alert>'
@@ -71,7 +71,7 @@ class PersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin, AjaxAdmin):
     list_filter = ["archives_group", "create_at"]
     exclude = ["is_access", "device_list"]  # TODO: 该字段为扩展字段，后期决定存留
     search_fields = ["name", "phone", "id_card"]
-    resource_class = PersonnelResources
+    resource_class = archives_resources.PersonnelResources
     # actions = ['action_for_archives_personnel_export', 'action_for_archives_personnel_import', 'action_for_archives_personnel_layer_input']
     fields_options = {
         "id": {"fixed": "left", "width": "120px"},
@@ -159,7 +159,7 @@ class PersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin, AjaxAdmin):
 
 
 @admin.register(archives_models.AccessDiscover)
-class AccessDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
+class AccessDiscoverAdmin(PublicModelAdmin, AjaxAdmin):
     list_display = [
         "id",
         "target",

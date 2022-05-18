@@ -6,12 +6,13 @@ from django.conf import settings
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 from import_export.admin import ImportExportModelAdmin
+from simpleui.admin import AjaxAdmin
 from simplepro.dialog import ModalDialog, MultipleCellDialog
 
 from apps.device import models as device_models
 from apps.monitor import models as monitor_models
 from apps.public.admin import PublicModelAdmin
-from apps.public.resources import MonitorResources, ArchivesPersonnelResources
+from apps.monitor import resources as monitor_resources
 from apps.utils.constant import VIDEO_PLAY_TYPE, DETAIL_TYPE
 from apps.utils.face_discern import face_discern
 
@@ -20,13 +21,13 @@ from apps.utils.face_discern import face_discern
 
 
 @admin.register(monitor_models.PersonnelType)
-class PersonnelTypeAdmin(PublicModelAdmin, admin.ModelAdmin):
+class PersonnelTypeAdmin(PublicModelAdmin, AjaxAdmin):
     list_display = ["id", "name", "detail"]
     search_fields = ["name"]
 
 
 @admin.register(monitor_models.Monitor)
-class MonitorAdmin(PublicModelAdmin, ImportExportModelAdmin):
+class MonitorAdmin(PublicModelAdmin, ImportExportModelAdmin, AjaxAdmin):
     list_display = [
         "id",
         "name",
@@ -39,7 +40,7 @@ class MonitorAdmin(PublicModelAdmin, ImportExportModelAdmin):
     list_filter = ["personnel_types", "create_at"]
     exclude = ["num_values", "area_personnel"]
     search_fields = ["name"]
-    resource_class = MonitorResources
+    resource_class = monitor_resources.MonitorResources
     fields_options = {
         "id": {"fixed": "left", "width": "120px"},
         "gender": {"width": "80px"},
@@ -124,7 +125,7 @@ class MonitorAdmin(PublicModelAdmin, ImportExportModelAdmin):
 
 
 @admin.register(monitor_models.MonitorDiscover)
-class MonitorDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
+class MonitorDiscoverAdmin(PublicModelAdmin, AjaxAdmin):
     list_display = [
         "id",
         "target",
@@ -195,9 +196,10 @@ class MonitorDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
 
 
 @admin.register(monitor_models.VehicleMonitor)
-class VehicleMonitorAdmin(PublicModelAdmin, admin.ModelAdmin):
+class VehicleMonitorAdmin(PublicModelAdmin, ImportExportModelAdmin, AjaxAdmin):
     list_display = ["id", "plate", "name", "gender", "phone", "detail", "operation"]
     search_fields = ["plate", "name", "phone"]
+    resource_class = monitor_resources.VehicleMonitorResources
     fields_options = {
         "id": {"fixed": "left", "width": "120px"},
         "plate": {"width": "120px"},
@@ -221,7 +223,7 @@ class VehicleMonitorAdmin(PublicModelAdmin, admin.ModelAdmin):
 
 
 @admin.register(monitor_models.VehicleMonitorDiscover)
-class VehicleMonitorDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
+class VehicleMonitorDiscoverAdmin(PublicModelAdmin, AjaxAdmin):
     list_display = ["id", "target", "image", "checked", "detail", "operation"]
     list_filter = ["target", "create_at"]
     fields_options = {
@@ -273,7 +275,7 @@ class VehicleMonitorDiscoverAdmin(PublicModelAdmin, admin.ModelAdmin):
 
 
 @admin.register(monitor_models.RestrictedArea)
-class RestrictedAreaAdmin(PublicModelAdmin, admin.ModelAdmin):
+class RestrictedAreaAdmin(PublicModelAdmin, AjaxAdmin):
     list_display = ["id", "name", "device", "detail"]
     list_filter = ["name"]
     exclude = ["personnel_list"]
@@ -300,9 +302,10 @@ class RestrictedAreaAdmin(PublicModelAdmin, admin.ModelAdmin):
 
 
 @admin.register(monitor_models.AreaMonitorPersonnel)
-class AreaMonitorPersonnelAdmin(PublicModelAdmin, admin.ModelAdmin):
+class AreaMonitorPersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin, AjaxAdmin):
     list_display = ["id", "area", "personnel", "image", "detail"]
     list_filter = ["area", "create_at"]
+    resource_class = monitor_resources.AreaMonitorPersonnelResources
     fields_options = {
         "id": {"fixed": "left", "width": "120px"},
         "area": {"width": "160px"},
@@ -368,12 +371,12 @@ class AreaMonitorPersonnelAdmin(PublicModelAdmin, admin.ModelAdmin):
 
 
 @admin.register(monitor_models.AreaSnapRecord)
-class AreaSnapRecordAdmin(PublicModelAdmin, admin.ModelAdmin):
+class AreaSnapRecordAdmin(PublicModelAdmin, AjaxAdmin):
     list_display = ["id", "personnel", "record", "similarity"]
 
 
 @admin.register(monitor_models.ArchivesLibrary)
-class ArchivesLibraryAdmin(PublicModelAdmin, admin.ModelAdmin):
+class ArchivesLibraryAdmin(PublicModelAdmin, AjaxAdmin):
     list_display = ["id", "name", "detail"]
     search_fields = ["name"]
     fields_options = {
@@ -383,11 +386,11 @@ class ArchivesLibraryAdmin(PublicModelAdmin, admin.ModelAdmin):
 
 
 @admin.register(monitor_models.ArchivesPersonnel)
-class ArchivesPersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin):
+class ArchivesPersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin, AjaxAdmin):
     list_display = ["id", "library", "name", "phone", "id_card", "image", "operation"]
     list_filter = ["library"]
     search_fields = ["name"]
-    resource_class = ArchivesPersonnelResources
+    resource_class = monitor_resources.ArchivesPersonnelResources
     top_html = ' <el-alert title="关注人员隔天对前天的数据进行归档(非实时归档)!" type="warning"></el-alert>'
     fields_options = {
         "id": {"fixed": "left", "width": "120px"},
@@ -469,7 +472,7 @@ class ArchivesPersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin):
 
 
 @admin.register(monitor_models.PhotoCluster)
-class PhotoClusterAdmin(PublicModelAdmin, admin.ModelAdmin):
+class PhotoClusterAdmin(PublicModelAdmin, AjaxAdmin):
     list_display = [
         "id",
         "archives_personnel",

@@ -3,6 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 from django.contrib.admin.models import LogEntry
 from django.contrib.auth.models import Permission
+from simpleui.admin import AjaxAdmin
 
 from apps.account import models as account_models
 
@@ -59,7 +60,7 @@ class UserExtraAdmin(UserAdmin):
 
 
 @admin.register(LogEntry)
-class LogEntryAdmin(admin.ModelAdmin):
+class LogEntryAdmin(AjaxAdmin):
     list_display = ["id", "user", "content_type", "message", "action_time"]
     list_filter = ["user__username", "action_time"]
     readonly_fields = ["action_time", "user", "content_type"]
@@ -77,5 +78,5 @@ class LogEntryAdmin(admin.ModelAdmin):
 
 
 @admin.register(Permission)
-class PermissionAdmin(admin.ModelAdmin):
+class PermissionAdmin(AjaxAdmin):
     list_display = ["id", "name", "content_type", "codename"]

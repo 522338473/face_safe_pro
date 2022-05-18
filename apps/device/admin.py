@@ -1,9 +1,12 @@
 from django.urls import reverse
 from django.contrib import admin
 from django.utils.safestring import mark_safe
+from import_export.admin import ImportExportModelAdmin
+from simpleui.admin import AjaxAdmin
 from simplepro.dialog import ModalDialog, MultipleCellDialog
 
 from apps.device import models as device_models
+from apps.device import resources as device_resources
 from apps.public.admin import PublicModelAdmin
 from apps.utils.constant import VIDEO_PLAY_TYPE, DETAIL_TYPE
 from apps.utils.job_queue import redis_queue
@@ -13,11 +16,12 @@ from apps.utils.job_queue import redis_queue
 
 
 @admin.register(device_models.DeviceInfo)
-class DeviceInfoAdmin(PublicModelAdmin, admin.ModelAdmin):
+class DeviceInfoAdmin(PublicModelAdmin, ImportExportModelAdmin, AjaxAdmin):
     list_display = ["id", "name", "ip", "address", "status", "channel", "operation"]
     list_filter = ["name", "device_type", "create_at"]
     exclude = ["last_login", "last_logout", "snap_count", "monitor_count"]
     list_per_page = 10
+    resource_class = device_resources.DeviceInfoResources
     change_list_template = "admin/device/deviceinfo/change_list.html"
     change_form_template = "admin/device/deviceinfo/change_form.html"
     fields_options = {
@@ -114,7 +118,7 @@ class DeviceInfoAdmin(PublicModelAdmin, admin.ModelAdmin):
 
 
 @admin.register(device_models.DevicePhoto)
-class DevicePhotoAdmin(PublicModelAdmin, admin.ModelAdmin):
+class DevicePhotoAdmin(PublicModelAdmin, AjaxAdmin):
     list_display = ["id", "address", "take_photo_time", "image", "operation"]
     list_filter = ["device", "take_photo_time"]
     fields_options = {
@@ -179,7 +183,7 @@ class DevicePhotoAdmin(PublicModelAdmin, admin.ModelAdmin):
 
 
 @admin.register(device_models.DeviceOffLine)
-class DeviceOffLineAdmin(PublicModelAdmin, admin.ModelAdmin):
+class DeviceOffLineAdmin(PublicModelAdmin, AjaxAdmin):
     list_display = ["id", "device", "checked", "alarm_type", "photo_path"]
     list_filter = ["device", "create_at"]
     fields_options = {
@@ -189,7 +193,7 @@ class DeviceOffLineAdmin(PublicModelAdmin, admin.ModelAdmin):
 
 
 @admin.register(device_models.Motor)
-class MotorAdmin(PublicModelAdmin, admin.ModelAdmin):
+class MotorAdmin(PublicModelAdmin, AjaxAdmin):
     list_display = ["id", "device", "address", "take_photo_time", "image"]
     list_filter = ["device", "create_at"]
     fields_options = {
@@ -213,7 +217,7 @@ class MotorAdmin(PublicModelAdmin, admin.ModelAdmin):
 
 
 @admin.register(device_models.Vehicle)
-class VehicleAdmin(PublicModelAdmin, admin.ModelAdmin):
+class VehicleAdmin(PublicModelAdmin, AjaxAdmin):
     list_display = [
         "id",
         "device",
