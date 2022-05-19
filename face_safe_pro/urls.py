@@ -15,11 +15,11 @@ Including another URLconf
 """
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, re_path
 from django.urls import include
 from django.conf import settings
 from django.views.generic import RedirectView
-
+from django.contrib.staticfiles.views import serve
 from rest_framework.documentation import include_docs_urls
 
 from apps.public import views as public_view
@@ -38,6 +38,7 @@ urlpatterns = [
     path("v1/", include(urls_v1)),  # RestApi
     path("favicon.ico", RedirectView.as_view(url=r"static/favicon.ico")),  # favicon
     path("admin/", admin.site.urls, name="admin"),  # admin管理后台
+    re_path(r"^static/(?P<path>.*)$", serve, name="static"),  # 静态文件
     path("sp/", include("simplepro.urls")),  # simplepro
     path(
         "api-docs/",

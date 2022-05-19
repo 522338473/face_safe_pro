@@ -18,7 +18,17 @@ class MonitorResources(resources.ModelResource):
 
     class Meta:
         model = monitor_models.Monitor
-        fields = ["personnel_types", "name", "gender", "types", "photo", "id_name", "id_number", "phone", ""]
+        fields = [
+            "personnel_types",
+            "name",
+            "gender",
+            "types",
+            "photo",
+            "id_name",
+            "id_number",
+            "phone",
+            "",
+        ]
 
     def export(self, queryset=None, *args, **kwargs):
         """导出触发"""

@@ -17,7 +17,19 @@ class PersonnelResources(resources.ModelResource):
 
     class Meta:
         model = archives_models.Personnel
-        fields = ["archives_group", "name", "gender", "phone", "photo", "id_card", "household_register", "date_of_birth", "nation", "nationality", "address"]
+        fields = [
+            "archives_group",
+            "name",
+            "gender",
+            "phone",
+            "photo",
+            "id_card",
+            "household_register",
+            "date_of_birth",
+            "nation",
+            "nationality",
+            "address",
+        ]
 
     def export(self, queryset=None, *args, **kwargs):
         """导出触发"""

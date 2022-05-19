@@ -28,5 +28,5 @@ else
   pipenv run python manage.py migrate
   export DJANGO_SUPERUSER_PASSWORD=Yishi@9086
   pipenv run python manage.py createsuperuser --noinput --username Yishi  --email Yishi@localhost.com
-  pipenv run python manage.py runserver 0.0.0.0:8000
+  pipenv run daphne -b 0.0.0.0 -p 9999 face_safe_pro.asgi:application
 fi

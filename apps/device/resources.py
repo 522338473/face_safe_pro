@@ -17,7 +17,16 @@ class DeviceInfoResources(resources.ModelResource):
 
     class Meta:
         model = device_models.DeviceInfo
-        fields = ["name", "channel", "ip", "geo", "address", "rtsp_address", "device_type", "is_access"]
+        fields = [
+            "name",
+            "channel",
+            "ip",
+            "geo",
+            "address",
+            "rtsp_address",
+            "device_type",
+            "is_access",
+        ]
 
     def export(self, queryset=None, *args, **kwargs):
         """导出触发"""
