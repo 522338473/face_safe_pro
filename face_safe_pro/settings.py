@@ -163,7 +163,7 @@ STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "static"
 
 # 开发阶段
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "staticfiles")]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "templates/static")]
 
 # 图片上传配置
 MEDIA_URL = "/media/"
