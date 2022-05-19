@@ -9,14 +9,6 @@ if [ $1 ]; then
     pipenv run python manage.py makemigrations
     pipenv run python manage.py migrate
     pipenv run celery -A face_safe worker -B -l info
-  elif [ $1 = 'celery-beta' ]; then
-    pipenv run python manage.py makemigrations
-    pipenv run python manage.py migrate
-    pipenv run celery -A face_safe beat --loglevel=INFO
-  elif [ $1 = 'celery-worker' ]; then
-    pipenv run python manage.py makemigrations
-    pipenv run python manage.py migrate
-    pipenv run celery -A face_safe worker -c 4 --loglevel=INFO
   else
     pipenv run python manage.py makemigrations
     pipenv run python manage.py migrate

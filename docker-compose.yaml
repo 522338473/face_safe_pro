@@ -30,14 +30,12 @@ services:
     ports:
       - "80:80"
       - "10081:10081"
-      - "8088:8088"
     volumes:
-      - ./deveploy/nginx:/etc/nginx/conf.d
-      - ./static/dist:/app/face_safe/dist
+      - ./deployment/nginx:/etc/nginx/conf.d
       - /srv/stream/mp4:/srv/stream/mp4
-      - ./deveploy/docs:/app/face_safe/docs
+      - ./static/:/app/static
     depends_on:
-      - face-safe
+      - face_safe_pro
     logging:
       driver: "json-file"
       options:
@@ -76,7 +74,7 @@ services:
     volumes:
       - /mnt/data/postgresql:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=face_safe
+      - POSTGRES_DB=face_safe_pro
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     ports:
@@ -116,17 +114,17 @@ services:
       options:
         max-size: "50M"
         max-file: "1"
-  cisa-live:
+  cisa_live:
     image: nightz/csia_live:latest
     restart: always
-    hostname: cisa-live
+    hostname: cisa_live
     volumes:
-      - /srv/stream/mp4:/srv/csia-live/stream
+      - /srv/stream/mp4:/srv/csia_live/stream
     environment:
       - NVR_IP=172.17.0.1
       - NVR_USERNAME=admin
       - NVR_PASSWORD=Yishi9086
-      - NVR_SAVE_PATH=/srv/csia-live/stream
+      - NVR_SAVE_PATH=/srv/csia_live/stream
     ports:
       - "3000:3000"
       - "1935:1935"
@@ -146,16 +144,16 @@ services:
       options:
         max-size: "50M"
         max-file: "1"
-  face-safe:
-    image: nightz/face_safe:latest
+  face_safe_pro:
+    image: nightz/face_safe_pro:latest
     restart: always
-    hostname: face-safe
+    hostname: face_safe_pro
     volumes:
       - .:/app
       - /mnt/data/fastdfs/:/mnt/data/fastdfs/
     command: sh start.sh
     ports:
-      - "8000:8000"
+      - "9999:9999"
     depends_on:
       - redis
       - rabbitmq
@@ -166,10 +164,10 @@ services:
       options:
         max-size: "50M"
         max-file: "1"
-  face-safe-celery:
-    image: nightz/face_safe:latest
+  face_safe_pro_celery:
+    image: nightz/face_safe_pro:latest
     restart: always
-    hostname: face-safe-celery
+    hostname: face_safe_pro_celery
     volumes:
       - .:/app
       - /mnt/data/fastdfs/:/mnt/data/fastdfs/
@@ -184,14 +182,14 @@ services:
       options:
         max-size: "50M"
         max-file: "1"
-  face-safe-mq_image:
-    image: nightz/face_safe:latest
+  face_safe_pro_parse_image:
+    image: nightz/face_safe_pro:latest
     restart: always
-    hostname: face-safe-mq_image
+    hostname: face_safe_pro_parse_image
     volumes:
       - .:/app
       - /mnt/data/fastdfs/:/mnt/data/fastdfs/
-    command: sh start.sh mq_image
+    command: sh start.sh parse_image
     depends_on:
       - redis
       - rabbitmq
@@ -202,28 +200,10 @@ services:
       options:
         max-size: "50M"
         max-file: "1"
-  face-safe-redis_image:
-    image: nightz/face_safe:latest
+  face_safe_pro_warning_queue:
+    image: nightz/face_safe_pro:latest
     restart: always
-    hostname: face-safe-redis_image
-    volumes:
-      - .:/app
-      - /mnt/data/fastdfs/:/mnt/data/fastdfs/
-    command: sh start.sh redis_image
-    depends_on:
-      - redis
-      - rabbitmq
-      - fastdfs
-      - postgresql
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "50M"
-        max-file: "1"
-  face-safe-warning_queue:
-    image: nightz/face_safe:latest
-    restart: always
-    hostname: face-safe-warning_queue
+    hostname: face_safe_pro_warning_queue
     volumes:
       - .:/app
       - /mnt/data/fastdfs/:/mnt/data/fastdfs/
