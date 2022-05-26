@@ -35,7 +35,7 @@ def push_algorithm(camera_ip=None, time_tag=None):
             # 人脸入库
             # 数据入库
             path = upload_image(
-                image=base64.b64decode(response["data"].get("image")), path=None
+                image=base64.b64decode(response["data"].get("image"))
             )
             take_photo_time = datetime.fromtimestamp(
                 response["data"].get("timetag") / 1000
@@ -44,7 +44,7 @@ def push_algorithm(camera_ip=None, time_tag=None):
             device = device_models.DeviceInfo.objects.filter(
                 delete_at__isnull=True
             ).get(ip=response["data"].get("cameraip"))
-            optical = models.OpticalFiberAlarmModel.objects.filter(
+            optical = models.OpticalFiberAlarm.objects.filter(
                 createAt=time_tag, devIp=camera_ip
             ).first()
             models.AlgorithmAlarm.objects.create(
