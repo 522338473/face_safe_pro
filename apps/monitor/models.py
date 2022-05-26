@@ -270,7 +270,6 @@ class VehicleMonitorDiscover(BaseModel):
         verbose_name_plural = verbose_name
 
 
-# TODO: personnel_list 该字段后期删除，区域人员以: AreaMonitorPersonnel为准
 class RestrictedArea(BaseModel):
     """
     区域管理表
@@ -289,9 +288,6 @@ class RestrictedArea(BaseModel):
     device_list = fields.ManyToManyField(
         to="device.DeviceInfo", blank=True, verbose_name="关联设备"
     )
-    personnel_list = fields.ManyToManyField(
-        to="archives.Personnel", blank=True, verbose_name="关联人员"
-    )
 
     class Meta:
         verbose_name = "门禁管理"
@@ -301,7 +297,6 @@ class RestrictedArea(BaseModel):
         return self.name
 
 
-# TODO: 该表与上表有冲突。后期讨论优化
 class AreaMonitorPersonnel(BaseModel):
     """
     区域监测人员表
@@ -325,37 +320,10 @@ class AreaMonitorPersonnel(BaseModel):
     class Meta:
         verbose_name = "门禁人员"
         verbose_name_plural = verbose_name
+        unique_together = ["personnel", "area", "delete_at"]
 
-
-# TODO: 跟门禁通行冗余
-class AreaSnapRecord(BaseModel):
-    """
-    区域抓拍记录表
-    """
-
-    personnel = fields.ForeignKey(
-        to="AreaMonitorPersonnel",
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        verbose_name="区域人员",
-    )
-    record = fields.ForeignKey(
-        to="device.DevicePhoto",
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        verbose_name="抓拍目标",
-    )
-
-    checked = fields.SwitchField(default=False, verbose_name="已读未读")
-    similarity = fields.CharField(
-        null=True, blank=True, max_length=12, verbose_name="相似度"
-    )
-
-    class Meta:
-        verbose_name = "门禁抓拍"
-        verbose_name_plural = verbose_name
+    def __str__(self):
+        return self.personnel.name
 
 
 class ArchivesLibrary(BaseModel):

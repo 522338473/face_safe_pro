@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     "apps.device",
     "apps.archives",
     "apps.monitor",
+    "apps.telecom",
 ]
 
 MIDDLEWARE = [
@@ -380,14 +381,14 @@ SIMPLEUI_CONFIG = {
                     "url": "/admin/monitor/restrictedarea/",
                 },
                 {
-                    "name": "门禁通行",
-                    "icon": "fas fa-person-booth",
-                    "url": "/admin/archives/accessdiscover/",
-                },
-                {
                     "name": "人员名单",
                     "icon": "fas fa-child",
                     "url": "/admin/monitor/areamonitorpersonnel/",
+                },
+                {
+                    "name": "门禁通行",
+                    "icon": "fas fa-person-booth",
+                    "url": "/admin/archives/accessdiscover/",
                 },
             ],
         },
@@ -468,6 +469,32 @@ SIMPLEUI_CONFIG = {
                         },
                     ],
                 },
+            ],
+        },
+        {
+            "name": "大屏扩展",
+            "icon": "fas fa-align-justify",
+            "models": [
+                {
+                    "name": "光纤报警",
+                    "icon": "fas fa-exclamation-triangle",
+                    "url": "/admin/telecom/opticalfiberalarm/",
+                },
+                {
+                    "name": "算法报警",
+                    "icon": "fas fa-exclamation-triangle",
+                    "url": "/admin/telecom/algorithmalarm/",
+                },
+                {
+                    "name": "点名快照",
+                    "icon": "fas fa-camera-retro",
+                    "url": "/admin/telecom/rollcallhistory/",
+                },
+                {
+                    "name": "光纤大屏",
+                    "icon": "fas fa-exclamation-triangle",
+                },
+                {"name": "点名大屏", "icon": "fas fa-camera-retro"},
             ],
         },
     ],

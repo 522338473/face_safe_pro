@@ -278,7 +278,6 @@ class VehicleMonitorDiscoverAdmin(PublicModelAdmin, AjaxAdmin):
 class RestrictedAreaAdmin(PublicModelAdmin, AjaxAdmin):
     list_display = ["id", "name", "device", "detail"]
     list_filter = ["name"]
-    exclude = ["personnel_list"]
     top_html = ' <el-alert title="门禁区域只可绑定门禁设备&无感通行! 删除门禁区域。请先删除该区域下所有人员" type="warning"></el-alert>'
     fields_options = {
         "id": {"fixed": "left", "width": "120px"},
@@ -368,11 +367,6 @@ class AreaMonitorPersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin, AjaxAd
                     print(res.status_code)
                     print(res.json())
         return super(AreaMonitorPersonnelAdmin, self).delete_queryset(request, queryset)
-
-
-@admin.register(monitor_models.AreaSnapRecord)
-class AreaSnapRecordAdmin(PublicModelAdmin, AjaxAdmin):
-    list_display = ["id", "personnel", "record", "similarity"]
 
 
 @admin.register(monitor_models.ArchivesLibrary)

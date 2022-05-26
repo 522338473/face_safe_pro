@@ -165,7 +165,7 @@ class RedisQueue:
         )
         redis_queue.image_enqueue(image_list)
 
-        if archive_id:  # 归档预警
+        if archive_id:  # 通行记录
             try:
                 AccessDiscover.objects.create(
                     target_id=Hasher.to_object_pk(archive_id),

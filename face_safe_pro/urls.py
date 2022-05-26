@@ -29,16 +29,17 @@ urls_v1 = [
     path("archives/", include(("archives.urls", "archives"))),
     path("device/", include(("device.urls", "device"))),
     path("monitor/", include(("monitor.urls", "monitor"))),
+    path("telecom/", include(("telecom.urls", "telecom"))),
     path("public/", include(("public.urls", "public"))),
 ]
 
 urlpatterns = [
+    re_path(r"^static/(?P<path>.*)$", serve, name="static"),  # 静态文件
     path("web_upload/", public_view.web_upload_image, name="web_upload"),
     path("f_upload/<file_types>/", public_view.upload_image),
     path("v1/", include(urls_v1)),  # RestApi
     path("favicon.ico", RedirectView.as_view(url=r"static/favicon.ico")),  # favicon
     path("admin/", admin.site.urls, name="admin"),  # admin管理后台
-    re_path(r"^static/(?P<path>.*)$", serve, name="static"),  # 静态文件
     path("sp/", include("simplepro.urls")),  # simplepro
     path(
         "api-docs/",

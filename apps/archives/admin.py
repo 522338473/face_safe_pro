@@ -69,7 +69,6 @@ class PersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin, AjaxAdmin):
         "operation",
     ]
     list_filter = ["archives_group", "create_at"]
-    exclude = ["is_access", "device_list"]  # TODO: 该字段为扩展字段，后期决定存留
     search_fields = ["name", "phone", "id_card"]
     resource_class = archives_resources.PersonnelResources
     # actions = ['action_for_archives_personnel_export', 'action_for_archives_personnel_import', 'action_for_archives_personnel_layer_input']

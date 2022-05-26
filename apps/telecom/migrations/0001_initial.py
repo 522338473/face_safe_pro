@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name="ArchivesGroup",
+            name="OpticalFiberAlarm",
             fields=[
                 (
                     "id",
@@ -57,20 +57,56 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
-                    "name",
+                    "position",
                     simplepro.components.fields.CharField(
-                        max_length=32, verbose_name="库名"
+                        blank=True, max_length=8, null=True, verbose_name="报警位置(单位 m)"
+                    ),
+                ),
+                (
+                    "createAt",
+                    simplepro.components.fields.CharField(
+                        blank=True, max_length=32, null=True, verbose_name="报警时间"
+                    ),
+                ),
+                (
+                    "geo",
+                    simplepro.components.fields.AMapField(
+                        blank=True,
+                        help_text="点击获取经纬度坐标",
+                        max_length=32,
+                        null=True,
+                        verbose_name="经纬度坐标",
+                    ),
+                ),
+                (
+                    "channel",
+                    simplepro.components.fields.IntegerField(
+                        default=0, verbose_name="通道号"
+                    ),
+                ),
+                (
+                    "devIp",
+                    simplepro.components.fields.CharField(
+                        blank=True, max_length=32, null=True, verbose_name="设备IP"
+                    ),
+                ),
+                (
+                    "alarmType",
+                    simplepro.components.fields.IntegerField(
+                        blank=True,
+                        choices=[(1, "振动报警"), (2, "断纤报警")],
+                        null=True,
+                        verbose_name="报警类型(1: 震动 2: 断纤)",
                     ),
                 ),
             ],
             options={
-                "verbose_name": "档案库",
-                "verbose_name_plural": "档案库",
-                "unique_together": {("name", "delete_at")},
+                "verbose_name": "光纤报警",
+                "verbose_name_plural": "光纤报警",
             },
         ),
         migrations.CreateModel(
-            name="Personnel",
+            name="RollCallHistory",
             fields=[
                 (
                     "id",
@@ -112,192 +148,135 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
-                    "name",
-                    simplepro.components.fields.CharField(
-                        max_length=32, verbose_name="姓名"
+                    "start_time",
+                    simplepro.components.fields.DateTimeField(
+                        blank=True, null=True, verbose_name="开始时间"
                     ),
                 ),
                 (
-                    "gender",
+                    "end_time",
+                    simplepro.components.fields.DateTimeField(
+                        blank=True, null=True, verbose_name="结束时间"
+                    ),
+                ),
+                (
+                    "personnel_types",
+                    simplepro.components.fields.CharField(
+                        blank=True, max_length=32, null=True, verbose_name="名称"
+                    ),
+                ),
+                (
+                    "total_person",
                     simplepro.components.fields.IntegerField(
-                        choices=[(1, "男"), (2, "女"), (3, "未知")],
-                        default=1,
-                        verbose_name="性别",
+                        default=0, verbose_name="总人数"
                     ),
                 ),
                 (
-                    "phone",
+                    "attendance_person",
+                    simplepro.components.fields.IntegerField(
+                        default=0, verbose_name="已出勤人数"
+                    ),
+                ),
+                (
+                    "rate_of_attendance",
+                    simplepro.components.fields.RateField(
+                        default=0.0, verbose_name="出勤率"
+                    ),
+                ),
+                (
+                    "person_list",
                     simplepro.components.fields.CharField(
-                        blank=True, max_length=32, null=True, verbose_name="手机号"
+                        blank=True, max_length=512, null=True, verbose_name="人员列表"
                     ),
                 ),
                 (
-                    "photo",
+                    "person_list_record",
+                    simplepro.components.fields.CharField(
+                        blank=True, max_length=512, null=True, verbose_name="人员出勤抓拍"
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "点名快照",
+                "verbose_name_plural": "点名快照",
+            },
+        ),
+        migrations.CreateModel(
+            name="AlgorithmAlarm",
+            fields=[
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "create_at",
+                    simplepro.components.fields.DateTimeField(
+                        auto_now_add=True, verbose_name="创建时间"
+                    ),
+                ),
+                (
+                    "update_at",
+                    simplepro.components.fields.DateTimeField(
+                        auto_now=True, verbose_name="更新时间"
+                    ),
+                ),
+                (
+                    "delete_at",
+                    simplepro.components.fields.DateTimeField(
+                        blank=True, null=True, verbose_name="删除时间"
+                    ),
+                ),
+                (
+                    "create_by",
+                    simplepro.components.fields.CharField(
+                        blank=True, max_length=32, null=True, verbose_name="创建人"
+                    ),
+                ),
+                (
+                    "detail",
+                    simplepro.components.fields.CharField(
+                        blank=True, max_length=200, null=True, verbose_name="备注信息"
+                    ),
+                ),
+                (
+                    "back_path",
                     simplepro.components.fields.ImageField(
-                        blank=True, max_length=128, null=True, verbose_name="照片"
+                        blank=True, max_length=64, null=True, verbose_name="背景照"
                     ),
                 ),
                 (
-                    "id_card",
-                    simplepro.components.fields.CharField(
-                        blank=True, max_length=32, null=True, verbose_name="身份证号"
-                    ),
+                    "take_photo_time",
+                    simplepro.components.fields.DateTimeField(verbose_name="抓拍时间"),
                 ),
                 (
-                    "household_register",
-                    simplepro.components.fields.CharField(
-                        blank=True, max_length=32, null=True, verbose_name="户籍"
-                    ),
-                ),
-                (
-                    "date_of_birth",
-                    simplepro.components.fields.CharField(
-                        blank=True, max_length=12, null=True, verbose_name="出生年月"
-                    ),
-                ),
-                (
-                    "nation",
-                    simplepro.components.fields.CharField(
-                        blank=True, max_length=32, null=True, verbose_name="民族"
-                    ),
-                ),
-                (
-                    "nationality",
-                    simplepro.components.fields.CharField(
-                        blank=True, max_length=32, null=True, verbose_name="国籍"
-                    ),
-                ),
-                (
-                    "id_type",
-                    simplepro.components.fields.IntegerField(
-                        choices=[(1, "身份证"), (2, "护照"), (3, "港澳居民往来内地通行证"), (4, "其他")],
-                        default=1,
-                        verbose_name="证件类型",
-                    ),
-                ),
-                (
-                    "id_name",
-                    simplepro.components.fields.CharField(
-                        blank=True, max_length=32, null=True, verbose_name="证件名称"
-                    ),
-                ),
-                (
-                    "source",
-                    simplepro.components.fields.IntegerField(
-                        choices=[(0, "总控平台"), (1, "子平台")],
-                        default=1,
-                        verbose_name="数据来源",
-                    ),
-                ),
-                (
-                    "right_control",
-                    simplepro.components.fields.IntegerField(
-                        choices=[(0, "总控平台"), (1, "子平台"), (2, "总控平台， 子平台")],
-                        default=2,
-                        verbose_name="预警范围",
-                    ),
-                ),
-                (
-                    "address",
-                    simplepro.components.fields.CharField(
-                        blank=True, max_length=32, null=True, verbose_name="住址"
-                    ),
-                ),
-                (
-                    "archives_group",
+                    "device",
                     simplepro.components.fields.ForeignKey(
                         blank=True,
                         null=True,
                         on_delete=django.db.models.deletion.SET_NULL,
-                        to="archives.archivesgroup",
-                        verbose_name="档案分组名称",
+                        to="device.deviceinfo",
+                        verbose_name="报警设备",
+                    ),
+                ),
+                (
+                    "optical",
+                    simplepro.components.fields.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="telecom.opticalfiberalarm",
+                        verbose_name="光纤报警",
                     ),
                 ),
             ],
             options={
-                "verbose_name": "档案人员库",
-                "verbose_name_plural": "档案人员库",
-                "unique_together": {("name", "phone", "delete_at")},
-            },
-        ),
-        migrations.CreateModel(
-            name="AccessDiscover",
-            fields=[
-                (
-                    "id",
-                    models.BigAutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
-                ),
-                (
-                    "create_at",
-                    simplepro.components.fields.DateTimeField(
-                        auto_now_add=True, verbose_name="创建时间"
-                    ),
-                ),
-                (
-                    "update_at",
-                    simplepro.components.fields.DateTimeField(
-                        auto_now=True, verbose_name="更新时间"
-                    ),
-                ),
-                (
-                    "delete_at",
-                    simplepro.components.fields.DateTimeField(
-                        blank=True, null=True, verbose_name="删除时间"
-                    ),
-                ),
-                (
-                    "create_by",
-                    simplepro.components.fields.CharField(
-                        blank=True, max_length=32, null=True, verbose_name="创建人"
-                    ),
-                ),
-                (
-                    "detail",
-                    simplepro.components.fields.CharField(
-                        blank=True, max_length=200, null=True, verbose_name="备注信息"
-                    ),
-                ),
-                (
-                    "checked",
-                    simplepro.components.fields.SwitchField(
-                        default=False, verbose_name="已读未读"
-                    ),
-                ),
-                (
-                    "similarity",
-                    simplepro.components.fields.CharField(
-                        blank=True, max_length=12, null=True, verbose_name="相似度"
-                    ),
-                ),
-                (
-                    "record",
-                    simplepro.components.fields.ForeignKey(
-                        blank=True,
-                        null=True,
-                        on_delete=django.db.models.deletion.SET_NULL,
-                        to="device.devicephoto",
-                        verbose_name="通行抓拍",
-                    ),
-                ),
-                (
-                    "target",
-                    simplepro.components.fields.ForeignKey(
-                        blank=True,
-                        null=True,
-                        on_delete=django.db.models.deletion.SET_NULL,
-                        to="archives.personnel",
-                        verbose_name="门禁人员档案",
-                    ),
-                ),
-            ],
-            options={
-                "verbose_name": "门禁通行记录",
-                "verbose_name_plural": "门禁通行记录",
+                "verbose_name": "算法报警",
+                "verbose_name_plural": "算法报警",
             },
         ),
     ]

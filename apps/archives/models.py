@@ -139,13 +139,6 @@ class Personnel(BaseModel):
         verbose_name="住址",
         placeholder="请输入地址",
     )
-    is_access = fields.IntegerField(
-        default=0, choices=constant.IS_ACCESS, verbose_name="是否门禁人员"
-    )
-    # TODO: 该字段扩展。后期决定存留
-    device_list = fields.ManyToManyField(
-        to="device.DeviceInfo", blank=True, verbose_name="人员所属门禁"
-    )
 
     class Meta:
         verbose_name = "档案人员库"
