@@ -34,9 +34,7 @@ def push_algorithm(camera_ip=None, time_tag=None):
         if response.get("error") == 0:
             # 人脸入库
             # 数据入库
-            path = upload_image(
-                image=base64.b64decode(response["data"].get("image"))
-            )
+            path = upload_image(image=base64.b64decode(response["data"].get("image")))
             take_photo_time = datetime.fromtimestamp(
                 response["data"].get("timetag") / 1000
             )

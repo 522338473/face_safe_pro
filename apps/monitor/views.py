@@ -2,6 +2,7 @@ import datetime
 import base64
 import requests
 
+from django.conf import settings
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -16,6 +17,7 @@ from apps.utils.face_discern import face_discern
 
 
 # Create your views here.
+from telecom import consumer
 
 
 class PersonnelTypeViewSet(HashRetrieveViewSetMixin, ModelViewSet):
@@ -80,12 +82,37 @@ class MonitorViewSet(HashRetrieveViewSetMixin, ModelViewSet):
         except Exception as e:
             instance.set_delete()
             raise exceptions.ParseError("人脸注册失败.")
+        else:
+            if settings.BIG_SCREEN and settings.PUSH_ROLL_CALL:
+                # 重点人员新增，ws推送
+                consumer.send_message(
+                    message=serializer.data, message_type="personnel_add"
+                )
         return Response(
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
 
     def perform_create(self, serializer):
         return serializer.save()
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop("partial", False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        if settings.BIG_SCREEN and settings.PUSH_ROLL_CALL:
+            # 重点人员修改 WS推送
+            consumer.send_message(
+                message=serializer.data, message_type="personnel_update"
+            )
+
+        if getattr(instance, "_prefetched_objects_cache", None):
+            # If 'prefetch_related' has been applied to a queryset, we need to
+            # forcibly invalidate the prefetch cache on the instance.
+            instance._prefetched_objects_cache = {}
+
+        return Response(serializer.data)
 
     def perform_destroy(self, instance):
         """人员软删除"""
@@ -97,6 +124,15 @@ class MonitorViewSet(HashRetrieveViewSetMixin, ModelViewSet):
             raise exceptions.ParseError("人脸删除失败.")
         else:
             instance.set_delete()
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = serializers.MonitorSerializer(instance)
+        self.perform_destroy(instance)
+        if settings.BIG_SCREEN and settings.PUSH_ROLL_CALL:
+            # 重点人员删除，WS推送
+            consumer.send_message(message=serializer.data, message_type="personnel_del")
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(methods=["GET"], detail=False, url_path="count")
     def count(self, request, *args, **kwargs):

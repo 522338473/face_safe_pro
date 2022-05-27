@@ -29,9 +29,13 @@ urls_v1 = [
     path("archives/", include(("archives.urls", "archives"))),
     path("device/", include(("device.urls", "device"))),
     path("monitor/", include(("monitor.urls", "monitor"))),
-    path("telecom/", include(("telecom.urls", "telecom"))),
     path("public/", include(("public.urls", "public"))),
 ]
+
+if settings.BIG_SCREEN:
+    urls_v1.append(
+        path("telecom/", include(("telecom.urls", "telecom"))),
+    )
 
 urlpatterns = [
     re_path(r"^static/(?P<path>.*)$", serve, name="static"),  # 静态文件

@@ -11,8 +11,10 @@ from simplepro.dialog import ModalDialog, MultipleCellDialog
 
 from apps.device import models as device_models
 from apps.monitor import models as monitor_models
+from apps.monitor import serializers as monitor_serializer
 from apps.public.admin import PublicModelAdmin
 from apps.monitor import resources as monitor_resources
+from apps.telecom import consumer
 from apps.utils.constant import VIDEO_PLAY_TYPE, DETAIL_TYPE
 from apps.utils.face_discern import face_discern
 
@@ -93,6 +95,20 @@ class MonitorAdmin(PublicModelAdmin, ImportExportModelAdmin, AjaxAdmin):
             except Exception as e:
                 instance.set_delete()
                 self.message_user(request, "人脸注册失败")
+            else:
+                if settings.BIG_SCREEN and settings.PUSH_ROLL_CALL:
+                    # 重点人员新增，ws推送
+                    serializer = monitor_serializer.MonitorSerializer(instance)
+                    consumer.send_message(
+                        message=serializer.data, message_type="personnel_add"
+                    )
+        else:
+            if settings.BIG_SCREEN and settings.PUSH_ROLL_CALL:
+                # 重点人员修改 WS推送
+                serializer = monitor_serializer.MonitorSerializer(instance)
+                consumer.send_message(
+                    message=serializer.data, message_type="personnel_update"
+                )
 
     def delete_model(self, request, obj):
         """重点人员删除"""
@@ -102,6 +118,13 @@ class MonitorAdmin(PublicModelAdmin, ImportExportModelAdmin, AjaxAdmin):
                 pass
         except Exception as e:
             pass
+        else:
+            if settings.BIG_SCREEN and settings.PUSH_ROLL_CALL:
+                # 重点人员删除，WS推送
+                serializer = monitor_serializer.MonitorSerializer(obj)
+                consumer.send_message(
+                    message=serializer.data, message_type="personnel_del"
+                )
         finally:
             if request.user.is_superuser:
                 obj.delete()
@@ -117,6 +140,13 @@ class MonitorAdmin(PublicModelAdmin, ImportExportModelAdmin, AjaxAdmin):
                     pass
             except Exception as e:
                 pass
+            else:
+                if settings.BIG_SCREEN and settings.PUSH_ROLL_CALL:
+                    # 重点人员删除，WS推送
+                    serializer = monitor_serializer.MonitorSerializer(query)
+                    consumer.send_message(
+                        message=serializer.data, message_type="personnel_del"
+                    )
             finally:
                 if request.user.is_superuser:
                     query.delete()

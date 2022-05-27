@@ -471,32 +471,6 @@ SIMPLEUI_CONFIG = {
                 },
             ],
         },
-        {
-            "name": "大屏扩展",
-            "icon": "fas fa-align-justify",
-            "models": [
-                {
-                    "name": "光纤报警",
-                    "icon": "fas fa-exclamation-triangle",
-                    "url": "/admin/telecom/opticalfiberalarm/",
-                },
-                {
-                    "name": "算法报警",
-                    "icon": "fas fa-exclamation-triangle",
-                    "url": "/admin/telecom/algorithmalarm/",
-                },
-                {
-                    "name": "点名快照",
-                    "icon": "fas fa-camera-retro",
-                    "url": "/admin/telecom/rollcallhistory/",
-                },
-                {
-                    "name": "光纤大屏",
-                    "icon": "fas fa-exclamation-triangle",
-                },
-                {"name": "点名大屏", "icon": "fas fa-camera-retro"},
-            ],
-        },
     ],
 }
 
@@ -581,3 +555,48 @@ SEARCH_REAL_TIME_HOST = os.getenv("SEARCH_REAL_TIME_HOST", "http://192.168.2.89:
 # 双网卡配置
 DOUBLE_NETWORK = os.getenv("DOUBLE_NETWORK", 0)  # 是否双网卡
 D_REDIS_SERVER_HOST = os.getenv("D_REDIS_SERVER_HOST", "192.168.4.10")  # 双网卡IP
+
+# 点名系统最小单位: 默认305s == 5分钟
+EFFECTIVE = os.getenv("EFFECTIVE", 305)
+
+# 是否启用大屏功能
+BIG_SCREEN = bool(int(os.getenv("BIG_SCREEN", 1)))
+
+# 是否启用大屏推送(点名系统)
+PUSH_ROLL_CALL = bool(int(os.getenv("PUSH_ROLL_CALL", 0)))
+
+if BIG_SCREEN:
+    SIMPLEUI_CONFIG["menus"].append(
+        {
+            "name": "大屏扩展",
+            "icon": "fas fa-align-justify",
+            "models": [
+                {
+                    "name": "光纤报警",
+                    "icon": "fas fa-exclamation-triangle",
+                    "url": "/admin/telecom/opticalfiberalarm/",
+                },
+                {
+                    "name": "算法报警",
+                    "icon": "fas fa-exclamation-triangle",
+                    "url": "/admin/telecom/algorithmalarm/",
+                },
+                {
+                    "name": "点名快照",
+                    "icon": "fas fa-camera-retro",
+                    "url": "/admin/telecom/rollcallhistory/",
+                },
+                {
+                    "name": "光纤大屏",
+                    "icon": "fas fa-exclamation-triangle",
+                },
+                {"name": "点名大屏", "icon": "fas fa-camera-retro"},
+            ],
+        },
+    )
+    if PUSH_ROLL_CALL:
+        CELERY_BEAT_SCHEDULE["personnel_history"] = {  # 每隔5分钟保存快照
+            "task": "telecom.tasks.personnel_history",
+            "schedule": datetime.timedelta(seconds=300),
+            "args": None,
+        }
