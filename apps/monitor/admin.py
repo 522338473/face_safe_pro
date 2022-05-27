@@ -24,8 +24,14 @@ from apps.utils.face_discern import face_discern
 
 @admin.register(monitor_models.PersonnelType)
 class PersonnelTypeAdmin(PublicModelAdmin, AjaxAdmin):
-    list_display = ["id", "name", "detail"]
+    list_display = ["id", "name", "personnel_count", "detail"]
     search_fields = ["name"]
+
+    def personnel_count(self, obj):
+        """统计改分类下人员总数"""
+        return obj.monitor_set.count()
+
+    personnel_count.short_description = "人员总数"
 
 
 @admin.register(monitor_models.Monitor)
@@ -227,7 +233,7 @@ class MonitorDiscoverAdmin(PublicModelAdmin, AjaxAdmin):
 
 @admin.register(monitor_models.VehicleMonitor)
 class VehicleMonitorAdmin(PublicModelAdmin, ImportExportModelAdmin, AjaxAdmin):
-    list_display = ["id", "plate", "name", "gender", "phone", "detail", "operation"]
+    list_display = ["id", "plate", "types", "name", "gender", "phone", "id_type", "id_number", "operation"]
     search_fields = ["plate", "name", "phone"]
     resource_class = monitor_resources.VehicleMonitorResources
     fields_options = {
@@ -254,12 +260,22 @@ class VehicleMonitorAdmin(PublicModelAdmin, ImportExportModelAdmin, AjaxAdmin):
 
 @admin.register(monitor_models.VehicleMonitorDiscover)
 class VehicleMonitorDiscoverAdmin(PublicModelAdmin, AjaxAdmin):
-    list_display = ["id", "target", "image", "checked", "detail", "operation"]
+    list_display = ["id", "target", "image", "snap_time", "snap_address", "operation"]
     list_filter = ["target", "create_at"]
     fields_options = {
         "id": {"fixed": "left", "width": "120px"},
         "image": {"width": "120px"},
     }
+
+    def snap_time(self, obj):
+        return obj.record.take_photo_time
+
+    snap_time.short_description = "通行时间"
+
+    def snap_address(self, obj):
+        return obj.record.address
+
+    snap_address.short_description = "通行地点"
 
     def image(self, obj):
         return mark_safe(
@@ -306,7 +322,7 @@ class VehicleMonitorDiscoverAdmin(PublicModelAdmin, AjaxAdmin):
 
 @admin.register(monitor_models.RestrictedArea)
 class RestrictedAreaAdmin(PublicModelAdmin, AjaxAdmin):
-    list_display = ["id", "name", "device", "detail"]
+    list_display = ["id", "name", "device", "personnel_count", "detail"]
     list_filter = ["name"]
     top_html = ' <el-alert title="门禁区域只可绑定门禁设备&无感通行! 删除门禁区域。请先删除该区域下所有人员" type="warning"></el-alert>'
     fields_options = {
@@ -321,6 +337,12 @@ class RestrictedAreaAdmin(PublicModelAdmin, AjaxAdmin):
         return device_list
 
     device.short_description = "设备列表"
+
+    def personnel_count(self, obj):
+        """禁区人员统计"""
+        return obj.areamonitorpersonnel_set.count()
+
+    personnel_count.short_description = "人员总数"
 
     def formfield_for_manytomany(self, db_field, request, **kwargs):
         obj = super(RestrictedAreaAdmin, self).formfield_for_manytomany(
@@ -401,12 +423,14 @@ class AreaMonitorPersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin, AjaxAd
 
 @admin.register(monitor_models.ArchivesLibrary)
 class ArchivesLibraryAdmin(PublicModelAdmin, AjaxAdmin):
-    list_display = ["id", "name", "detail"]
+    list_display = ["id", "name", "personnel_count", "detail"]
     search_fields = ["name"]
-    fields_options = {
-        "id": {"fixed": "left", "width": "120px"},
-        "name": {"width": "160px"},
-    }
+
+    def personnel_count(self, obj):
+        """统计关注人员库下人员总数"""
+        return obj.archivespersonnel_set.count()
+
+    personnel_count.short_description = "人员总数"
 
 
 @admin.register(monitor_models.ArchivesPersonnel)

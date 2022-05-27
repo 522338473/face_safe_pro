@@ -17,9 +17,15 @@ from apps.utils.face_discern import face_discern
 
 @admin.register(archives_models.ArchivesGroup)
 class ArchivesGroupAdmin(PublicModelAdmin, AjaxAdmin):
-    list_display = ["id", "name", "detail"]
+    list_display = ["id", "name", "personnel_count", "detail"]
     search_fields = ["name"]
     top_html = ' <el-alert title="档案库分类" type="success"></el-alert>'
+
+    def personnel_count(self, obj):
+        """统计档案库下人员总数"""
+        return obj.personnel_set.count()
+
+    personnel_count.short_description = "人员总数"
 
     def dialog_url(self, model):
         modal = ModalDialog()
