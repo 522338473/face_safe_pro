@@ -123,3 +123,44 @@ sudo sed -i 's#172.17.0.1#192.168.3.97#g' docker-compose.yml
 sudo sh setup.sh # 为了避免文件存储错误，建议第一次启动程序脚本！后续直接采用命令即可
 ```
 
+`.env配置文件`
+
+```text
+DJANGO_DEBUG=1  # 生产环境debug需要关闭
+
+DJANGO_DATABASE=pg  # 默认使用的数据库
+
+DB_NAME=face_safe_pro  # 数据库名称
+DB_USER=postgres  # 数据库用户
+DB_PASSWORD=postgres  # 数据库密码
+DB_HOST=192.168.2.89  # 数据库host
+DB_PORT=5432  # 数据库port
+
+FAST_DFS_HOST=http://192.168.2.89:8089  # 文件存储服务
+SEARCH_SERVER_HOST=http://192.168.2.89:5000  # 搜索服务
+SEARCH_REAL_TIME_HOST=http://192.168.2.84:8083  # 视频流转换服务
+SEARCH_VIDEO_HOST=http://192.168.2.84:3000  # 视频回放服务
+VIDEO_HOST=http://192.168.2.84:10081  # MP4视频服务
+
+RABBITMQ_USERNAME=admin  # mq用户名
+RABBITMQ_PASSWORD=admin  # mq密码
+RABBITMQ_HOST=192.168.2.89  # mq_host
+RABBITMQ_PORT=5672  # mq_port
+
+REDIS_SERVER_HOST=192.168.2.89  # redis_host
+REDIS_SERVER_PORT=6379  # redis_port
+REDIS_CACHE_DB=1  # redis_db
+
+BAIDU_SEARCH_APPID=test  # 私有化appid
+
+DOUBLE_NETWORK=1  # 是否启用双网卡配置
+D_REDIS_SERVER_HOST=192.168.2.89  # 双网卡
+
+SSD_DIR=/mnt/data  # 数据盘
+DEL_DAY=180  # 删除180天以前的数据
+DEL_RATE=70  # 超过70%删除
+
+BIG_SCREEN=1  # 是否开启大屏
+PUSH_ROLL_CALL=0  # 大屏推送
+
+```
