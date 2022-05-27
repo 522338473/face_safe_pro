@@ -57,6 +57,31 @@ class RollCallHistoryAdmin(PublicModelAdmin, AjaxAdmin):
         "personnel_types",
         "total_person",
         "attendance_person",
+        "percentage",
         "rate_of_attendance",
     ]
     list_filter = ["personnel_types"]
+
+    def percentage(self, obj):
+        """
+        出勤百分比
+        60%以下danger
+        60% - 80%之间warning
+        80%以上success
+        """
+        rate = obj.rate_of_attendance * 20
+        if rate < 60:
+            _types = "danger"
+        elif 60 <= rate < 80:
+            _types = "warning"
+        elif rate >= 80:
+            _types = "success"
+        else:
+            _types = "info"
+        return mark_safe(
+            f"""
+            <el-tag type="{_types}">{rate}%</el-tag>
+            """
+        )
+
+    percentage.short_description = "出勤百分比"

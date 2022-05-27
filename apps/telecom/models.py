@@ -122,7 +122,7 @@ class RollCallHistory(BaseModel):
         if self.rate_of_attendance == 0.0:
             self.rate_of_attendance = round(
                 self.attendance_person / self.total_person, 2
-            )
+            ) * 5
         return super(RollCallHistory, self).save(
             force_insert=force_insert,
             force_update=force_update,
