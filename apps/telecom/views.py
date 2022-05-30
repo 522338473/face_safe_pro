@@ -290,12 +290,12 @@ class DeviceInfoViewSet(HashRetrieveViewSetMixin, mixins.ListModelMixin):
     @action(methods=["GET"], detail=False, url_path="offline")
     def offline(self, request, *args, **kwargs):
         """设备离线记录"""
-        queryset = device_models.DeviceOffLineModel.objects.order_by("-create_at")
+        queryset = device_models.DeviceOffLine.objects.order_by("-create_at")
         page = self.paginate_queryset(queryset)
         if page is not None:
-            serializer = device_serializers.DeviceOffLineSerializer(page, many=True)
+            serializer = device_serializers.DeviceOffLineSerializers(page, many=True)
             return self.get_paginated_response(serializer.data)
-        serializer = device_serializers.DeviceOffLineSerializer(page, many=True)
+        serializer = device_serializers.DeviceOffLineSerializers(page, many=True)
         return Response(serializer.data)
 
 
