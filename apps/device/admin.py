@@ -119,12 +119,11 @@ class DeviceInfoAdmin(PublicModelAdmin, ImportExportModelAdmin, AjaxAdmin):
 
 @admin.register(device_models.DevicePhoto)
 class DevicePhotoAdmin(PublicModelAdmin, AjaxAdmin):
-    list_display = ["id", "address", "take_photo_time", "image", "operation"]
+    list_display = ["id", "device", "address", "take_photo_time", "image", "operation"]
     list_filter = ["device", "take_photo_time"]
     fields_options = {
         "id": {"fixed": "left", "width": "120px"},
         "image": {"label": "抓拍人脸", "width": "120px"},
-        "take_photo_time": {"width": "170px"},
         "operation": {"width": "200px"},
     }
 
