@@ -1,0 +1,939 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>分布式光纤振动报警视频联动系统</title>
+
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="{% static 'element-ui/index.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'admin/css/base.css' %}?_=2.7">
+    <link rel="stylesheet" type="text/css" href="{% static 'admin/simpleui-x/css/base.css' %}?_=2.7">
+
+    <!-- 引入vue -->
+    <script src="{% static 'vue/vue.js' %}"></script>
+
+    <!-- 引入组件库 -->
+    <script src="{% static 'element-ui/index.js' %}"></script>
+
+    <!-- axios -->
+    <script src="{% static 'axios/axios.min.js' %}"></script>
+
+    <!-- simplepro中的图表 -->
+    <script type="text/javascript" src="{% static "/admin/simplepro/echarts/echarts.js" %}"></script>
+    <script type="text/javascript" src="{% static "/admin/simplepro/js/chart.js" %}"></script>
+
+    <!-- webrtc视频播放组件 -->
+    <script type="text/javascript" src="{% static "webrtc/webrtc.js" %}"></script>
+
+    <style type="text/css">
+        html {
+            /*font-size: 50px; !* 可以通过调整页面字体的大小来调整布局 *!*/
+            font-family: "Avenir", Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        p {
+            margin: 0;
+            padding: 0;
+        }
+
+        .telecom {
+            width: 100%;
+            height: 100%;
+            background-color: #091041;
+            background-image: url("{% static "fibre_optical/static/bg.png" %}");
+            background-position: center;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+
+        .telecom-content {
+            display: flex;
+            padding: 0.4rem;
+        }
+
+        .telecom-left {
+            height: 8.61rem;
+            width: 6.4rem;
+            opacity: 1;
+            background-image: url("{% static "fibre_optical/static/beijingkuang.png" %}");
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-position: center;
+            margin-right: 0.5rem;
+        }
+
+        .telecom-left:nth-child(2) {
+            margin-top: 0.41rem;
+            height: 7.6rem;
+            background-image: url("{% static "fibre_optical/static/beijingkuang1.png" %}");
+        }
+
+        .telecom-left-title {
+            display: flex;
+            align-items: center;
+            height: 1.3rem;
+            margin-left: 0.4rem;
+        }
+
+        .telecom-left-content {
+            width: 23rem;
+            height: 14.56rem;
+            margin: 0.3rem 0.4rem;
+            border: 0.01rem solid rgba(200, 200, 200, 0.001);
+            background-image: url("{% static "fibre_optical/static/vodeo-c.png" %}");
+            background-position: center;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+
+        .telecom-data-content {
+            width: 30.5rem;
+            height: 16.61rem;
+            background-image: url("{% static "fibre_optical/static/video.png" %}");
+            background-position: center;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .capture {
+            width: 6.2rem;
+            height: 14.56rem;
+            background-image: url("{% static "fibre_optical/static/r.png" %}");
+            background-position: center;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            margin: 1.6rem 0.4rem 0 0;
+        }
+
+        .telecom-left-face {
+            display: flex;
+            align-items: center;
+            height: 1.3rem;
+            margin-left: 0.3rem;
+        }
+
+        .capture-title {
+            font-size: 0.42rem;
+            font-weight: 400;
+            color: #74bcff;
+        }
+
+        .capture-box {
+            height: 13rem;
+            overflow-x: scroll;
+        }
+
+        .telecom-face-group {
+            width: 5.3rem;
+            height: 6.1rem;
+            background-image: url("{% static "fibre_optical/static/b.png" %}");
+            background-position: center;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            margin: 0.3rem auto 0 auto;
+        }
+
+        .telecom-right-content {
+            width: 6rem;
+            margin-top: 0.4rem;
+            margin-left: 0.4rem;
+        }
+
+        .device-content {
+            height: 6.6rem;
+            overflow-x: hidden;
+            overflow-y: scroll;
+        }
+
+        .device-content::-webkit-scrollbar {
+            height: 0.12rem;
+        }
+
+        .device-content::-webkit-scrollbar-thumb {
+            background: #026dbf;
+            border-radius: 0.1rem;
+        }
+
+        .device-content::-webkit-scrollbar-thumb:hover {
+            background: #026dbf;
+        }
+
+        .device-content::-webkit-scrollbar-corner {
+            background: #026dbf !important;
+        }
+
+        .telecom-inform {
+            width: 5.5rem;
+            height: 1.2rem;
+            line-height: 1.2rem;
+            font-size: 0.4rem;
+            background-image: url("{% static "fibre_optical/static/left.png" %}");
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-position: center;
+            margin-bottom: 0.4rem;
+            color: #74bcff;
+            cursor: pointer;
+        }
+
+        .telecom-img {
+            width: 1.1rem;
+            height: 1.1rem;
+        }
+
+        .telecom-title {
+            font-size: 0.6rem;
+            font-family: PingFang SC-Semibold, PingFang SC;
+            font-weight: 600;
+            color: #74bcff;
+            line-height: 0.35rem;
+            background: linear-gradient(118deg, #72c0ff 0%, #2489da 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            padding: 0.25rem 0 0.4rem 0;
+        }
+
+        .camera {
+            line-height: 0.55rem;
+            padding: 0.35rem 0 0.4rem 0;
+            margin-top: 0;
+        }
+
+        .capture-box::-webkit-scrollbar,
+        .capture-box::-webkit-scrollbar {
+            width: 0.12rem;
+            height: 0.12rem;
+        }
+
+        .capture-box::-webkit-scrollbar-thumb,
+        .capture-box::-webkit-scrollbar-thumb {
+            background: #026dbf;
+            border-radius: 0.1rem;
+        }
+
+        .capture-box::-webkit-scrollbar-thumb:hover,
+        .capture-box::-webkit-scrollbar-thumb:hover {
+            background: #026dbf;
+        }
+
+        .capture-box::-webkit-scrollbar-corner,
+        .capture-box::-webkit-scrollbar-corner {
+            background: #026dbf !important;
+        }
+
+        .checked {
+            color: #ffffff;
+            background-color: #59adf1;
+        }
+
+        .telecom-picture-i {
+            height: 2.5rem;
+            margin: 0.4rem 0.4rem 0.1rem 0.4rem;
+        }
+
+        .handle-btn {
+            height: 0.7rem;
+            width: 4.6rem;
+            line-height: 0.7rem;
+            font-size: 0.16rem;
+            opacity: 1;
+            background-image: url("{% static "fibre_optical/static/btn-t.png" %}");
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-position: center;
+            text-align: center;
+            color: #59adf1;
+            cursor: pointer;
+            margin: 0.35rem auto 0 auto;
+        }
+
+        .telecom-text {
+            width: 3.6rem;
+            margin: 0 0.4rem 0.15rem 0.4rem;
+            font-size: 0.28rem;
+            color: #e0e0e0;
+            white-space: nowrap;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .telecom-header {
+            height: 2rem;
+            display: flex;
+            justify-content: center;
+            position: relative;
+            background-image: url("{% static "fibre_optical/static/header.png" %}");
+            background-position: center;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+
+        .telecom-logo {
+            height: 0.8rem;
+            position: absolute;
+            top: .5rem;
+            left: 2rem;
+        }
+
+        .title {
+            height: 0.7rem;
+            margin-top: 0.4rem;
+            margin-right: 0.15rem;
+        }
+
+        .video-detail .el-dialog {
+            background-color: #0f2230;
+            margin: 0;
+        }
+
+        .video-detail .el-dialog__header {
+            display: none;
+        }
+
+        .el-message__icon {
+            margin: 0;
+        }
+
+        .video-detail {
+            height: 100%;
+            padding: 0.4rem 0.8rem;
+            backdrop-filter: blur(4px) brightness(99%);
+            background-color: rgba(51, 80, 243, 0.1);
+            margin: 0;
+        }
+
+        .content-detail {
+            width: 35.4rem;
+            height: 15.83rem;
+            margin: 0.4rem 0.8rem;
+            display: flex;
+            background-image: url("{% static "fibre_optical/static/dialog-video.png" %}");
+            background-position: center;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+
+        .imgVideo {
+            background-image: url("{% static "fibre_optical/static/dialog-v.png" %}");
+            background-position: center;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            width: 23.5rem;
+            height: 13.6rem;
+            overflow: hidden;
+            margin: 1.55rem 0.5rem;
+        }
+
+        .maxbig-pic-box {
+            width: 22.7rem;
+            height: 12.8rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        {#background-color: #000000;#} margin: 0.4rem;
+        }
+
+        .loading {
+            width: 100%;
+            height: 100%;
+        {#background: rgba(0, 0, 0, 0.7);#} text-align: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            font-size: 0.48rem;
+            color: white;
+            z-index: 999;
+        }
+
+        i {
+            margin-top: 6.5rem;
+        }
+
+        .dialog-r {
+            width: 10.31rem;
+            height: 13.55rem;
+            background-image: url("{% static "fibre_optical/static/dialog-r.png" %}");
+            background-position: center;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            margin-top: 1.6rem;
+        }
+
+        .text-box {
+            margin: 1.55rem 0.45rem 0.45rem 0.45rem;
+        }
+
+        .telecom-picture-i-v {
+            width: 9.41rem;
+            height: 5.3rem;
+        }
+
+        .telecom-text-v {
+            width: 100%;
+            font-size: 0.35rem;
+            color: #e0e0e0;
+            line-height: 0.6rem;
+            text-align: left;
+        }
+
+        .img-item-btn {
+            width: 9.41rem;
+            height: 1.2rem;
+            background-image: url("{% static "fibre_optical/static/dialog-btn.png" %}");
+            background-position: center;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            margin-top: 2.1rem;
+            line-height: 1.2rem;
+            color: #74bcff;
+            font-weight: 600;
+            font-size: 0.35rem;
+            cursor: pointer;
+        }
+
+        .telecom-left-title-v {
+            display: flex;
+            align-items: center;
+            height: 1.16rem;
+            position: absolute;
+            top: 0.3rem;
+        }
+
+        .telecom-left-title-re {
+            display: flex;
+            align-items: center;
+            height: 1.16rem;
+            position: absolute;
+            top: 1.9rem;
+        }
+
+        .telecom-img-v {
+            width: 1.1rem;
+            height: 1.1rem;
+            opacity: 1;
+            margin-top: 1.3rem;
+        }
+
+        .telecom-title-v {
+            font-size: 0.5rem;
+            font-family: PingFang SC-Semibold, PingFang SC;
+            font-weight: 600;
+            color: #74bcff;
+            background: linear-gradient(118deg, #72c0ff 0%, #2489da 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-top: 1.3rem;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<div id="app">
+    <div class="telecom">
+        <div class="telecom-header">
+            <img class="telecom-logo" src="{% static "fibre_optical/static/logo.png" %}" alt=""/>
+            <img class="title" src="{% static "fibre_optical/static/title.png" %}" alt=""/>
+        </div>
+        <div class="telecom-content">
+            <div class="telecom-left-group">
+                <div class="telecom-left">
+                    <p class="telecom-title camera">摄像机列表</p>
+                    <div class="telecom-right-content device-content">
+                        <div
+                                class="telecom-inform"
+                                v-for="(item, index) in data"
+                                :key="'inform' + index"
+                                :class="item.id === deviceId ? 'checked' : ''"
+                                @click="handleClick(item, 'device')"
+                        >
+                            ${ item.name }
+                        </div>
+                    </div>
+                </div>
+                <div class="telecom-left">
+                    <p class="telecom-title camera">实时报警监测</p>
+                    <div class="telecom-right-content">
+                    </div>
+                </div>
+            </div>
+
+            <div class="telecom-data-content">
+                <div>
+                    <div class="telecom-left-title">
+                        <img
+                                class="telecom-img"
+                                src="{% static "fibre_optical/static/device.png" %}"
+                                alt=""
+                        />
+                        <p class="telecom-title">实时视频</p>
+                    </div>
+                    <div class="telecom-left-content">
+                        <div
+                                style="
+                  height: 13rem;
+                  width: 22rem;
+                  margin: 0.79rem 0 0 0.5rem;
+                  border-radius: 0.25rem;
+                  position: relative;
+                "
+                                element-loading-background="rgba(0, 0, 0, 0.8)"
+                        >
+                            <div style="height: 13rem; width: 22rem; position: relative">
+                                <webrtc v-if="url" :url="url" style="height: 13rem; width: 100%"></webrtc>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="capture">
+                    <div class="telecom-left-face">
+                        <img
+                                class="telecom-img"
+                                src="{% static "fibre_optical/static/camera.png" %}"
+                                alt=""
+                        />
+                        <p class="capture-title">光纤视频联动抓拍</p>
+                    </div>
+                    <div class="capture-box">
+                        <div
+                                class="telecom-face-group"
+                                v-for="(item, i) in telecomAlgorithm"
+                                :key="'box' + i"
+                        >
+                            <img class="telecom-picture-i" :src="item.back_url" alt=""/>
+                            <p class="telecom-text">报警时间：${ item.take_time }</p>
+                            <p class="telecom-text">报警位置：${ item.dev_address }</p>
+                            <p class="telecom-text">
+                                事件类型：${
+                                item.alarm_type == "1"
+                                ? " 震动报警"
+                                : item.alarm_type == "2"
+                                ? "断纤报警"
+                                : ""
+                                }
+                            </p>
+                            <p class="handle-btn" @click="showDetails(item)">
+                                <!-- 点击查看相关视频 -->
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <el-dialog
+                class="video-detail"
+                width="100%"
+                top="0"
+                :before-close="emitClose"
+                :visible="visible"
+        >
+            <div class="content-detail">
+                <div class="imgVideo">
+                    <div>
+                        <div class="telecom-left-title-v">
+                            <img
+                                    class="telecom-img-v"
+                                    src="{% static "fibre_optical/static/device.png" %}"
+                                    alt=""
+                            />
+                            <p class="telecom-title-v">回放视频</p>
+                        </div>
+                        <div class="maxbig-pic-box" style="position: relative">
+                            <div class="loading" v-if="videoLoading">
+                                <i class="el-icon-loading"></i>
+                            </div>
+                            <video
+                                    controls
+                                    id="videoid"
+                                    autoplay="autoplay"
+                                    style="height: 12.8rem; width: 100%"
+                            >
+                                <source style="width: 550px; height: 436px" type="video/mp4"/>
+                                您的浏览器不支持 HTML5 video 标签。
+                            </video>
+                        </div>
+                    </div>
+                </div>
+                <div class="dialog-r">
+                    <div class="telecom-left-title-re">
+                        <img
+                                class="telecom-img-v"
+                                src="{% static "fibre_optical/static/camera.png" %}"
+                                alt=""
+                        />
+                        <p class="telecom-title-v">光纤视频联动抓拍</p>
+                    </div>
+                    <div class="text-box">
+                        <img class="telecom-picture-i-v" :src="textData.back_url" alt=""/>
+
+                        <p class="telecom-text-v">报警时间：${ textData.take_time }</p>
+                        <p class="telecom-text-v">报警位置：${ textData.dev_address }</p>
+                        <p class="telecom-text-v">
+                            事件类型：${
+                            textData.alarm_type == "1"
+                            ? " 震动报警"
+                            : textData.alarm_type == "2"
+                            ? "断纤报警"
+                            : ""
+                            }
+                        </p>
+                        <p class="telecom-text-v">相关信息：${ textData.info }</p>
+                        <p class="img-item-btn" @click="emitClose">关闭</p>
+                    </div>
+                </div>
+            </div>
+        </el-dialog>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    (function (WIN) {
+        let setFontSize = WIN.setFontSize = function (_width) {
+            let docEl = document.documentElement;
+            // 获取当前窗口的宽度
+            let width = _width || docEl.clientWidth; // docEl.getBoundingClientRect().width;
+
+            // 大于 1080px 按 1080
+            if (width > 1920) {
+                width = 1920;
+            }
+
+            let rem = width / 38.4;
+            console.log(rem);
+
+            docEl.style.fontSize = rem + 'px';
+
+            // 部分机型上的误差、兼容性处理
+            let actualSize = win.getComputedStyle && parseFloat(win.getComputedStyle(docEl)["font-size"]);
+            if (actualSize !== rem && actualSize > 0 && Math.abs(actualSize - rem) > 1) {
+                let remScaled = rem * rem / actualSize;
+                docEl.style.fontSize = remScaled + 'px';
+            }
+        }
+
+        let timer;
+
+        //函数节流
+        function dbcRefresh() {
+            clearTimeout(timer);
+            timer = setTimeout(setFontSize, 100);
+        }
+
+        //窗口更新动态改变 font-size
+        WIN.addEventListener('resize', dbcRefresh, false);
+        //页面显示时计算一次
+        WIN.addEventListener('pageshow', function (e) {
+            if (e.persisted) {
+                dbcRefresh()
+            }
+        }, false);
+        setFontSize();
+    })(window)
+</script>
+<script type="text/javascript">
+    new Vue({
+        el: "#app",
+        delimiters: ['${', '}'],
+        data: {
+            input: 100,
+            url: "",
+            videoLoading: false,
+            data: [],
+            deviceForm: {},
+            formDetails: {},
+            telecomAlgorithm: [],
+            telecomAlgorithmInterval: null,
+            handleClickInterval: null,
+            deviceId: "",
+            tag: "",
+            getTelecomEchartInterval: null,
+            telecomEchartData: [],
+            path: "ws://192.168.2.36:9998/v1/ws/telecom/optical/get_waterfall/",
+            socket: "",
+            socketStatus: false,
+            videoStatus: false,
+            visible: false,
+            textData: {},
+        },
+        init() {
+            if (typeof WebSocket === "undefined") {
+                alert("您的浏览器不支持socket");
+            } else {
+                // 实例化socket
+                console.log(this.path);
+                this.socket = new WebSocket(this.path);
+                // 监听socket连接
+                this.socket["onopen"] = this.open;
+                // 监听socket错误信息
+                this.socket["onerror"] = this.error;
+                // 监听socket消息
+                this.socket["onmessage"] = this.getMessage;
+            }
+        },
+        open() {
+            console.log("socket连接成功");
+            this.socketStatus = true;
+        },
+        error() {
+            console.log("连接错误");
+        },
+        getMessage(msg) {
+            let time = 0;
+            let newDatalist = [];
+            let i = 0;
+            for (i in JSON.parse(msg.data).data) {
+                let value = "";
+                value = JSON.parse(msg.data).data[i];
+                if (value >= 800) {
+                    console.log(value);
+                    newDatalist.push([Number(i) + 1, time, value]);
+                }
+            }
+            for (let i in this.telecomEchartData) {
+                this.telecomEchartData[i][1] = this.telecomEchartData[i][1] + 1;
+            }
+            this.telecomEchartData = this.telecomEchartData.filter(
+                (item) => item[1] <= 28
+            );
+            this.telecomEchartData.push(...newDatalist);
+            console.log(this.telecomEchartData.length, 7410);
+            console.log(msg.data);
+        },
+        send() {
+            this.socket["send"]("123456789");
+            console.log("123456789");
+        },
+        close() {
+            console.log("socket已经关闭");
+        },
+        created() {
+            this.getDeviceList();
+            this.telecomAlgorithmList();
+            this.getTelecomEchartData();
+        },
+        destroyed() {
+            clearInterval(this.telecomAlgorithmInterval);
+            clearInterval(this.handleClickInterval);
+            clearInterval(this.getTelecomEchartInterval);
+            // 销毁监听
+            this.socket.onclose = this.close;
+        },
+        mounted() {
+            this.getTelecomAlgorithm("F");
+        },
+        methods: {
+            getDeviceList: function () {
+                const params = {
+                    offset: 0,
+                    limit: 100,
+                };
+                axios.get("/v1/telecom/device/", {
+                    params: params
+                }, {
+                    'Content-Type': 'application/json;charset=UTF-8'
+                }).then(res => {
+                    this.data = res.data.results;
+                }).finally(() => {
+
+                });
+            },
+            handleClick: function (node, t) {
+                clearInterval(this.telecomAlgorithmInterval);
+                this.telecomAlgorithmInterval = null;
+                this.handleNodeClick(node, t);
+                this.tag = "th";
+                this.handleClickInterval = setInterval(() => {
+                    clearInterval(this.telecomAlgorithmInterval);
+                    this.telecomAlgorithmInterval = null;
+                    this.telecomAlgorithmList();
+                }, 30000);
+            },
+            handleNodeClick: function (node, t) {
+                let info = {};
+                if (t === "device") {
+                    this.deviceId = node.id;
+                } else {
+                    this.deviceId = node.device_id;
+                }
+                this.data.map((item, i) => {
+                    if (item.id === this.deviceId) {
+                        info = item;
+                    }
+                });
+
+                if (info.status) {
+                    this.videoLoading = true;
+                    const params = {
+                        "device": this.deviceId
+                    }
+                    axios.get("/v1/device/info/device_video/", {
+                        params: params
+                    }, {
+                        'Content-Type': 'application/json;charset=UTF-8'
+                    }).then((res) => {
+                        if (res.data.url) {
+                            localStorage.setItem("videoUrl", res.data.url);
+                            this.url = "";
+                            this.$nextTick(() => {
+                                this.url = res.data.url;
+                            });
+                        }
+                    });
+                } else {
+                    this.url = "";
+                }
+                this.deviceForm = Object.assign({}, node);
+            },
+            getTelecomEchartData: function () {
+                this.getTelecomEchartInterval = setInterval(() => {
+                    this.getTelecomEcharts();
+                }, 20000);
+            },
+            getTelecomEcharts: function () {
+                axios.get("/v1/telecom/optical/get_waterfall/", {
+                    params: {}
+                }, {
+                    'Content-Type': 'application/json;charset=UTF-8'
+                }).then((res) => {
+                    let time = 0;
+                    let newDatalist = [];
+                    let i = 0;
+                    for (i in res.data.data) {
+                        let value = ""
+                        value = res.data.data[i];
+                        if (value >= 800) {
+                            newDatalist.push([Number(i) + 1, time, value]);
+                        }
+                    }
+                    for (let i in this.telecomEchartData) {
+                        this.telecomEchartData[i][1] = this.telecomEchartData[i][1] + 1;
+                    }
+                    this.telecomEchartData = this.telecomEchartData.filter(
+                        (item) => item[1] <= 28
+                    );
+                    this.telecomEchartData.push(...newDatalist);
+                });
+            },
+            telecomAlgorithmList: function () {
+                clearInterval(this.handleClickInterval);
+                this.handleClickInterval = null;
+                this.telecomAlgorithmInterval = setInterval(() => {
+                    this.getTelecomAlgorithm("");
+                }, 30000);
+            },
+            getTelecomAlgorithm: function (f) {
+                const params = {
+                    offset: 0,
+                    limit: 20,
+                };
+                axios.get("/v1/telecom/algorithm/", {
+                    params: params
+                }, {
+                    'Content-Type': 'application/json;charset=UTF-8'
+                }).then((res) => {
+                    this.telecomAlgorithm = res.data.results;
+                    if (res.data.results.length > 0) {
+                        this.deviceId = res.data.results[0].device_id;
+                        if (localStorage.getItem("tackTime")) {
+                            if (
+                                localStorage.getItem("tackTime") !== res.data.results[0].take_time
+                            ) {
+                                //每次调用有take_time有改变
+                                localStorage.setItem("tackTime", res.data.results[0].take_time);
+                                if (
+                                    res.data.results[0].device_id !== localStorage.getItem("deviceId")
+                                ) {
+                                    localStorage.setItem("deviceId", res.data.results[0].device_id);
+                                    this.handleNodeClick(res.data.results[0], "");
+                                }
+                            } else {
+                                if (f === "F") {
+                                    //第一次调用有take_time
+                                    this.handleNodeClick(res.data.results[0], "");
+                                }
+                                if (this.tag === "th") {
+                                    this.tag = "";
+                                    this.handleNodeClick(res.data.results[0], "");
+                                }
+                            }
+                        } else {
+                            //第一次调用没有take_time
+                            localStorage.setItem("tackTime", res.data.results[0].take_time);
+                            localStorage.setItem("deviceId", res.data.results[0].device_id);
+                            this.handleNodeClick(res.data.results[0], "");
+                        }
+                    }
+                }).finally(() => {
+
+                });
+            },
+            showDetails: function (row) {
+                this.visible = true;
+                this.formDetails = row;
+                this.$nextTick(() => {
+                    this.getVideo(row);
+                });
+            },
+            emitClose: function () {
+                this.visible = false;
+                this.stop();
+                return false;
+            },
+            getVideo: function (row) {
+                let _this = this;
+                _this.textData = row;
+                const params = {
+                    channel_id: row["channel_id"],
+                    take_time: row["take_time"],
+                };
+                var video = document.getElementById("videoid")
+                this.videoLoading = true;
+                video["src"] = "";
+                axios.get("/v1/telecom/algorithm/video_playback/", {
+                    params: params
+                }, {
+                    'Content-Type': 'application/json;charset=UTF-8'
+                }).then((res) => {
+                    if (res.data.url) {
+                        video["src"] = res.data.url;
+                        video["play"]();
+                    } else {
+                        _this.$message.error(res.data.message);
+                    }
+                }).finally(() => {
+                    _this.videoLoading = false;
+                });
+            },
+            stop: function () {
+                let video = document.getElementById("videoid");
+                if (video) {
+                    video["currentTime"] = 0;
+                    video["pause"]();
+                    video["src"] = ""
+                }
+            },
+        }
+    })
+</script>
+</body>
+</html>

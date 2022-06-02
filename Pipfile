@@ -23,6 +23,7 @@ channels = "*"
 psycopg2-binary = "*"
 paho-mqtt = "*"
 jsonschema = "*"
+channels-redis = "*"
 
 [requires]
 python_version = "3.8"

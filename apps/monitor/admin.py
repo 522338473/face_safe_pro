@@ -233,7 +233,17 @@ class MonitorDiscoverAdmin(PublicModelAdmin, AjaxAdmin):
 
 @admin.register(monitor_models.VehicleMonitor)
 class VehicleMonitorAdmin(PublicModelAdmin, ImportExportModelAdmin, AjaxAdmin):
-    list_display = ["id", "plate", "types", "name", "gender", "phone", "id_type", "id_number", "operation"]
+    list_display = [
+        "id",
+        "plate",
+        "types",
+        "name",
+        "gender",
+        "phone",
+        "id_type",
+        "id_number",
+        "operation",
+    ]
     search_fields = ["plate", "name", "phone"]
     resource_class = monitor_resources.VehicleMonitorResources
     fields_options = {

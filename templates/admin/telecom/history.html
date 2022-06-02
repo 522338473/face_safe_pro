@@ -1,0 +1,599 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>智能实时点名系统</title>
+
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="{% static 'element-ui/index.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'admin/simpleui-x/css/base.css' %}?_=2.7">
+
+    <!-- 引入vue -->
+    <script src="{% static 'vue/vue.js' %}"></script>
+
+    <!-- 引入组件库 -->
+    <script src="{% static 'element-ui/index.js' %}"></script>
+
+    <!-- axios -->
+    <script src="{% static 'axios/axios.min.js' %}"></script>
+
+    <style>
+        html {
+            /*font-size: 35px; !* 可以通过调整页面字体的大小来调整布局 *!*/
+            font-family: "Avenir", Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        p {
+            margin: 0;
+            padding: 0;
+        }
+
+        .el-table {
+            background-color: #070e3a;
+            color: #ffffff;
+            font-size: 12px;
+        }
+
+        .el-table::before {
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 0;
+        }
+
+        .el-table tr {
+            height: 44px;
+            background-color: rgba(255, 255, 255, 0);
+        }
+
+        .el-table--enable-row-hover .el-table__body tr:hover > td {
+            background-color: #070e3a !important;
+        }
+
+        .el-table th {
+            background: #035db4 !important;
+            color: #ffffff;
+            border: 1px solid #193d9b !important;
+        }
+
+        .el-table td {
+            padding: 6px 0;
+            border: 1px solid #193d9b;
+        }
+
+        .el-table .el-table__cell {
+            padding: 0;
+            border: 1px solid #193d9b !important;
+        }
+
+        td {
+            border: 1px solid #193d9b !important;
+        }
+
+        .el-table td.el-table__cell {
+            border: 1px solid #193d9b !important;
+        }
+
+        .el-table tbody tr {
+        {#pointer-events: none;#} border: 1px solid #193d9b !important;
+        }
+
+        .el-pagination span:not([class*="suffix"]), .el-pagination button {
+            background-color: rgba(6, 30, 93, 0.5);
+            color: #ffffff;
+        }
+
+        .el-pagination.is-background .el-pager li:not(.disabled).active {
+            background-color: rgba(25, 129, 246, 0.4);
+        }
+
+        .el-pagination.is-background .btn-prev, .el-pagination.is-background .btn-next, .el-pagination.is-background .el-pager li {
+            background-color: rgba(6, 30, 93, 0.5);
+            color: #ffffff !important;
+        }
+
+        .el-pagination .btn-prev .el-icon {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            color: #ffffff !important;
+        }
+
+        .telecom-header {
+            height: 2rem;
+            display: flex;
+            justify-content: center;
+            position: relative;
+            background-image: url('{% static "roll_call/static/header.png" %}');
+            background-position: center;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+
+        .title {
+            height: 1rem;
+            margin-top: 0.26rem;
+            margin-right: 0.15rem;
+        }
+
+        .telecom {
+            width: 100%;
+            height: 100%;
+            background-color: #091041;
+            background-image: url("{% static "roll_call/static/bg.png" %}");
+            background-position: center;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+
+        .telecom-content {
+            padding: 0.5rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .telecom-content-top {
+            display: flex;
+            width: 100%;
+        }
+
+        .telecom-left {
+            height: 12.76rem;
+            width: 4.74rem;
+            opacity: 1;
+            background-image: url("{% static "roll_call/static/beijingkuang.png" %}");
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-position: center;
+            margin-right: 0.5rem;
+        }
+
+        .telecom-left:nth-child(2) {
+            margin-top: 0.41rem;
+            height: 7.6rem;
+            background-image: url("{% static "roll_call/static/beijingkuang1.png" %}");
+        }
+
+        .telecom-left-title {
+            display: flex;
+            align-items: center;
+            height: 0.82rem;
+            margin-left: 0.4rem;
+        }
+
+        .telecom-left-content {
+            height: 14.56rem;
+            margin: 0.3rem 0.4rem;
+            border: 0.01rem solid rgba(200, 200, 200, 0.001);
+        }
+
+        .telecom-data-content {
+            flex: 1;
+            height: 14.02rem;
+            background-image: url("{% static "roll_call/static/video.png" %}");
+            background-position: center;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+
+        .camera-btn {
+            width: 4.74rem;
+            height: 0.88rem;
+            background-image: url("{% static "roll_call/static/left.png" %}");
+            background-position: center;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            margin-top: 0.4rem;
+            font-size: 0.4rem;
+            color: #74bcff;
+            line-height: 0.88rem;
+            cursor: pointer;
+        }
+
+        .telecom-right-content {
+            width: 5.5rem;
+            margin: 0 auto;
+            margin-top: 0.4rem;
+        }
+
+        .device-content {
+            width: 3.96rem;
+            height: 11rem;
+            overflow-x: hidden;
+        }
+
+        .telecom-inform {
+            width: 3.56rem;
+            height: 0.9rem;
+            line-height: 0.9rem;
+            font-size: 0.3rem;
+            background-image: url("{% static "roll_call/static/left.png" %}");
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-position: center;
+            margin-bottom: 0.3rem;
+            color: #74bcff;
+            cursor: pointer;
+        }
+
+        .telecom-title {
+            height: 0.82rem;
+            font-size: 0.5rem;
+            font-family: PingFang SC-Semibold, PingFang SC;
+            font-weight: 600;
+            color: #74bcff;
+            line-height: 0.82rem;
+            background: linear-gradient(118deg, #72c0ff 0%, #2489da 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #0090ff;
+        }
+
+        p.text {
+            width: 20%;
+            height: 0.67rem;
+            line-height: 0.77rem;
+            border-left: 0.01rem solid #1b42a4;
+            border-top: 0.01rem solid #1b42a4;
+        }
+
+        p.title {
+            height: 0.85rem !important;
+            line-height: 0.99rem !important;
+            background: rgba(15, 75, 164, 0.6);
+            border-top: none !important;
+        }
+
+        .scrollFace {
+            border: 1px solid #193d9b;
+            padding: 0.4rem;
+            margin-top: 0.4rem;
+        / / display: flex;
+        / / flex-wrap: wrap;
+            height: 9rem;
+            overflow: auto;
+            text-align: left;
+        }
+
+        .scrollFace .face {
+            width: 72px;
+            margin-right: 0.4rem;
+            margin-bottom: 0.1rem;
+            display: inline-block;
+        }
+
+        .scrollFace .face img {
+            width: 100%;
+            height: 70px;
+        / / margin-bottom: 0.1 rem;
+        }
+
+        .scrollFace .face .name {
+            text-align: center;
+            color: #55a5e7;
+            font-size: 12px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .aBtn {
+            color: #4f9ad9;
+            cursor: pointer;
+        }
+
+        .el-pagination.is-background .btn-next.disabled, .el-pagination.is-background .btn-next:disabled, .el-pagination.is-background .btn-prev.disabled, .el-pagination.is-background .btn-prev:disabled, .el-pagination.is-background .el-pager li.disabled {
+            background-color: rgba(6, 30, 93, 0.5);
+        }
+
+        .el-pagination.is-background .btn-prev, .el-pagination.is-background .btn-next,  .el-pagination.is-background .el-pager li {
+            color: #ffffff !important;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<div id="app">
+    <div>
+        <div class="telecom">
+            <div class="telecom-header">
+                <img class="title" src="{% static "roll_call/static/title.png" %}" alt=""/>
+            </div>
+            <div class="telecom-content">
+                <div class="telecom-content-top">
+                    <div>
+                        <div class="telecom-left">
+                            <p class="telecom-title camera">会议室</p>
+                            <div class="telecom-right-content device-content">
+                                <div
+                                        @click="clickZoom(item, index)"
+                                        class="telecom-inform"
+                                        :class="{ activeZoom: item.id == zoomId }"
+                                        v-for="(item, index) in meetingList"
+                                        :key="index"
+                                >
+                                    ${ item.name }
+                                </div>
+                            </div>
+                        </div>
+                        {#                                                <p class="camera-btn" @click="goBack">返回</p>#}
+                        <p class="camera-btn" @click="goBack">返回</p>
+                    </div>
+
+                    <div class="telecom-data-content">
+                        <div>
+                            <div class="telecom-left-title">
+                                <p class="telecom-title" style="padding-left: 0.5rem">
+                                    ${ detailPage ? "历史数据查看" : "时间段" }
+                                </p>
+                            </div>
+                            <div class="telecom-left-content">
+                                <div v-show="!detailPage">
+                                    <el-table :data="table">
+                                        <el-table-column
+                                                prop="start_time"
+                                                label="开始时间"
+                                                :show-overflow-tooltip="true"
+                                                align="center"
+                                        ></el-table-column>
+                                        <el-table-column
+                                                prop="end_time"
+                                                label="结束时间"
+                                                :show-overflow-tooltip="true"
+                                                align="center"
+                                        ></el-table-column>
+                                        <el-table-column
+                                                prop="total_person"
+                                                label="应到人数"
+                                                :show-overflow-tooltip="true"
+                                                align="center"
+                                        ></el-table-column>
+                                        <el-table-column
+                                                prop="attendance_person"
+                                                label="实到人数"
+                                                :show-overflow-tooltip="true"
+                                                align="center"
+                                        ></el-table-column>
+                                        <el-table-column
+                                                label="签到率"
+                                                :show-overflow-tooltip="true"
+                                                align="center"
+                                        >
+                                            <template slot-scope="scope">
+                                                ${ (scope.row.rate_of_attendance * 20).toFixed(2) }%
+                                            </template>
+                                        </el-table-column>
+                                        <el-table-column
+                                                label="操作"
+                                                :show-overflow-tooltip="true"
+                                                align="center"
+                                        >
+                                            <template slot-scope="scope">
+                        <span class="aBtn" @click="showDetail(scope.row)"
+                        >到场详情>>></span
+                        >
+                                            </template>
+                                        </el-table-column>
+                                    </el-table>
+                                    <el-pagination
+                                            @current-change="getMeetingList"
+                                            style="margin-top: 10px"
+                                            background
+                                            layout="pager, total"
+                                            :total="total"
+                                    ></el-pagination>
+                                </div>
+
+                                <div v-show="detailPage">
+                                    <el-table :data="detail.table">
+                                        <el-table-column
+                                                prop="personnel_types"
+                                                label="名称"
+                                                :show-overflow-tooltip="true"
+                                                align="center"
+                                        ></el-table-column>
+                                        <el-table-column
+                                                prop="total_person"
+                                                label="应到人数"
+                                                :show-overflow-tooltip="true"
+                                                align="center"
+                                        ></el-table-column>
+                                        <el-table-column
+                                                prop="attendance_person"
+                                                label="实到人数"
+                                                :show-overflow-tooltip="true"
+                                                align="center"
+                                        ></el-table-column>
+                                        <el-table-column
+                                                label="出勤率"
+                                                :show-overflow-tooltip="true"
+                                                align="center"
+                                        >
+                                            <template slot-scope="scope">
+                                                ${ (scope.row.rate_of_attendance * 20).toFixed(2) }%
+                                            </template>
+                                        </el-table-column>
+                                    </el-table>
+                                    <div class="scrollFace">
+                                        <div
+                                                class="face"
+                                                v-for="(item, index) in faceList"
+                                                :key="index"
+                                        >
+                                            <img
+                                                    v-if="!item.photo"
+                                                    src="{% static "roll_call/static/user.png" %}"
+                                                    alt=""
+                                            />
+                                            <img v-else :src="item.photo" alt=""/>
+                                            <div class="name" :title="item.name">${ item.name }</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    (function (WIN) {
+        let setFontSize = WIN.setFontSize = function (_width) {
+            let docEl = document.documentElement;
+            // 获取当前窗口的宽度
+            let width = _width || docEl.clientWidth; // docEl.getBoundingClientRect().width;
+
+            // 大于 1080px 按 1080
+            if (width > 1920) {
+                width = 1920;
+            }
+
+            let rem = width / 38.4;
+            console.log(rem);
+
+            docEl.style.fontSize = rem + 'px';
+
+            // 部分机型上的误差、兼容性处理
+            let actualSize = win.getComputedStyle && parseFloat(win.getComputedStyle(docEl)["font-size"]);
+            if (actualSize !== rem && actualSize > 0 && Math.abs(actualSize - rem) > 1) {
+                let remScaled = rem * rem / actualSize;
+                docEl.style.fontSize = remScaled + 'px';
+            }
+        }
+
+        let timer;
+
+        //函数节流
+        function dbcRefresh() {
+            clearTimeout(timer);
+            timer = setTimeout(setFontSize, 100);
+        }
+
+        //窗口更新动态改变 font-size
+        WIN.addEventListener('resize', dbcRefresh, false);
+        //页面显示时计算一次
+        WIN.addEventListener('pageshow', function (e) {
+            if (e.persisted) {
+                dbcRefresh()
+            }
+        }, false);
+        setFontSize();
+    })(window)
+</script>
+<script type="text/javascript">
+    new Vue({
+        el: "#app",
+        delimiters: ['${', '}'],
+        data: {
+            meetingList: [],
+            table: [],
+            total: 0,
+            zoomId: "",
+            detailPage: false,
+            faceList: [],
+            detail: {
+                table: []
+            }
+        },
+        created() {
+
+        },
+        mounted() {
+            this.getTelecomRoom();
+        },
+        methods: {
+            getTelecomRoom() {
+                axios.get("/v1/telecom/room_types/", {
+                    params: {}
+                }, {
+                    'Content-Type': 'application/json;charset=UTF-8'
+                }).then((res) => {
+                    this.meetingList = res.data;
+                    if (this.meetingList.length) {
+                        this.zoomId = this.meetingList[0]["id"];
+                        this.getMeetingList(1);
+                    }
+                });
+            },
+            getMeetingList(page) {
+                let params = {
+                    limit: 10,
+                    offset: (page - 1) * 10,
+                };
+                axios.get(`/v1/telecom/room_types/${this.zoomId}`, {
+                    params: params
+                }, {
+                    'Content-Type': 'application/json;charset=UTF-8'
+                }).then((res) => {
+                    this.table = res.data.results;
+                    this.total = res.data.count;
+                });
+            },
+            clickZoom(param) {
+                this.zoomId = param.id;
+                this.getMeetingList(1);
+                this.detailPage = false;
+            },
+            showDetail(row) {
+                this.detailPage = true;
+                this.getDetailList(row.id);
+            },
+            getDetailList(id) {
+                axios.get(`/v1/telecom/roll_call_history/${id}`, {
+                    params: {}
+                }, {
+                    'Content-Type': 'application/json;charset=UTF-8'
+                }).then((res) => {
+                    this.detail.table = [
+                        {
+                            attendance_person: res.data.attendance_person,
+                            personnel_types: res.data.personnel_types,
+                            rate_of_attendance: res.data.rate_of_attendance,
+                            total_person: res.data.total_person,
+                        },
+                    ];
+                    this.faceList = res.data.person_list;
+
+                    this.faceList.forEach((item, i) => {
+                        this.faceList[i].photo = "";
+                        let obj = res.data.person_list_record.find(
+                            (item1) => item1.target.id == item["id"]
+                        );
+                        if (obj) {
+                            this.faceList[i].photo = "http://192.168.2.89" + obj.record.head_path;
+                        }
+                    });
+                });
+            },
+            goBack() {
+                if (this.detailPage) {
+                    this.detailPage = false;
+                } else window.history.back();
+                ;
+
+            }
+        }
+    })
+</script>
+</body>
+</html>

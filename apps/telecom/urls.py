@@ -14,10 +14,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-
+from django.urls import path
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework.routers import DefaultRouter
 
 from apps.telecom import views
+from apps.telecom import admin_view
 
 router = DefaultRouter()
 router.register(r"optical", views.OpticalFiberAlarmViewSet, basename="optical")
@@ -30,6 +32,22 @@ router.register(
     r"roll_call_history", views.RollCallHistoryViewSet, basename="roll_call_history"
 )
 
-urlpatterns = []
+urlpatterns = [
+    path(
+        "fibre_optical/",
+        csrf_exempt(admin_view.FibreOpticalView.as_view()),
+        name="fibre_optical",
+    ),
+    path(
+        "roll_call/",
+        csrf_exempt(admin_view.RollCallView.as_view()),
+        name="roll_call"
+    ),
+    path(
+        "history/",
+        csrf_exempt(admin_view.HistoryView.as_view()),
+        name="history"
+    )
+]
 
 urlpatterns += router.urls

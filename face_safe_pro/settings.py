@@ -95,6 +95,15 @@ TEMPLATES = [
 WSGI_APPLICATION = "face_safe_pro.wsgi.application"
 ASGI_APPLICATION = "face_safe_pro.asgi.application"
 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [(os.getenv('REDIS_SERVER_HOST', '192.168.2.175'), int(os.getenv('REDIS_SERVER_PORT', '6379')))],
+        },
+    },
+}
+
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
@@ -589,8 +598,9 @@ if BIG_SCREEN:
                 {
                     "name": "光纤大屏",
                     "icon": "fas fa-exclamation-triangle",
+                    "url": "/v1/telecom/fibre_optical/"
                 },
-                {"name": "点名大屏", "icon": "fas fa-camera-retro"},
+                {"name": "点名大屏", "icon": "fas fa-camera-retro", "url": "/v1/telecom/roll_call/"},
             ],
         },
     )

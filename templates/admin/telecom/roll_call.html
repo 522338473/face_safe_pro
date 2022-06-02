@@ -1,0 +1,729 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>智能实时点名系统</title>
+
+    <!-- 引入vue -->
+    <script src="{% static 'vue/vue.js' %}"></script>
+
+    <!-- axios -->
+    <script src="{% static 'axios/axios.min.js' %}"></script>
+
+    <!-- webrtc视频播放组件 -->
+    <script type="text/javascript" src="{% static "webrtc/webrtc.js" %}"></script>
+
+    <style>
+        html {
+            /*font-size: 35px; !* 可以通过调整页面字体的大小来调整布局 *!*/
+            font-family: "Avenir", Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        p {
+            margin: 0;
+            padding: 0;
+        }
+
+        .telecom {
+            width: 100%;
+            height: 100%;
+            background-color: #091041;
+            background-image: url("{% static "roll_call/static/bg.png" %}");
+            background-position: center;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+
+        .telecom-content {
+            margin-top: 0.4rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .telecom-content-top {
+            display: flex;
+        }
+
+        .telecom-left {
+            height: 11.46rem;
+            width: 4.74rem;
+            opacity: 1;
+            background-image: url("{% static "roll_call/static/beijingkuang.png" %}");
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-position: center;
+            margin: 0 0.5rem 0 0;
+        }
+
+        .telecom-left:nth-child(2) {
+            margin-top: 0.41rem;
+            height: 7.6rem;
+            background-image: url("{% static "roll_call/static/beijingkuang1.png" %}");
+        }
+
+        .telecom-left-title {
+            display: flex;
+            align-items: center;
+            height: 0.82rem;
+            margin-left: 0.4rem;
+        }
+
+        .telecom-left-content {
+            width: 23rem;
+            height: 14.56rem;
+            margin: 0.3rem 0.4rem;
+            border: 0.01rem solid rgba(200, 200, 200, 0.001);
+        }
+
+        .telecom-data-content {
+            width: 22.74rem;
+            height: 14.02rem;
+            background-image: url("{% static "roll_call/static/video.png" %}");
+            background-position: center;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+
+        .capture {
+            width: 8.5rem;
+            height: 14.02rem;
+            background-image: url("{% static "roll_call/static/r.png" %}");
+            background-position: center;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            margin-left: 0.4rem;
+        }
+
+        .telecom-left-face {
+            display: flex;
+            align-items: center;
+            height: 0.82rem;
+            margin-left: 0.3rem;
+            position: relative;
+        }
+
+        .telecom-time {
+            font-size: 0.1rem;
+            color: #74bcff;
+            position: absolute;
+            bottom: 0.08rem;
+            right: 0.4rem;
+        }
+
+        .capture-title {
+            font-size: 0.42rem;
+            font-weight: 400;
+            color: #74bcff;
+        }
+
+        .capture-box {
+            height: 3.13rem;
+            margin-top: 0.4rem;
+            padding: 0 0.4rem;
+            display: flex;
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+
+        .name-box {
+            height: auto;
+            flex-wrap: wrap;
+            margin-top: 0.4rem;
+            padding: 0 0.4rem;
+            display: flex;
+        }
+
+        .sign-no {
+            display: inline-block;
+            width: 1.4rem;
+            height: 0.6rem;
+            line-height: 0.6rem;
+            background: rgba(77, 77, 77, 0.6);
+            border: 0.01rem solid #3a3a3b;
+            background: linear-gradient(rgb(77, 77, 77), rgb(132, 132, 132));
+            color: #a7a7a7;
+            font-size: 0.3rem;
+            border-radius: 0.14rem;
+            margin: 0.04rem;
+            font-weight: bold;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sign-in {
+            background: linear-gradient(rgb(7, 14, 58), rgb(2, 85, 164));
+            border: 0.01rem solid #1c44a9;
+            color: #fff;
+        }
+
+        .camera {
+            line-height: 0.55rem;
+            margin: 0;
+        }
+
+        .camera-btn {
+            width: 4.74rem;
+            height: 0.88rem;
+            background-image: url("{% static "roll_call/static/left.png" %}");
+            background-position: center;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            margin-top: 0.4rem;
+            margin-bottom: 0;
+            font-size: 0.4rem;
+            color: #74bcff;
+            line-height: 0.88rem;
+            cursor: pointer;
+        }
+
+        .telecom-face-group {
+            height: 2.36rem;
+            margin-right: 0.4rem;
+        }
+
+        .telecom-right-content {
+            width: 5.5rem;
+            margin: 0 auto;
+            margin-top: 0.45rem;
+        }
+
+        .device-content {
+            width: 3.96rem;
+            height: 10rem;
+        }
+
+        .telecom-inform {
+            width: 3.86rem;
+            height: 0.9rem;
+            line-height: 0.9rem;
+            font-size: 0.3rem;
+            background-image: url("{% static "roll_call/static/left.png" %}");
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-position: center;
+            margin-bottom: 0.3rem;
+            color: #74bcff;
+            cursor: pointer;
+        }
+
+        .telecom-img {
+            width: 1rem;
+            height: 1rem;
+            margin-top: 0.1rem;
+        }
+
+        .telecom-title {
+            height: 0.82rem;
+            font-size: 0.5rem;
+            font-family: PingFang SC-Semibold, PingFang SC;
+            font-weight: 600;
+            color: #74bcff;
+            line-height: 0.82rem;
+            background: linear-gradient(118deg, #72c0ff 0%, #2489da 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .device-content::-webkit-scrollbar,
+        .capture-box::-webkit-scrollbar {
+            /* width: 0.12rem; */
+            height: 0.12rem;
+        }
+
+        .device-content::-webkit-scrollbar-thumb,
+        .capture-box::-webkit-scrollbar-thumb {
+            background: #026dbf;
+            border-radius: 0.1rem;
+        }
+
+        .device-content::-webkit-scrollbar-thumb:hover,
+        .capture-box::-webkit-scrollbar-thumb:hover {
+            background: #026dbf;
+        }
+
+        .device-content::-webkit-scrollbar-corner,
+        .capture-box::-webkit-scrollbar-corner {
+            background: #026dbf !important;
+        }
+
+        .capture-box::-webkit-scrollbar-track-piece {
+            background: rgba(15, 75, 164, 0.6) !important;
+        }
+
+        .checked {
+            color: #ffffff;
+            background-color: #59adf1;
+        }
+
+        .telecom-picture-i {
+            height: 2rem;
+            width: 2rem;
+            /* margin: 0.4rem 0.4rem 0.1rem 0.4rem; */
+        }
+
+        .handle-btn {
+            height: 0.7rem;
+            width: 4.6rem;
+            line-height: 0.7rem;
+            font-size: 0.16rem;
+            opacity: 1;
+            background-image: url("{% static "roll_call/static/btn-t.png" %}");
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-position: center;
+            text-align: center;
+            color: #59adf1;
+            cursor: pointer;
+            margin: 0.35rem auto 0 auto;
+        }
+
+        .telecom-text {
+            width: 2rem;
+            font-size: 0.3rem;
+            color: #74bcff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: center;
+            font-weight: bold;
+            /* position: absolute; */
+            /* bottom: -0.1rem; */
+        }
+
+        .video-bottom {
+            display: flex;
+            justify-content: center;
+            margin-top: 0.4rem;
+        }
+
+        .camera-take {
+            width: 28rem;
+            height: 4.38rem;
+            margin-right: 0.4rem;
+            background-image: url("{% static "roll_call/static/take-bg.png" %}");
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .table-box {
+            width: 8.52rem;
+            height: 4.38rem;
+            background-image: url("{% static "roll_call/static/statistics-bg.png" %}");
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .statistics-box {
+            display: flex;
+            font-size: 0.3rem;
+            color: #fff;
+        }
+
+        p.text {
+            width: 20%;
+            height: 0.67rem;
+            line-height: 0.67rem;
+            border-left: 0.01rem solid #1b42a4;
+            border-top: 0.01rem solid #1b42a4;
+        }
+
+        .statistics-box p:nth-child(2),
+        .statistics-box p:nth-child(3) {
+            width: 40%;
+        }
+
+        .statistics-box p:nth-child(1) {
+            border-left: none;
+        }
+
+        p.bottom-title {
+            height: 0.67rem !important;
+            line-height: 0.67rem !important;
+            background: rgba(15, 75, 164, 0.6);
+        }
+
+        .telecom-header {
+            height: 2rem;
+            display: flex;
+            justify-content: center;
+            position: relative;
+            background-image: url("{% static "roll_call/static/header.png" %}");
+            background-position: center;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+
+        .title {
+            height: 1rem;
+            margin-top: 0.26rem;
+            margin-right: 0.15rem;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<div id="app">
+    <div class="telecom">
+        <div class="telecom-header">
+            <img class="title" src="{% static "roll_call/static/title.png" %}" alt=""/>
+        </div>
+        <div class="telecom-content">
+            <div class="telecom-content-top">
+                <div class="telecom-left">
+                    <p class="telecom-title camera">摄像机列表</p>
+                    <div class="telecom-right-content device-content">
+                        <div
+                                class="telecom-inform"
+                                v-for="(item, index) in data"
+                                :key="'inform' + index"
+                                @click="handleClick(item, 'device')"
+                                :style="{
+                    backgroundImage:
+                      item.id === deviceId ? 'url(' + imgActive + ')' : '',
+                  }"
+                        >
+                            ${ item.name }
+                        </div>
+                    </div>
+                    <p class="camera-btn" @click="linkBtn('p')">名单管理</p>
+                    <p class="camera-btn" @click="linkBtn('h')">历史数据</p>
+                </div>
+
+                <div class="telecom-data-content">
+                    <div>
+                        <div class="telecom-left-title">
+                            <img
+                                    class="telecom-img"
+                                    src="{% static "roll_call/static/device.png" %}"
+                                    alt=""
+                            />
+                            <p class="telecom-title">实时视频</p>
+                        </div>
+                        <div class="telecom-left-content">
+                            <div
+                                    style="
+                    height: 13rem;
+                    width: 22rem;
+                    margin: -0.2rem 0 0 0rem;
+                    border-radius: 0.25rem;
+                    position: relative;
+                  "
+                                    element-loading-background="rgba(0, 0, 0, 0.8)"
+                            >
+                                <div style="height: 13rem; width: 22rem; position: relative">
+                                    <webrtc v-if="url" :url="url" style="height: 13rem; width: 100%"></webrtc>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="capture">
+                    <div class="telecom-left-face">
+                        <p class="telecom-title">智能实时点名</p>
+                        <p class="telecom-time">剩余时间：${ nowTime }</p>
+                    </div>
+                    <div class="name-box">
+              <span
+                      class="sign-no"
+                      v-for="(item, index) in personCount"
+                      :key="'personCount' + index"
+                      :class="item.signIn ? 'sign-in' : ''"
+              >${ item.name }</span
+              >
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="video-bottom">
+            <div class="camera-take">
+                <div class="telecom-left-title">
+                    <img
+                            class="telecom-img"
+                            src="{% static "roll_call/static/camera.png" %}"
+                            alt=""
+                    />
+                    <p class="telecom-title camera">点名抓拍</p>
+                </div>
+                <div class="capture-box">
+                    <div
+                            class="telecom-face-group"
+                            v-for="(item, i) in telecomAlgorithm"
+                            :key="'box' + i"
+                    >
+                        <img class="telecom-picture-i" :src="item.head_url" alt=""/>
+                        <p class="telecom-text">${ item.name }</p>
+                    </div>
+                </div>
+            </div>
+            <div class="table-box">
+                <div
+                        class="statistics-box"
+                        v-for="(item, index) in statisticsData"
+                        :key="'statisticsData' + index"
+                >
+                    <p
+                            class="text"
+                            :class="index === 0 && item.name !== ' ' ? 'title' : ''"
+                    >
+                        ${ item.name }
+                    </p>
+                    <p class="text" :class="index === 0 ? 'bottom-title' : ''">
+                        ${ item.now }
+                    </p>
+                    <p class="text" :class="index === 0 ? 'bottom-title' : ''">
+                        ${ item.top }
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    (function (WIN) {
+        let setFontSize = WIN.setFontSize = function (_width) {
+            let docEl = document.documentElement;
+            // 获取当前窗口的宽度
+            let width = _width || docEl.clientWidth; // docEl.getBoundingClientRect().width;
+
+            // 大于 1080px 按 1080
+            if (width > 1920) {
+                width = 1920;
+            }
+
+            let rem = width / 38.4;
+            console.log(rem);
+
+            docEl.style.fontSize = rem + 'px';
+
+            // 部分机型上的误差、兼容性处理
+            let actualSize = win.getComputedStyle && parseFloat(win.getComputedStyle(docEl)["font-size"]);
+            if (actualSize !== rem && actualSize > 0 && Math.abs(actualSize - rem) > 1) {
+                let remScaled = rem * rem / actualSize;
+                docEl.style.fontSize = remScaled + 'px';
+            }
+        }
+
+        let timer;
+
+        //函数节流
+        function dbcRefresh() {
+            clearTimeout(timer);
+            timer = setTimeout(setFontSize, 100);
+        }
+
+        //窗口更新动态改变 font-size
+        WIN.addEventListener('resize', dbcRefresh, false);
+        //页面显示时计算一次
+        WIN.addEventListener('pageshow', function (e) {
+            if (e.persisted) {
+                dbcRefresh()
+            }
+        }, false);
+        setFontSize();
+    })(window)
+</script>
+<script type="text/javascript">
+    new Vue({
+        el: "#app",
+        delimiters: ['${', '}'],
+        data: {
+            data: [],
+            url: "",
+            deviceId: "",
+            nowTime: "00:00",
+            personCount: [],
+            telecomAlgorithm: [],
+            imgActive: "{% static "roll_call/static/left_active.png" %}",
+            statisticsData: [
+                {name: " ", now: "本次", top: "上次"},
+                {name: "名称", now: "", top: ""},
+                {name: "应到", now: "", top: ""},
+                {name: "实到", now: "", top: ""},
+                {name: "出勤率", now: "", top: ""},
+                {name: "时间段", now: "", top: ""},
+            ]
+        },
+        created() {
+            this.getTelecomAlgorithm();
+            this.getDeviceList();
+            this.statisticsTopData();
+            this.statisticsNowTimeData();
+        },
+        methods: {
+            getDeviceList: function () {
+                const params = {
+                    offset: 0,
+                    limit: 100,
+                };
+                axios.get("/v1/telecom/device/", {
+                    params: params
+                }, {
+                    'Content-Type': 'application/json;charset=UTF-8'
+                }).then(res => {
+                    this.data = res.data.results;
+                    if (res.data.results.length > 0) {
+                        this.deviceId = res.data.results[0].id;
+                        this.handleNodeClick(res.data.results[0])
+                    }
+                }).finally(() => {
+
+                });
+            },
+            handleClick: function (node, t) {
+                clearInterval(this.telecomAlgorithmInterval);
+                this.telecomAlgorithmInterval = null;
+                this.handleNodeClick(node, t);
+                this.tag = "th";
+            },
+            handleNodeClick: function (node, t) {
+                let info = {};
+                this.deviceId = node.id;
+                this.data.map((item, i) => {
+                    if (item.id === this.deviceId) {
+                        info = item;
+                    }
+                });
+
+                if (info.status) {
+                    this.videoLoading = true;
+                    const params = {
+                        "device": this.deviceId
+                    }
+                    axios.get("/v1/device/info/device_video/", {
+                        params: params
+                    }, {
+                        'Content-Type': 'application/json;charset=UTF-8'
+                    }).then((res) => {
+                        if (res.data.url) {
+                            localStorage.setItem("videoUrl", res.data.url);
+                            this.url = "";
+                            this.$nextTick(() => {
+                                this.url = res.data.url;
+                            });
+                        }
+                    });
+                } else {
+                    this.url = "";
+                }
+                this.deviceForm = Object.assign({}, node);
+            },
+            statisticsTopData: function () {
+                const params = {
+                    offset: 0,
+                    limit: 1,
+                };
+                axios.get("/v1/telecom/roll_call_history/", {
+                    params: params
+                }, {
+                    'Content-Type': 'application/json;charset=UTF-8'
+                }).then((res) => {
+                    res.data.results.map((item) => {
+                        this.statisticsData[1].top = item.personnel_types;
+                        this.statisticsData[1].now = item.personnel_types;
+                        this.statisticsData[2].top = item.total_person + "人" || 0 + "人";
+                        this.statisticsData[3].top = item.attendance_person + "人" || 0 + "人";
+                        this.statisticsData[4].top =
+                            Math.floor(item.rate_of_attendance * 20) + "%" || 0 + "%";
+                        this.statisticsData[5].top =
+                            item.start_time.split(" ")[1] + "--" + item.end_time.split(" ")[1];
+                    });
+                });
+            },
+            nowAta: function () {
+                this.signIn = [];
+                this.statisticsData[2].now = this.personCount.length + "人" || 0 + "人";
+                let num = this.telecomAlgorithm.length / this.personCount.length;
+                if (this.telecomAlgorithm.length > 0 && this.personCount.length > 0) {
+                    this.statisticsData[4].now = Math.floor(num * 100) + "%";
+                } else this.statisticsData[4].now = 0 + "%";
+                this.telecomAlgorithm.map((v) => {
+                    this.personCount.map((item) => {
+                        if (v.personnel_id === item.id) {
+                            item.signIn = true;
+                            this.signIn.push(item);
+                        }
+                    });
+                });
+                this.statisticsData[3].now = this.signIn.length + "人" || 0 + "人";
+            },
+            getTelecomAlgorithm: function () {
+                axios.get("/v1/telecom/records/", {
+                    params: {}
+                }, {
+                    'Content-Type': 'application/json;charset=UTF-8'
+                }).then((res) => {
+                    this.statisticsData[2].now = res.data.length + "人" || 0 + "人";
+                    this.personCount = res.data;
+                    axios.get("/v1/telecom/find-record/", {
+                        params: {}
+                    }, {
+                        'Content-Type': 'application/json;charset=UTF-8'
+                    }).then((res) => {
+                        this.telecomAlgorithm = res.data;
+                        this.nowAta();
+                    });
+                });
+            },
+            statisticsNowTimeData: function () {
+                axios.get("/v1/telecom/roll_call_history/exp_time/", {
+                    params: {}
+                }, {
+                    'Content-Type': 'application/json;charset=UTF-8'
+                }).then((res) => {
+                    this.remainingTime = res.data.remaining_time;
+                    this.countDown();
+                    this.statisticsData[5].now =
+                        res.data.start_time.split(" ")[1] +
+                        "--" +
+                        res.data.end_time.split(" ")[1];
+                });
+            },
+            countDown: function () {
+                let maxtime = this.remainingTime; //
+                let self = this;
+                clearInterval(this.timer);
+                this.timer = setInterval(() => {
+                    if (maxtime >= 0) {
+                        let minutes = Math.floor(maxtime / 60);
+                        let seconds = Math.floor(maxtime % 60);
+                        seconds = seconds < 10 ? "0" + seconds : seconds;
+                        let msg = "0" + minutes + ":" + seconds;
+                        self.nowTime = msg;
+                        --maxtime;
+                    } else {
+                        maxtime = 5 * 60 - 1;
+                        this.statisticsNowTimeData();
+                        this.getTelecomAlgorithm();
+                        this.statisticsTopData();
+                    }
+                }, 1000);
+            },
+            linkBtn: function (t) {
+                if (t === "p") {
+                    window.location.href = "/admin/monitor/monitor/"
+                } else if ( t === "h") {
+                    window.location.href = "/v1/telecom/history"
+                }
+            }
+        }
+    })
+</script>
+</body>
+</html>
