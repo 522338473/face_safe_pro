@@ -25,7 +25,7 @@ class DeviceInfoAdmin(PublicModelAdmin, ImportExportModelAdmin, AjaxAdmin):
     change_list_template = "admin/device/deviceinfo/change_list.html"
     change_form_template = "admin/device/deviceinfo/change_form.html"
     fields_options = {
-        "id": {"fixed": "left", "width": "120px"},
+        "id": {"fixed": "left", "width": "320px"},
         "name": {"label": "设备名称", "width": "160px"},
         "ip": {"width": "120px"},
         "address": {
@@ -122,7 +122,7 @@ class DevicePhotoAdmin(PublicModelAdmin, AjaxAdmin):
     list_display = ["id", "device", "address", "take_photo_time", "image", "operation"]
     list_filter = ["device", "take_photo_time"]
     fields_options = {
-        "id": {"fixed": "left", "width": "120px"},
+        "id": {"fixed": "left", "width": "320px"},
         "image": {"label": "抓拍人脸", "width": "120px"},
         "operation": {"width": "200px"},
     }
@@ -186,7 +186,7 @@ class DeviceOffLineAdmin(PublicModelAdmin, AjaxAdmin):
     list_display = ["id", "device", "checked", "alarm_type", "photo_path"]
     list_filter = ["device", "create_at"]
     fields_options = {
-        "id": {"fixed": "left", "width": "120px"},
+        "id": {"fixed": "left", "width": "320px"},
         "checked": {"width": "120px"},
     }
 
@@ -196,7 +196,7 @@ class MotorAdmin(PublicModelAdmin, AjaxAdmin):
     list_display = ["id", "device", "address", "take_photo_time", "image"]
     list_filter = ["device", "create_at"]
     fields_options = {
-        "id": {"fixed": "left", "width": "120px"},
+        "id": {"fixed": "left", "width": "320px"},
         "image": {"width": "120px"},
     }
 
@@ -229,7 +229,7 @@ class VehicleAdmin(PublicModelAdmin, AjaxAdmin):
     list_filter = ["device", "create_at"]
     search_fields = ["plate", "color", "types"]
     fields_options = {
-        "id": {"fixed": "left", "width": "120px"},
+        "id": {"fixed": "left", "width": "320px"},
         "device": {"width": "160px"},
         "take_photo_time": {"width": "170px"},
         "plate": {"width": "100px"},

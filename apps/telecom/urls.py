@@ -39,15 +39,9 @@ urlpatterns = [
         name="fibre_optical",
     ),
     path(
-        "roll_call/",
-        csrf_exempt(admin_view.RollCallView.as_view()),
-        name="roll_call"
+        "roll_call/", csrf_exempt(admin_view.RollCallView.as_view()), name="roll_call"
     ),
-    path(
-        "history/",
-        csrf_exempt(admin_view.HistoryView.as_view()),
-        name="history"
-    )
+    path("history/", csrf_exempt(admin_view.HistoryView.as_view()), name="history"),
 ]
 
 urlpatterns += router.urls

@@ -16,7 +16,7 @@ class PublicModelAdmin:
     list_per_page = 10
     list_default_per_page = 10
     change_list_template = "admin/change_list.html"
-    fields_options = {"id": {"fixed": "left", "width": "120px", "align": "center"}}
+    fields_options = {"id": {"fixed": "left", "width": "320px", "align": "center"}}
 
     def delete_model(self, request, obj):
         """删除数据的时候软删除"""

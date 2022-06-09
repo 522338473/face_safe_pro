@@ -79,7 +79,7 @@ class PersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin, AjaxAdmin):
     resource_class = archives_resources.PersonnelResources
     # actions = ['action_for_archives_personnel_export', 'action_for_archives_personnel_import', 'action_for_archives_personnel_layer_input']
     fields_options = {
-        "id": {"fixed": "left", "width": "120px"},
+        "id": {"fixed": "left", "width": "320px"},
         "archives_group": {"label": "库名称", "width": "130px"},
         "name": {"width": "80px"},
         "phone": {"width": "120px"},
@@ -176,7 +176,7 @@ class AccessDiscoverAdmin(PublicModelAdmin, AjaxAdmin):
     ]
     list_filter = ["target", "create_at"]
     fields_options = {
-        "id": {"fixed": "left", "width": "120px"},
+        "id": {"fixed": "left", "width": "320px"},
         "target": {"label": "门禁人员"},
         "image": {"label": "通行抓拍", "width": "120px"},
     }

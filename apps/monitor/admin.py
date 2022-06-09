@@ -50,7 +50,7 @@ class MonitorAdmin(PublicModelAdmin, ImportExportModelAdmin, AjaxAdmin):
     search_fields = ["name"]
     resource_class = monitor_resources.MonitorResources
     fields_options = {
-        "id": {"fixed": "left", "width": "120px"},
+        "id": {"fixed": "left", "width": "320px"},
         "gender": {"width": "80px"},
         "image": {"label": "照片", "width": "120px"},
     }
@@ -174,7 +174,7 @@ class MonitorDiscoverAdmin(PublicModelAdmin, AjaxAdmin):
     list_filter = ["record__take_photo_time", "target"]
     search_fields = ["target__name"]
     fields_options = {
-        "id": {"fixed": "left", "width": "120px"},
+        "id": {"fixed": "left", "width": "320px"},
         "image": {"width": "120px"},
     }
 
@@ -247,7 +247,7 @@ class VehicleMonitorAdmin(PublicModelAdmin, ImportExportModelAdmin, AjaxAdmin):
     search_fields = ["plate", "name", "phone"]
     resource_class = monitor_resources.VehicleMonitorResources
     fields_options = {
-        "id": {"fixed": "left", "width": "120px"},
+        "id": {"fixed": "left", "width": "320px"},
         "plate": {"width": "120px"},
         "name": {"width": "120px"},
         "gender": {"width": "80px"},
@@ -273,7 +273,7 @@ class VehicleMonitorDiscoverAdmin(PublicModelAdmin, AjaxAdmin):
     list_display = ["id", "target", "image", "snap_time", "snap_address", "operation"]
     list_filter = ["target", "create_at"]
     fields_options = {
-        "id": {"fixed": "left", "width": "120px"},
+        "id": {"fixed": "left", "width": "320px"},
         "image": {"width": "120px"},
     }
 
@@ -336,7 +336,7 @@ class RestrictedAreaAdmin(PublicModelAdmin, AjaxAdmin):
     list_filter = ["name"]
     top_html = ' <el-alert title="门禁区域只可绑定门禁设备&无感通行! 删除门禁区域。请先删除该区域下所有人员" type="warning"></el-alert>'
     fields_options = {
-        "id": {"fixed": "left", "width": "120px"},
+        "id": {"fixed": "left", "width": "320px"},
         "name": {"width": "160px"},
     }
 
@@ -368,7 +368,7 @@ class AreaMonitorPersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin, AjaxAd
     list_filter = ["area", "create_at"]
     resource_class = monitor_resources.AreaMonitorPersonnelResources
     fields_options = {
-        "id": {"fixed": "left", "width": "120px"},
+        "id": {"fixed": "left", "width": "320px"},
         "area": {"width": "160px"},
         "personnel": {"width": "120px"},
     }
@@ -451,7 +451,7 @@ class ArchivesPersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin, AjaxAdmin
     resource_class = monitor_resources.ArchivesPersonnelResources
     top_html = ' <el-alert title="关注人员隔天对前天的数据进行归档(非实时归档)!" type="warning"></el-alert>'
     fields_options = {
-        "id": {"fixed": "left", "width": "120px"},
+        "id": {"fixed": "left", "width": "320px"},
         "image": {"label": "抓拍人脸", "width": "120px"},
     }
 
@@ -543,7 +543,7 @@ class PhotoClusterAdmin(PublicModelAdmin, AjaxAdmin):
     ]
     list_filter = ["archives_personnel", "device_take_photo_time"]
     fields_options = {
-        "id": {"fixed": "left", "width": "120px"},
+        "id": {"fixed": "left", "width": "320px"},
         "image": {"label": "抓拍人脸", "width": "120px"},
     }
 

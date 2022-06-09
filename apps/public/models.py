@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime
 
 from django.db import models
@@ -29,10 +30,12 @@ class BaseModel(models.Model):
     自定义Model基类
     """
 
-    id = models.BigAutoField(
-        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+    id = models.UUIDField(
+        primary_key=True, default=uuid.uuid4, editable=False, verbose_name="UUID"
     )
-    create_at = fields.DateTimeField(auto_now_add=True, verbose_name="创建时间")
+    create_at = fields.DateTimeField(
+        auto_now_add=True, db_index=True, verbose_name="创建时间"
+    )
     update_at = fields.DateTimeField(auto_now=True, verbose_name="更新时间")
     delete_at = fields.DateTimeField(null=True, blank=True, verbose_name="删除时间")
     create_by = fields.CharField(
@@ -53,7 +56,7 @@ class BaseModel(models.Model):
 
     class Meta:
         abstract = True
-        ordering = ["id"]
+        ordering = ["-create_at"]
 
     @property
     def hash(self):
