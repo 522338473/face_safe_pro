@@ -604,11 +604,13 @@ if BIG_SCREEN:
                     "name": "光纤大屏",
                     "icon": "fas fa-exclamation-triangle",
                     "url": "/v1/telecom/fibre_optical/",
+                    "newTab": True,
                 },
                 {
                     "name": "点名大屏",
                     "icon": "fas fa-camera-retro",
                     "url": "/v1/telecom/roll_call/",
+                    "newTab": True,
                 },
             ],
         },
