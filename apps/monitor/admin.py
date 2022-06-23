@@ -397,19 +397,22 @@ class AreaMonitorPersonnelAdmin(PublicModelAdmin, ImportExportModelAdmin, AjaxAd
                 requests.get(url=obj.personnel.get_head_url()).content
             ).decode()
             for device in list(obj.area.device_list.values()):
-                if device.get("device_type") in (2, 3):
-                    if device["device_type"] == 2:
-                        ip = device["ip"]
-                    elif device["device_type"] == 3:
-                        ip = settings.REDIS_SERVER_HOST
-                    else:
-                        continue
-                    message = {"name": obj.personnel.hash, "image": b64_image}
-                    res = requests.post(
-                        url=f"http://{ip}:5005/archives_add", json=message
-                    )
-                    print(res.status_code)
-                    print(res.json())
+                try:
+                    if device.get("device_type") in (2, 3):
+                        if device["device_type"] == 2:
+                            ip = device["ip"]
+                        elif device["device_type"] == 3:
+                            ip = settings.REDIS_SERVER_HOST
+                        else:
+                            continue
+                        message = {"name": obj.personnel.hash, "image": b64_image}
+                        res = requests.post(
+                            url=f"http://{ip}:5005/archives_add", json=message
+                        )
+                        print(res.status_code)
+                        print(res.json())
+                except Exception as e:
+                    print(e)
 
     def delete_queryset(self, request, queryset):
         """删除门禁人员"""
