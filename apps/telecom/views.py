@@ -464,9 +464,7 @@ class RollCallHistoryViewSet(
                 redis_value=str(datetime.datetime.now()),
                 ex=settings.EFFECTIVE,
             )
-            start_time = datetime.datetime.strptime(
-                redis_cache.decode(), "%Y-%m-%d %H:%M:%S.%f"
-            )
+            start_time = str(datetime.datetime.now())
         f_m = datetime.timedelta(minutes=5)
         end_time = start_time + f_m
         now_time = datetime.datetime.now()
