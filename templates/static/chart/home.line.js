@@ -171,8 +171,8 @@ Vue.component('home-line', {
     methods: {
         time_change: function () {
             //请求数据 伪代码
-            let start_time = new Date(new Date(new Date(new Date().setHours(0, 0, 0, 0)).setDate(new Date(new Date().setHours(0, 0, 0, 0)).getDate() - this.value))).format("YYYYMMDDhhmmss");
-            let end_time = new Date(new Date().setHours(23, 59, 59, 0)).format("YYYYMMDDhhmmss");
+            let start_time = dayjs(new Date(new Date(new Date(new Date().setHours(0, 0, 0, 0)).setDate(new Date(new Date().setHours(0, 0, 0, 0)).getDate() - this.value)))).format("YYYYMMDDhhmmss");
+            let end_time = dayjs(new Date(new Date().setHours(23, 59, 59, 0))).format("YYYYMMDDhhmmss");
             let self = this;
             let params = {
                 start_time: start_time,

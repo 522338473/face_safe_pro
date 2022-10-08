@@ -138,8 +138,8 @@ Vue.component('home-bar', {
     methods: {
         get_count: function () {
             let self = this;
-            let start_time = new Date(new Date(new Date(new Date().setHours(0, 0, 0, 0)).setDate(new Date(new Date().setHours(0, 0, 0, 0)).getDate() - this.value))).format("YYYYMMDDhhmmss");
-            let end_time = new Date(new Date().setHours(23, 59, 59, 0)).format("YYYYMMDDhhmmss");
+            let start_time = dayjs(new Date(new Date(new Date(new Date().setHours(0, 0, 0, 0)).setDate(new Date(new Date().setHours(0, 0, 0, 0)).getDate() - this.value)))).format("YYYYMMDDhhmmss");
+            let end_time = dayjs(new Date(new Date().setHours(23, 59, 59, 0))).format("YYYYMMDDhhmmss");
             let params = {
                 start_time: start_time,
                 end_time: end_time
