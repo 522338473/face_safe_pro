@@ -18,8 +18,6 @@ from apps.monitor.models import MonitorDiscover
 from apps.utils.job_queue import redis_queue
 from apps.utils.fast_dfs import upload_image
 
-socket.setdefaulttimeout(0.5)
-
 
 @shared_task
 def device_status():
@@ -28,12 +26,14 @@ def device_status():
         try:
             try:
                 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                server.settimeout(0.5)
                 server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                 server.connect((device.ip, 554))
                 if device.status == 0:
                     device.device_login()
             except ConnectionRefusedError as e:
                 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                server.settimeout(0.5)
                 server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                 server.connect((device.ip, 5005))  # 门禁设备
                 if device.status == 0:
