@@ -18,6 +18,10 @@ class PublicModelAdmin:
     change_list_template = "admin/change_list.html"
     fields_options = {"id": {"fixed": "left", "width": "320px", "align": "center"}}
 
+    def get_show_selection(self, request):
+        """超级管理员可以批量操作"""
+        return request.user.is_superuser
+
     def delete_model(self, request, obj):
         """删除数据的时候软删除"""
         if request.user.is_superuser:
