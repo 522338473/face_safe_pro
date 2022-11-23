@@ -70,21 +70,22 @@
                 </el-button>
 
                 <el-dropdown-menu slot="dropdown">
+                    {% if request.user.is_superuser %}
+                        <el-dropdown-item icon="el-icon-house" @click.native="goIndex('{{ 'SIMPLEUI_INDEX'|get_config }}')">{% trans 'Home page' %}</el-dropdown-item>
+                        <el-dropdown-item icon="el-icon-data-analysis" @click.native="openTab({icon:'el-icon-data-analysis',name:'{% trans 'Design chart' %}',url:'https://sdc.72wo.com'})">{% trans 'Change home' %}</el-dropdown-item>
+                        <el-dropdown-item icon="el-icon-setting" @click.native="themeDialogVisible=true">{% trans 'UI settings' %}</el-dropdown-item>
 
-                    <el-dropdown-item icon="el-icon-house" @click.native="goIndex('{{ 'SIMPLEUI_INDEX'|get_config }}')">{% trans 'Home page' %}</el-dropdown-item>
-                    <el-dropdown-item icon="el-icon-data-analysis" @click.native="openTab({icon:'el-icon-data-analysis',name:'{% trans 'Design chart' %}',url:'https://sdc.72wo.com'})">{% trans 'Change home' %}</el-dropdown-item>
-                    <el-dropdown-item icon="el-icon-setting" @click.native="themeDialogVisible=true">{% trans 'UI settings' %}</el-dropdown-item>
-
-                    {% if 'SIMPLEPRO_INFO'|get_config != False %}
-                        <el-dropdown-item icon="el-icon-bank-card" @click.native="openTab({icon:'el-icon-bank-card',name:'{% trans 'License' %}',url:'/simplepro/info/'})">{% trans 'License' %}</el-dropdown-item>
+                        {% if 'SIMPLEPRO_INFO'|get_config != False %}
+                            <el-dropdown-item icon="el-icon-bank-card" @click.native="openTab({icon:'el-icon-bank-card',name:'{% trans 'License' %}',url:'/simplepro/info/'})">{% trans 'License' %}</el-dropdown-item>
+                        {% endif %}
+                        <el-popover
+                                placement="left-start"
+                                content="{% trans 'You can choose to reset the page cache data when the page displays erratically' %}"
+                                width="50"
+                                trigger="hover">
+                            <el-dropdown-item slot="reference" icon="el-icon-delete" @click.native="clearCache()">{% trans 'Reset page' %}</el-dropdown-item>
+                        </el-popover>
                     {% endif %}
-                    <el-popover
-                            placement="left-start"
-                            content="{% trans 'You can choose to reset the page cache data when the page displays erratically' %}"
-                            width="50"
-                            trigger="hover">
-                        <el-dropdown-item slot="reference" icon="el-icon-delete" @click.native="clearCache()">{% trans 'Reset page' %}</el-dropdown-item>
-                    </el-popover>
 
                     {% verbatim mycode %}
                         <el-dropdown-item v-waves icon="far fa-edit" @click.native="changePassword()" divided>{{ language.change_password }}</el-dropdown-item>
