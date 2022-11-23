@@ -3,8 +3,8 @@ from django.conf import settings
 from django.utils.safestring import mark_safe
 from simplepro.components import fields
 
-from apps.public.models import BaseModel
-from apps.utils import constant
+from public.models import BaseModel
+from utils import constant
 
 
 class ArchivesGroup(BaseModel):

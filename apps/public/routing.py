@@ -9,7 +9,7 @@
 
 from django.urls import path
 
-from apps.public import consumer
+from public import consumer
 
 
 websocket_urlpatterns = [path("v1/ws/consumer/", consumer.WebSocket.as_asgi())]

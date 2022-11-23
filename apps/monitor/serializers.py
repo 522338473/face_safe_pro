@@ -9,9 +9,9 @@
 
 from rest_framework import serializers
 
-from apps.monitor import models
-from apps.device import serializers as device_serializers
-from apps.archives import serializers as archives_serializers
+from monitor import models
+from device import serializers as device_serializers
+from archives import serializers as archives_serializers
 
 
 class PersonnelTypeSerializer(serializers.ModelSerializer):

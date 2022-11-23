@@ -54,12 +54,12 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "django_celery_beat",
-    "apps.public",
-    "apps.account",
-    "apps.device",
-    "apps.archives",
-    "apps.monitor",
-    "apps.telecom",
+    "public",
+    "account",
+    "device",
+    "archives",
+    "monitor",
+    "telecom",
 ]
 
 MIDDLEWARE = [

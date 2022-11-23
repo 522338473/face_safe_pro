@@ -4,8 +4,8 @@ from django.db import models
 from django.conf import settings
 from simplepro.components import fields
 
-from apps.public.models import BaseModel
-from apps.utils import constant
+from public.models import BaseModel
+from utils import constant
 
 
 class DeviceInfo(BaseModel):

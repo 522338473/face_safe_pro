@@ -4,7 +4,7 @@ from datetime import datetime
 from django.db import models
 from simplepro.components import fields
 
-from apps.utils.hasher import Hasher
+from utils.hasher import Hasher
 
 
 class BaseQuerySet(models.QuerySet):

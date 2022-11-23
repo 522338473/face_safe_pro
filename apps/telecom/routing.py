@@ -9,7 +9,7 @@
 
 from django.urls import path
 
-from apps.telecom import consumer
+from telecom import consumer
 
 
 websocket_urlpatterns = [

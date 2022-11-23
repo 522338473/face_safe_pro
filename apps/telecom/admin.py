@@ -2,8 +2,8 @@ from django.contrib import admin
 from django.utils.safestring import mark_safe
 from simpleui.admin import AjaxAdmin
 
-from apps.telecom import models as telecom_models
-from apps.public.admin import PublicModelAdmin
+from telecom import models as telecom_models
+from public.admin import PublicModelAdmin
 
 # Register your models here.
 

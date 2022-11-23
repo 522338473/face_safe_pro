@@ -16,13 +16,12 @@ import datetime
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from apps.monitor import models as monitor_models
-from apps.monitor import serializers as monitor_serializers
-from apps.utils.face_discern import face_discern
-from apps.utils.job_queue import redis_queue
-from apps.utils.hasher import Hasher
-from apps.monitor import tasks
-from apps.telecom import consumer
+from monitor import models as monitor_models
+from monitor import serializers as monitor_serializers
+from utils.face_discern import face_discern
+from utils.job_queue import redis_queue
+from utils.hasher import Hasher
+from telecom import consumer
 
 
 logger = logging.getLogger("server.default")

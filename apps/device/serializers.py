@@ -9,7 +9,7 @@
 
 from rest_framework import serializers
 
-from apps.device import models
+from device import models
 
 
 class DeviceInfoSerializers(serializers.ModelSerializer):

@@ -11,8 +11,8 @@ from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.routers import DefaultRouter
 
-from apps.archives import views
-from apps.archives import admin_view
+from archives import views
+from archives import admin_view
 
 router = DefaultRouter()
 router.register(r"group", views.ArchivesGroupViewSet, basename="group")

@@ -10,7 +10,7 @@
 from import_export import resources
 
 
-from apps.monitor import models as monitor_models
+from monitor import models as monitor_models
 
 
 class MonitorResources(resources.ModelResource):

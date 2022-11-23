@@ -9,7 +9,7 @@
 
 from import_export import resources
 
-from apps.archives import models as archives_models
+from archives import models as archives_models
 
 
 class PersonnelResources(resources.ModelResource):

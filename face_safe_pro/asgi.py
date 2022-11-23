@@ -13,8 +13,8 @@ from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 from django.core.asgi import get_asgi_application
 
-from apps.telecom.routing import websocket_urlpatterns as telecom_websocket_urlpatterns
-from apps.public.routing import websocket_urlpatterns as public_websocket_urlpatterns
+from telecom.routing import websocket_urlpatterns as telecom_websocket_urlpatterns
+from public.routing import websocket_urlpatterns as public_websocket_urlpatterns
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "face_safe_pro.settings")
 

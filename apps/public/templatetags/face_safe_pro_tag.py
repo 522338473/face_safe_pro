@@ -14,11 +14,11 @@ from django.utils.safestring import mark_safe, SafeData
 from django.db.models import Count
 from django.db.models.functions import TruncDay, TruncHour
 
-from apps.device import models as device_model
-from apps.archives import models as archives_model
-from apps.monitor import models as monitor_model
-from apps.public.templatetags import register
-from apps.utils.hasher import Hasher
+from device import models as device_model
+from archives import models as archives_model
+from monitor import models as monitor_model
+from public.templatetags import register
+from utils.hasher import Hasher
 
 
 @register.simple_tag

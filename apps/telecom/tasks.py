@@ -9,12 +9,12 @@ from celery import shared_task
 
 from django.conf import settings
 
-from apps.telecom import models
-from apps.device import models as device_models
-from apps.monitor import models as monitor_models
-from apps.telecom import models as telecom_models
-from apps.utils.fast_dfs import upload_image
-from apps.utils.job_queue import redis_queue
+from telecom import models
+from device import models as device_models
+from monitor import models as monitor_models
+from telecom import models as telecom_models
+from utils.fast_dfs import upload_image
+from utils.job_queue import redis_queue
 
 
 @shared_task

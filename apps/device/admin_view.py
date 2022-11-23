@@ -18,11 +18,10 @@ from django.shortcuts import render
 from django.core.paginator import Paginator
 from rest_framework.response import Response
 
-from apps.device import models as device_models
-from apps.monitor import models as monitor_models
-from apps.archives import models as archives_models
-from apps.device import serializers as device_serializers
-from apps.public.views import ParseJsonView
+from device import models as device_models
+from monitor import models as monitor_models
+from archives import models as archives_models
+from public.views import ParseJsonView
 
 
 # Create your views here.

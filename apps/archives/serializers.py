@@ -9,8 +9,8 @@
 
 from rest_framework import serializers
 
-from apps.archives import models
-from apps.device import serializers as device_serializer
+from archives import models
+from device import serializers as device_serializer
 
 
 class ArchivesGroupSerializer(serializers.ModelSerializer):

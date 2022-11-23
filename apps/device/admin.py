@@ -5,11 +5,11 @@ from import_export.admin import ImportExportModelAdmin
 from simpleui.admin import AjaxAdmin
 from simplepro.dialog import ModalDialog, MultipleCellDialog
 
-from apps.device import models as device_models
-from apps.device import resources as device_resources
-from apps.public.admin import PublicModelAdmin
-from apps.utils.constant import VIDEO_PLAY_TYPE, DETAIL_TYPE
-from apps.utils.job_queue import redis_queue
+from device import models as device_models
+from device import resources as device_resources
+from public.admin import PublicModelAdmin
+from utils.constant import VIDEO_PLAY_TYPE, DETAIL_TYPE
+from utils.job_queue import redis_queue
 
 
 # Register your models here.

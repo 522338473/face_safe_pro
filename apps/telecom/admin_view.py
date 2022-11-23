@@ -17,8 +17,8 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from rest_framework.response import Response
 
-from apps.device import models as device_models
-from apps.public.views import ParseJsonView
+from device import models as device_models
+from public.views import ParseJsonView
 
 
 # Create your views here.

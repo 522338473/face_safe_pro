@@ -13,8 +13,8 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.exceptions import ParseError
 from jsonschema import validate, ValidationError
 
-from apps.utils.hasher import Hasher
-from apps.utils.constant import FILE_PATH_PREFIX
+from utils.hasher import Hasher
+from utils.constant import FILE_PATH_PREFIX
 
 
 class HashRetrieveViewSetMixin(GenericViewSet):

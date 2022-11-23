@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 from simplepro.components import fields
 
-from apps.public.models import BaseModel
+from public.models import BaseModel
 
 
 class UserExtra(BaseModel):

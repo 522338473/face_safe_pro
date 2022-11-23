@@ -8,10 +8,10 @@ from rest_framework.response import Response
 from rest_framework import exceptions
 from rest_framework import status
 
-from apps.archives import models
-from apps.archives import serializers
-from apps.public.views import HashRetrieveViewSetMixin
-from apps.utils.face_discern import face_discern
+from archives import models
+from archives import serializers
+from public.views import HashRetrieveViewSetMixin
+from utils.face_discern import face_discern
 
 
 # Create your views here.

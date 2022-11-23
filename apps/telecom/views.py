@@ -13,17 +13,16 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError
 from django.conf import settings
 
-from apps.public.views import HashRetrieveViewSetMixin
+from public.views import HashRetrieveViewSetMixin
 
-from apps.telecom import models
-from apps.telecom import serializers
-from apps.telecom import tasks
-from apps.device import models as device_models
-from apps.device import serializers as device_serializers
-from apps.monitor import models as monitor_models
-from apps.monitor import serializers as monitor_serializer
-from apps.utils.q import alarm
-from apps.utils.job_queue import redis_queue
+from telecom import models
+from telecom import serializers
+from telecom import tasks
+from device import models as device_models
+from device import serializers as device_serializers
+from monitor import models as monitor_models
+from monitor import serializers as monitor_serializer
+from utils.job_queue import redis_queue
 
 
 """

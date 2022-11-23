@@ -18,8 +18,8 @@ from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.routers import DefaultRouter
 
-from apps.telecom import views
-from apps.telecom import admin_view
+from telecom import views
+from telecom import admin_view
 
 router = DefaultRouter()
 router.register(r"optical", views.OpticalFiberAlarmViewSet, basename="optical")

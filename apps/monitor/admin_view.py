@@ -11,8 +11,8 @@ from django.views import View
 from django.shortcuts import render
 from django.core.paginator import Paginator
 
-from apps.monitor import models
-from apps.public.views import ParseJsonView
+from monitor import models
+from public.views import ParseJsonView
 
 
 # Create your views here.

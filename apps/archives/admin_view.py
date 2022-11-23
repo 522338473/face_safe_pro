@@ -10,8 +10,8 @@
 from django.views import View
 from django.shortcuts import render
 
-from apps.archives import models
-from apps.public.views import ParseJsonView
+from archives import models
+from public.views import ParseJsonView
 
 
 class SearchPersonnelView(ParseJsonView, View):

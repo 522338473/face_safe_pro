@@ -13,10 +13,10 @@ import socket
 import datetime
 from celery import shared_task
 
-from apps.device.models import DeviceInfo, DeviceOffLine
-from apps.monitor.models import MonitorDiscover
-from apps.utils.job_queue import redis_queue
-from apps.utils.fast_dfs import upload_image
+from device.models import DeviceInfo, DeviceOffLine
+from monitor.models import MonitorDiscover
+from utils.job_queue import redis_queue
+from utils.fast_dfs import upload_image
 
 
 @shared_task

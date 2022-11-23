@@ -9,7 +9,7 @@
 
 from import_export import resources
 
-from apps.device import models as device_models
+from device import models as device_models
 
 
 class DeviceInfoResources(resources.ModelResource):

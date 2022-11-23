@@ -12,9 +12,9 @@ import datetime
 
 from celery import shared_task
 
-from apps.device import models as device_models
-from apps.monitor import models as monitor_models
-from apps.utils.face_discern import face_discern
+from device import models as device_models
+from monitor import models as monitor_models
+from utils.face_discern import face_discern
 
 
 @shared_task

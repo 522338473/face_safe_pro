@@ -9,14 +9,13 @@ from import_export.admin import ImportExportModelAdmin
 from simpleui.admin import AjaxAdmin
 from simplepro.dialog import ModalDialog, MultipleCellDialog
 
-from apps.device import models as device_models
-from apps.monitor import models as monitor_models
-from apps.monitor import serializers as monitor_serializer
-from apps.public.admin import PublicModelAdmin
-from apps.monitor import resources as monitor_resources
-from apps.telecom import consumer
-from apps.utils.constant import VIDEO_PLAY_TYPE, DETAIL_TYPE
-from apps.utils.face_discern import face_discern
+from monitor import models as monitor_models
+from monitor import serializers as monitor_serializer
+from public.admin import PublicModelAdmin
+from monitor import resources as monitor_resources
+from telecom import consumer
+from utils.constant import VIDEO_PLAY_TYPE, DETAIL_TYPE
+from utils.face_discern import face_discern
 
 
 # Register your models here.

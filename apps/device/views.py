@@ -11,13 +11,13 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError
 
-from apps.device import models as device_model
-from apps.archives import models as archives_model
-from apps.monitor import models as monitor_model
-from apps.device import serializers as device_serializer
-from apps.public.views import HashRetrieveViewSetMixin
-from apps.utils.face_discern import face_discern
-from apps.utils.job_queue import redis_cache
+from device import models as device_model
+from archives import models as archives_model
+from monitor import models as monitor_model
+from device import serializers as device_serializer
+from public.views import HashRetrieveViewSetMixin
+from utils.face_discern import face_discern
+from utils.job_queue import redis_cache
 
 
 # Create your views here.

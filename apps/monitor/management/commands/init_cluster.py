@@ -4,9 +4,9 @@ import datetime
 
 from django.core.management.base import BaseCommand
 
-from apps.monitor import models as monitor_models
-from apps.device import models as device_models
-from apps.utils.face_discern import face_discern
+from monitor import models as monitor_models
+from device import models as device_models
+from utils.face_discern import face_discern
 
 logger = logging.getLogger("server.default")
 

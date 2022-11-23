@@ -7,13 +7,13 @@ import redis
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from apps.device.models import DeviceInfo, DevicePhoto, Vehicle, Motor
-from apps.archives.models import AccessDiscover
-from apps.monitor.models import VehicleMonitor, VehicleMonitorDiscover
-from apps.utils.fast_dfs import upload_image
-from apps.utils.job_queue import redis_queue
-from apps.utils.hasher import Hasher
-from apps.utils.constant import IP_PATTERN
+from device.models import DeviceInfo, DevicePhoto, Vehicle, Motor
+from archives.models import AccessDiscover
+from monitor.models import VehicleMonitor, VehicleMonitorDiscover
+from utils.fast_dfs import upload_image
+from utils.job_queue import redis_queue
+from utils.hasher import Hasher
+from utils.constant import IP_PATTERN
 
 
 class Command(BaseCommand):

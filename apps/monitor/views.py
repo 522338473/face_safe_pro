@@ -9,11 +9,11 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import exceptions
 
-from apps.archives import models as archives_models
-from apps.monitor import models
-from apps.monitor import serializers
-from apps.public.views import HashRetrieveViewSetMixin
-from apps.utils.face_discern import face_discern
+from archives import models as archives_models
+from monitor import models
+from monitor import serializers
+from public.views import HashRetrieveViewSetMixin
+from utils.face_discern import face_discern
 
 
 # Create your views here.

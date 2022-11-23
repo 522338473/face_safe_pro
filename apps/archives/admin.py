@@ -5,11 +5,11 @@ from import_export.admin import ImportExportModelAdmin
 from simpleui.admin import AjaxAdmin
 from simplepro.dialog import ModalDialog, MultipleCellDialog
 
-from apps.archives import models as archives_models
-from apps.public.admin import PublicModelAdmin
-from apps.archives import resources as archives_resources
-from apps.utils.constant import VIDEO_PLAY_TYPE, DETAIL_TYPE
-from apps.utils.face_discern import face_discern
+from archives import models as archives_models
+from public.admin import PublicModelAdmin
+from archives import resources as archives_resources
+from utils.constant import VIDEO_PLAY_TYPE, DETAIL_TYPE
+from utils.face_discern import face_discern
 
 
 # Register your models here.

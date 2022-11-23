@@ -22,7 +22,7 @@ from django.views.generic import RedirectView
 from django.contrib.staticfiles.views import serve
 from rest_framework.documentation import include_docs_urls
 
-from apps.public import views as public_view
+from public import views as public_view
 
 urls_v1 = [
     path("account/", include(("account.urls", "account"))),

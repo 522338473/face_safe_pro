@@ -11,8 +11,8 @@ from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.routers import DefaultRouter
 
-from apps.device import views
-from apps.device import admin_view
+from device import views
+from device import admin_view
 
 router = DefaultRouter()
 router.register(r"info", views.DeviceInfoViewSet, basename="info")

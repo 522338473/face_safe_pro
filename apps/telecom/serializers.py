@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from apps.telecom import models
+from telecom import models
 
 
 class OpticalFiberAlarmSerializer(serializers.ModelSerializer):
