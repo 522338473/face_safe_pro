@@ -283,7 +283,7 @@ class DevicePhotoViewSet(HashRetrieveViewSetMixin, ModelViewSet):
         now_time = datetime.datetime.now()
         start_date = (now_time - days).strftime("%Y%m%d")
         end_date = now_time.strftime("%Y%m%d")
-        results = results = redis_cache.redis_get_cache(photo)
+        results = redis_cache.redis_get_cache(photo)
         if not results:
             results = face_discern.search_record(
                 image=image,
