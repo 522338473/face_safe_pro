@@ -211,6 +211,9 @@ class DevicePhotoViewSet(HashRetrieveViewSetMixin, ModelViewSet):
         face_query = device_model.DevicePhoto.objects.all()
         vehicle_query = device_model.Vehicle.objects.all()
 
+        # 如果是pg数据库则启用
+        if settings.DATABASES["default"] != "pg":
+            return Response(count_list)
         if end_date - start_date <= days:
             face_list = (
                 face_query.filter(take_photo_time__range=(start_date, end_date))
