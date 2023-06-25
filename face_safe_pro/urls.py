@@ -48,11 +48,11 @@ urlpatterns = [
     path(
         "api-docs/",
         include_docs_urls(
-            title="CSIA智能视图平台API文档", authentication_classes=[], permission_classes=[]
+            title="智能视图平台API文档", authentication_classes=[], permission_classes=[]
         ),
     ),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-admin.site.site_header = "CSIA智能视图平台"
-admin.site.site_title = "CSIA智能视图平台"
+admin.site.site_header = "智能视图平台"
+admin.site.site_title = "智能视图平台"
 # admin.site.empty_value_display = None

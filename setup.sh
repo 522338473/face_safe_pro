@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "CSIA智能视图平台安装中..."
+echo "智能视图平台安装中..."
 
 echo "安装docker"
 if ! type docker >/dev/null 2>&1; then
